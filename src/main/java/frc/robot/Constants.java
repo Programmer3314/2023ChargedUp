@@ -19,6 +19,17 @@ public class Constants {
     public static final double DRIVETRAIN_WHEELBASE_METERS = .0254
             * (CHASSIS_LENGTH_IN_INCHES - (WHEEL_OFFSET_IN_INCHES * 2));
 
+    // These are my "over the break" offsets just for reference:
+    // my turn motor is set to Inverted.
+    // public static final double frontLeftModuleSteerOffset =
+    // -Math.toRadians(-152); // 173 + 180 + 37);
+    // public static final double frontRightModuleSteerOffset = -Math.toRadians(93);
+    // // 264.45 + 9);
+    // public static final double backRightModuleSteerOffset = -Math.toRadians(53 -
+    // 180); // 228.5 - 180);
+    // public static final double backLeftModuleSteerOffset = -Math.toRadians(-120);
+    // // 238 - 180);
+
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 1;
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1;
@@ -42,7 +53,8 @@ public class Constants {
     public static final double MAX_VOLTAGE = 12.0;
     public static final double maxVelocityMetersPerSecond = 4.14528; // With the L2... 4.96824
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = maxVelocityMetersPerSecond /
-            Math.hypot(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0);
+            Math.hypot(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
+                    Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0);
 
     public static final int ChassisXAxis = 1;
     public static final int ChassisYAxis = 0;
@@ -54,6 +66,7 @@ public class Constants {
     public static final double driveReduction = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
     public static final boolean driveIsInverted = true;
     public static final double steerReduction = (14.0 / 50.0) * (10.0 / 60.0);
+    // TODO: Try steerIsInverted = true;
     public static final boolean steerIsInverted = false;
     public static final boolean absoluteEncoderIsInverted = false;
     public static final double wheelCircumference = (wheelDiameter / 2) * Math.PI;
