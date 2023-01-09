@@ -18,6 +18,8 @@ public class RobotContainer {
   private final MMSwerveSubsystem swerveSubsystem = new MMSwerveSubsystem();
 
   private final Joystick driverJoystick = new Joystick(Constants.DriverController);
+  // TODO: Slow these down... They are in METERS per Second not feet. 3 meters per
+  // second is pretty fast for initial testing
   private final MMJoystickAxis driveXAxis = new MMJoystickAxis(Constants.DriverController, Constants.driveXAxis, 0.01,
       -3);
   private final MMJoystickAxis driveYAxis = new MMJoystickAxis(Constants.DriverController, Constants.driveYAxis, 0.01,

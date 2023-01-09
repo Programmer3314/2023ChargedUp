@@ -30,11 +30,12 @@ public class MMSwerveSubsystem extends SubsystemBase {
 
     };
 
+    // TODO: Try Navx now that the library is sort of out...
     // private final AHRS navx= new AHRS(SPI.Port.KMXP);
     public MMSwerveSubsystem() {
         new Thread(() -> {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
                 zeroHeading();
                 resetEncoders();
             } catch (Exception e) {
@@ -48,6 +49,8 @@ public class MMSwerveSubsystem extends SubsystemBase {
     }
 
     public double getHeading() {
+        // TODO: this probably should be standardized to Radians
+        // TODO: Use MathUtil.angleModulus(...)
         // return Math.IEEEremainder(navx.getAngle(), 360);
         return 0;
 
