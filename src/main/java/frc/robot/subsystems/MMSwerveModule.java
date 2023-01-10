@@ -2,14 +2,18 @@ package frc.robot.subsystems;
 // Copyright (c) FIRST and other WPILib contributors.
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -34,38 +38,35 @@ public class MMSwerveModule {
         this.absoluteEncoderReversed = absoluteEncoderReversed;
         this.magneticCanCoderId = absoluteEncoderId;
         magneticCanCoder = new WPI_CANCoder(magneticCanCoderId);
-        // TODO: Add Configuration settings
-        // absoluteEncoder.configFactoryDefault();
-        // absoluteEncoder.configMagnetOffset(Math.toDegrees(0));
-        // absoluteEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
+
+        magneticCanCoder.configFactoryDefault();
+        magneticCanCoder.configMagnetOffset(Math.toDegrees(0));
+        magneticCanCoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
         driveMotorController = new WPI_TalonFX(driveMotorCanId);
         driveMotorController.configFactoryDefault();
-        // TODO: Implement...
-        // TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
-        // driveMotor.getAllConfigs(driveConfigs);
-        // driveConfigs.primaryPID.selectedFeedbackSensor =
-        // FeedbackDevice.IntegratedSensor;
-        // driveMotor.configAllSettings(driveConfigs, Constants.timeoutMs);
+
+        TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
+        driveMotorController.getAllConfigs(driveConfigs);
+        driveConfigs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+        driveMotorController.configAllSettings(driveConfigs, Constants.kMMTimeoutMs);
         driveMotorController.setNeutralMode(NeutralMode.Brake);
         driveMotorController.setInverted(driveMotorReversed);
 
         turnMotorController = new WPI_TalonFX(turnMotorCanId);
         turnMotorController.configFactoryDefault();
-        // TODO: implement...
-        // TalonFXConfiguration turnConfigs = new TalonFXConfiguration();
-        // turnMotor.getAllConfigs(driveConfigs, Constants.timeoutMs);
-        // turnConfigs.primaryPID.selectedFeedbackSensor =
-        // FeedbackDevice.IntegratedSensor;
-        // turnMotor.configAllSettings(driveConfigs, Constants.timeoutMs);
+
+        TalonFXConfiguration turnConfigs = new TalonFXConfiguration();
+        turnMotorController.getAllConfigs(driveConfigs, Constants.kMMTimeoutMs);
+        turnConfigs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+        turnMotorController.configAllSettings(driveConfigs, Constants.kMMTimeoutMs);
         turnMotorController.setNeutralMode(NeutralMode.Brake);
         turnMotorController.setInverted(turnMotorReversed);
 
         turnPidController = new PIDController(.65, 0, 0);
         turnPidController.enableContinuousInput(-Math.PI, Math.PI);
-        // TODO: try commenting the following line out, since
-        // it is done in the delayed code on the subsystem
-        resetEncoders();
+
+        // resetEncoders();
 
     }
 
@@ -74,8 +75,7 @@ public class MMSwerveModule {
     }
 
     public double getTurningPositionRadians() {
-        // TODO: Use MathUtil.angleModulus(...)
-        return turnMotorController.getSelectedSensorPosition() * Constants.turnTicksToRadians;
+        return MathUtil.angleModulus(turnMotorController.getSelectedSensorPosition() * Constants.turnTicksToRadians);
     }
 
     public double getDriveVelocity() {
@@ -87,9 +87,9 @@ public class MMSwerveModule {
     }
 
     public double getAbsoluteEncoderRad() {
-        // TODO: Use MathUtil.angleModulus(...)
-        return (magneticCanCoder.getAbsolutePosition() * Math.PI / 180.0) + absoluteEncoderOffset;
-        // TODO: Implement * (absoluteEncoderReversed ? -1.0 : 1.0)
+        return MathUtil.angleModulus((magneticCanCoder.getAbsolutePosition() * Math.PI / 180.0) + absoluteEncoderOffset)
+                * (absoluteEncoderReversed ? -1.0 : 1.0);
+
     }
 
     public void resetEncoders() {
@@ -102,11 +102,11 @@ public class MMSwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState state) {
-        if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+        if (Math.abs(state.speedMetersPerSecond) < 0.1) {
             stop();
             return;
         }
-        // state = SwerveModuleState.optimize(state, getState().angle);
+        state = SwerveModuleState.optimize(state, getState().angle);
         driveMotorController.set(ControlMode.PercentOutput,
                 state.speedMetersPerSecond / Constants.maxVelocityMetersPerSecond);
         turnMotorController.set(turnPidController.calculate(getTurningPositionRadians(), state.angle.getRadians()));

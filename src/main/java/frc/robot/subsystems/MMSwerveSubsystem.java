@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -31,39 +34,44 @@ public class MMSwerveSubsystem extends SubsystemBase {
     };
 
     // TODO: Try Navx now that the library is sort of out...
-    // private final AHRS navx= new AHRS(SPI.Port.KMXP);
+    private final AHRS navx = new AHRS(SPI.Port.kMXP);
+
     public MMSwerveSubsystem() {
+        SmartDashboard.putString("Reset Running: ", "No");
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
                 zeroHeading();
                 resetEncoders();
+                SmartDashboard.putString("Reset Running: ", "Yes");
             } catch (Exception e) {
-
+                SmartDashboard.putString("Reset Running: ", "Error");
             }
         });
+        resetEncoders();
+        zeroHeading();
     }
 
     public void zeroHeading() {
-        // navx.reset();
+        navx.reset();
     }
 
-    public double getHeading() {
+    public double getHeadingRad() {
         // TODO: this probably should be standardized to Radians
-        // TODO: Use MathUtil.angleModulus(...)
+        return -MathUtil.angleModulus(navx.getAngle() * Math.PI / 180.0);
         // return Math.IEEEremainder(navx.getAngle(), 360);
-        return 0;
+        // return 0;
 
     }
 
     public Rotation2d getRotation2d() {
-        return Rotation2d.fromDegrees(getHeading());
+        return Rotation2d.fromRadians(getHeadingRad());
 
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Robot Heading", getHeading());
+        SmartDashboard.putNumber("Robot Heading", Math.toDegrees(getHeadingRad()));
         for (int i = 0; i < modules.length; i++) {
             SmartDashboard.putNumber("Absolute Encoder Rotation " + i,
                     Math.toDegrees(modules[i].getAbsoluteEncoderRad()));

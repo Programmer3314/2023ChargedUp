@@ -21,11 +21,11 @@ public class RobotContainer {
   // TODO: Slow these down... They are in METERS per Second not feet. 3 meters per
   // second is pretty fast for initial testing
   private final MMJoystickAxis driveXAxis = new MMJoystickAxis(Constants.DriverController, Constants.driveXAxis, 0.01,
-      -3);
+      -1.3);
   private final MMJoystickAxis driveYAxis = new MMJoystickAxis(Constants.DriverController, Constants.driveYAxis, 0.01,
-      -3);
+      -1.3);
   private final MMJoystickAxis driveRAxis = new MMJoystickAxis(Constants.DriverController, Constants.driveRAxis, 0.01,
-      Math.PI / 2);
+      -(Math.PI / 2.0));
 
   public RobotContainer() {
     swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
@@ -38,7 +38,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    new JoystickButton(driverJoystick, Constants.setFieldOriented)
+    new JoystickButton(driverJoystick, 2)
         .onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
   }
 
