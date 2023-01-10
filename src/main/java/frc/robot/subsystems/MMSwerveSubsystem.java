@@ -7,8 +7,11 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,6 +38,8 @@ public class MMSwerveSubsystem extends SubsystemBase {
 
     // TODO: Try Navx now that the library is sort of out...
     private final AHRS navx = new AHRS(SPI.Port.kMXP);
+    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(Constants.driveKinematics, new Rotation2d(),
+            getSwerveModulePositions());
 
     public MMSwerveSubsystem() {
         SmartDashboard.putString("Reset Running: ", "No");
@@ -71,12 +76,14 @@ public class MMSwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        odometer.update(getRotation2d(), getSwerveModulePositions());
         SmartDashboard.putNumber("Robot Heading", Math.toDegrees(getHeadingRad()));
         for (int i = 0; i < modules.length; i++) {
             SmartDashboard.putNumber("Absolute Encoder Rotation " + i,
                     Math.toDegrees(modules[i].getAbsoluteEncoderRad()));
             SmartDashboard.putNumber("Motor  Rotation" + i, Math.toDegrees(modules[i].getTurningPositionRadians()));
         }
+        SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
 
     }
 
@@ -100,4 +107,20 @@ public class MMSwerveSubsystem extends SubsystemBase {
         }
     }
 
+    public SwerveModulePosition[] getSwerveModulePositions() {
+        return new SwerveModulePosition[] {
+                modules[0].getSwerveModulePosition(),
+                modules[1].getSwerveModulePosition(),
+                modules[2].getSwerveModulePosition(),
+                modules[3].getSwerveModulePosition()
+        };
+    }
+
+    public Pose2d getPose() {
+        return odometer.getPoseMeters();
+    }
+
+    public void resetOdometry(Pose2d pose) {
+        odometer.resetPosition(getRotation2d(), getSwerveModulePositions(), pose);
+    }
 }
