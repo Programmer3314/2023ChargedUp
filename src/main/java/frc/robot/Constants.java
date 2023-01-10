@@ -10,92 +10,114 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 /** Add your docs here. */
 public class Constants {
-        public static final double CHASSIS_LENGTH_IN_INCHES = 24.5;
-        public static final double CHASSIS_WIDTH_IN_INCHES = 24.5;
+    // TODO: Opps, I got a little crazy organizing the constants
+    // TODO: (over time) organize constants like this...
+    // TODO: Instead of using InchesToMeters use MetersPerInch (which is more
+    // standard)
+    // TODO: All units should be in Meters, Radians, Seconds unless noted (like Ms
+    // for milliseconds)
+    public static class Conv {
+        // Conversion Constants
+        public static final double MetersPerInch = 0.0254;
+        public static final double MetersPerFeet = 0.3048;
+    }
 
-        public static final double WHEEL_OFFSET_IN_INCHES = 2.625;
+    public static class Falcon {
+        public static final double TicksPerRev = 2048.0;
+    }
 
-        public static final double DRIVETRAIN_TRACKWIDTH_METERS = .0254
-                        * (CHASSIS_WIDTH_IN_INCHES - (WHEEL_OFFSET_IN_INCHES * 2));
-        public static final double DRIVETRAIN_WHEELBASE_METERS = .0254
-                        * (CHASSIS_LENGTH_IN_INCHES - (WHEEL_OFFSET_IN_INCHES * 2));
+    public static class Neo {
+        public static final double TicksPerRev = 42.0;
+    }
 
-        // These are my "over the break" offsets just for reference:
-        // my turn motor is set to Inverted.
-        // public static final double frontLeftModuleSteerOffset =
-        // -Math.toRadians(-152); // 173 + 180 + 37);
-        // public static final double frontRightModuleSteerOffset = -Math.toRadians(93);
-        // // 264.45 + 9);
-        // public static final double backRightModuleSteerOffset = -Math.toRadians(53 -
-        // 180); // 228.5 - 180);
-        // public static final double backLeftModuleSteerOffset = -Math.toRadians(-120);
-        // // 238 - 180);
-
-        public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
-        public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 1;
-        public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1;
-        public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(28);
-
-        public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 4;
-        public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 3;
-        public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 2;
-        public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-87);
-
-        public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 8;
-        public static final int BACK_LEFT_MODULE_STEER_MOTOR = 7;
-        public static final int BACK_LEFT_MODULE_STEER_ENCODER = 4;
-        public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(59);
-
-        public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 6;
-        public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 5;
-        public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 3;
-        public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(49);
-
-        public static final double MAX_VOLTAGE = 12.0;
-        public static final double maxVelocityMetersPerSecond = 4.14528; // With the L2... 4.96824
-        public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = maxVelocityMetersPerSecond /
-                        Math.hypot(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
-                                        Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0);
-
-        public static final int ChassisXAxis = 1;
-        public static final int ChassisYAxis = 0;
-        public static final int ChassisRAxis = 4;
-        public static final int DriverController = 4;
-
-        public static final int falconTicksPerRev = 2048;
+    public static class MK4i {
         public static final double wheelDiameter = .10033;
-        public static final double driveReduction = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
         public static final boolean driveIsInverted = true;
-        public static final double steerReduction = (14.0 / 50.0) * (10.0 / 60.0);
-
         public static final boolean steerIsInverted = true;
         public static final boolean absoluteEncoderIsInverted = false;
+        // TODO: I think this is WRONG...
         public static final double wheelCircumference = (wheelDiameter / 2) * Math.PI;
-        public static final double driveTicksToMeters = (1.0 / falconTicksPerRev) * driveReduction * wheelCircumference;
-        public static final double turnTicksToRadians = (1.0 / falconTicksPerRev) * steerReduction * 2 * Math.PI;
-        public static final double kMMNeoTicksPerRev = 42;
-        public static final int kMMTimeoutMs = 30;
+        public static final double wheelOffset = 2.625 * Constants.Conv.MetersPerInch;
+
+        public static class L2 {
+            public static final double driveReduction = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
+            public static final double steerReduction = (14.0 / 50.0) * (10.0 / 60.0);
+            public static final double driveMetersPerTick = (wheelCircumference / Falcon.TicksPerRev) * driveReduction;
+            public static final double turnRadiansPerTick = (2.0 * Math.PI / Falcon.TicksPerRev) * steerReduction;
+            public static final double maxVelocityMetersPerSecond = 4.14528; // With the L2... 4.96824
+            public static final double maxAngularVelocityRadiansPerSecond = maxVelocityMetersPerSecond
+                    / Constants.Chassis.wheelDiagnal;
+            // maxVelocityMetersPerSecond /
+            // Math.hypot(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0,
+            // Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0);
+        }
+    }
+
+    public static class Robot {
+        public static final int canBusTimeoutMs = 30;
+        public static final double MAX_VOLTAGE = 12.0;
+    }
+
+    public static class Chassis {
+        public static final double length = 24.5 * Constants.Conv.MetersPerInch;
+        public static final double width = 24.5 * Constants.Conv.MetersPerInch;
+        public static final double trackWidth = width - (2.0 * MK4i.wheelOffset);
+        public static final double wheelBase = length - (2.0 * MK4i.wheelOffset);
+        public static final double wheelDiagnal = Math.hypot(trackWidth/2.0, wheelBase/2.0); 
 
         public static final Translation2d[] moduleOffset = new Translation2d[] {
-                        new Translation2d(Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0,
-                                        Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0),
-                        new Translation2d(Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0,
-                                        -Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0),
-                        new Translation2d(-Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0,
-                                        -Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0),
-                        new Translation2d(-Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0,
-                                        Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0)
-        };
+            new Translation2d(Constants.Chassis.wheelBase / 2.0,
+                    Constants.Chassis.trackWidth / 2.0),
+            new Translation2d(Constants.Chassis.wheelBase / 2.0,
+                    -Constants.Chassis.trackWidth / 2.0),
+            new Translation2d(-Constants.Chassis.wheelBase / 2.0,
+                    -Constants.Chassis.trackWidth / 2.0),
+            new Translation2d(-Constants.Chassis.wheelBase / 2.0,
+                    Constants.Chassis.trackWidth / 2.0)
+    };
 
-        public static final SwerveDriveKinematics driveKinematics = new SwerveDriveKinematics(
-                        moduleOffset);
+    public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+            moduleOffset);
 
-        public static final int driveXAxis = 1;
-        public static final int driveYAxis = 0;
-        public static final int driveRAxis = 4;
 
-        public static final int setFieldOriented = 1;
+    }
 
-        public static final TrapezoidProfile.Constraints thetaControllerConstraints = new TrapezoidProfile.Constraints(
-                        Math.PI / 2.0, Math.PI / 2.0);
+    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
+    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 1;
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1;
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(28);
+
+    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 4;
+    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 3;
+    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 2;
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-87);
+
+    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 8;
+    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 7;
+    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 4;
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(59);
+
+    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 6;
+    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 5;
+    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 3;
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(49);
+
+    public static class Driver {
+        public static final int Controller = 4;
+
+        public static class Axis {
+            public static final int y = 0;
+            public static final int x = 1;
+            public static final int r = 4;
+        }
+        public static class Button {
+            public static final int overrideFieldCentric = 1;
+            public static final int resetNavx = 2;
+        }
+    }
+
+    //public static final int setFieldOriented = 1;
+
+    public static final TrapezoidProfile.Constraints thetaControllerConstraints = new TrapezoidProfile.Constraints(
+            Math.PI / 2.0, Math.PI / 2.0);
 }

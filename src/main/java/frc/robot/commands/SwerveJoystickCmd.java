@@ -17,7 +17,7 @@ public class SwerveJoystickCmd extends CommandBase {
 
     private final MMSwerveSubsystem swerveSubsystem;
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction;
-    private final Supplier<Boolean> fieldOrientedFunction;
+    private final Supplier<Boolean> overrideFieldOriented;
 
     public SwerveJoystickCmd(MMSwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction,
             Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction,
@@ -26,7 +26,7 @@ public class SwerveJoystickCmd extends CommandBase {
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
         this.turningSpdFunction = turningSpdFunction;
-        this.fieldOrientedFunction = fieldOrientedFunction;
+        this.overrideFieldOriented = fieldOrientedFunction;
         addRequirements(swerveSubsystem);
     }
 
@@ -43,14 +43,14 @@ public class SwerveJoystickCmd extends CommandBase {
 
         ChassisSpeeds chassisSpeeds;
 
-        if (!fieldOrientedFunction.get()) {
+        if (!overrideFieldOriented.get()) {
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
         } else {
             chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
         }
 
-        SwerveModuleState[] moduleStates = Constants.driveKinematics.toSwerveModuleStates(chassisSpeeds);
+        SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
 
         swerveSubsystem.setModuleStates(moduleStates);
     }

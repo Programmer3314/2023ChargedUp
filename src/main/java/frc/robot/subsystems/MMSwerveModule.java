@@ -1,13 +1,12 @@
 package frc.robot.subsystems;
 // Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
@@ -49,7 +48,7 @@ public class MMSwerveModule {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
         driveMotorController.getAllConfigs(driveConfigs);
         driveConfigs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        driveMotorController.configAllSettings(driveConfigs, Constants.kMMTimeoutMs);
+        driveMotorController.configAllSettings(driveConfigs, Constants.Robot.canBusTimeoutMs);
         driveMotorController.setNeutralMode(NeutralMode.Brake);
         driveMotorController.setInverted(driveMotorReversed);
 
@@ -57,9 +56,9 @@ public class MMSwerveModule {
         turnMotorController.configFactoryDefault();
 
         TalonFXConfiguration turnConfigs = new TalonFXConfiguration();
-        turnMotorController.getAllConfigs(driveConfigs, Constants.kMMTimeoutMs);
+        turnMotorController.getAllConfigs(driveConfigs, Constants.Robot.canBusTimeoutMs);
         turnConfigs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        turnMotorController.configAllSettings(driveConfigs, Constants.kMMTimeoutMs);
+        turnMotorController.configAllSettings(driveConfigs, Constants.Robot.canBusTimeoutMs);
         turnMotorController.setNeutralMode(NeutralMode.Brake);
         turnMotorController.setInverted(turnMotorReversed);
 
@@ -71,19 +70,19 @@ public class MMSwerveModule {
     }
 
     public double getDrivePositionMeters() {
-        return driveMotorController.getSelectedSensorPosition() * Constants.driveTicksToMeters;
+        return driveMotorController.getSelectedSensorPosition() * Constants.MK4i.L2.driveMetersPerTick;
     }
 
     public double getTurningPositionRadians() {
-        return MathUtil.angleModulus(turnMotorController.getSelectedSensorPosition() * Constants.turnTicksToRadians);
+        return MathUtil.angleModulus(turnMotorController.getSelectedSensorPosition() * Constants.MK4i.L2.turnRadiansPerTick);
     }
 
     public double getDriveVelocity() {
-        return driveMotorController.getSelectedSensorVelocity() * 10 * Constants.driveTicksToMeters;
+        return driveMotorController.getSelectedSensorVelocity() * 10 * Constants.MK4i.L2.driveMetersPerTick;
     }
 
     public double getTurningVelocity() {
-        return turnMotorController.getSelectedSensorVelocity() * 10 * Constants.turnTicksToRadians;
+        return turnMotorController.getSelectedSensorVelocity() * 10 * Constants.MK4i.L2.turnRadiansPerTick;
     }
 
     public double getAbsoluteEncoderRad() {
@@ -94,7 +93,7 @@ public class MMSwerveModule {
 
     public void resetEncoders() {
         driveMotorController.setSelectedSensorPosition(0);
-        turnMotorController.setSelectedSensorPosition(getAbsoluteEncoderRad() / Constants.turnTicksToRadians);
+        turnMotorController.setSelectedSensorPosition(getAbsoluteEncoderRad() / Constants.MK4i.L2.turnRadiansPerTick);
     }
 
     public SwerveModuleState getState() {
@@ -108,7 +107,7 @@ public class MMSwerveModule {
         }
         state = SwerveModuleState.optimize(state, getState().angle);
         driveMotorController.set(ControlMode.PercentOutput,
-                state.speedMetersPerSecond / Constants.maxVelocityMetersPerSecond);
+                state.speedMetersPerSecond / Constants.MK4i.L2.maxVelocityMetersPerSecond);
         turnMotorController.set(turnPidController.calculate(getTurningPositionRadians(), state.angle.getRadians()));
         SmartDashboard.putString("Swerve[" + magneticCanCoderId + "] State", state.toString());
 
