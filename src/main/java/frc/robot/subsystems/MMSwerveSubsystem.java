@@ -42,8 +42,6 @@ public class MMSwerveSubsystem extends SubsystemBase {
 
     public MMSwerveSubsystem() {
         SmartDashboard.putString("Reset Running: ", "No");
-        // TODO: GOT IT! The thread thing only works if there is a .Start() at the end. 
-        // This one is created, but never starts. 
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
@@ -53,9 +51,9 @@ public class MMSwerveSubsystem extends SubsystemBase {
             } catch (Exception e) {
                 SmartDashboard.putString("Reset Running: ", "Error");
             }
-        });
-        resetEncoders();
-        zeroHeading();
+        }).start();
+        // resetEncoders();
+        // zeroHeading();
     }
 
     public void zeroHeading() {
@@ -97,6 +95,13 @@ public class MMSwerveSubsystem extends SubsystemBase {
             modules[i].setDesiredState(desiredStates[i]);
         }
     }
+    public void setModuleStatesRaw(SwerveModuleState[] desiredStates) {
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.MK4i.L2.maxVelocityMetersPerSecond);
+        for (int i = 0; i < modules.length; i++) {
+            modules[i].setDesiredStateRaw(desiredStates[i]);
+        }
+    }
+    
 
     public void resetEncoders() {
         for (MMSwerveModule m : modules) {

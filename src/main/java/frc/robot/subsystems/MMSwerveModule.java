@@ -105,6 +105,11 @@ public class MMSwerveModule {
             stop();
             return;
         }
+        setDesiredStateRaw(state);
+    };
+    public void setDesiredStateRaw(SwerveModuleState state){
+
+    
         state = SwerveModuleState.optimize(state, getState().angle);
         driveMotorController.set(ControlMode.PercentOutput,
                 state.speedMetersPerSecond / Constants.MK4i.L2.maxVelocityMetersPerSecond);

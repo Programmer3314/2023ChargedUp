@@ -18,16 +18,16 @@ public class Constants {
     // for milliseconds)
     public static class Conv {
         // Conversion Constants
-        public static final double MetersPerInch = 0.0254;
-        public static final double MetersPerFeet = 0.3048;
+        public static final double metersPerInch = 0.0254;
+        public static final double metersPerFeet = 0.3048;
     }
 
     public static class Falcon {
-        public static final double TicksPerRev = 2048.0;
+        public static final double ticksPerRev = 2048.0;
     }
 
     public static class Neo {
-        public static final double TicksPerRev = 42.0;
+        public static final double ticksPerRev = 42.0;
     }
 
     public static class MK4i {
@@ -35,15 +35,14 @@ public class Constants {
         public static final boolean driveIsInverted = true;
         public static final boolean steerIsInverted = true;
         public static final boolean absoluteEncoderIsInverted = false;
-        // TODO: I think this is WRONG...
-        public static final double wheelCircumference = (wheelDiameter / 2) * Math.PI;
-        public static final double wheelOffset = 2.625 * Constants.Conv.MetersPerInch;
-
+        public static final double wheelCircumference = wheelDiameter  * Math.PI;
+        public static final double wheelOffset = 2.625 * Constants.Conv.metersPerInch;
+ 
         public static class L2 {
             public static final double driveReduction = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
             public static final double steerReduction = (14.0 / 50.0) * (10.0 / 60.0);
-            public static final double driveMetersPerTick = (wheelCircumference / Falcon.TicksPerRev) * driveReduction;
-            public static final double turnRadiansPerTick = (2.0 * Math.PI / Falcon.TicksPerRev) * steerReduction;
+            public static final double driveMetersPerTick = (wheelCircumference / Falcon.ticksPerRev) * driveReduction;
+            public static final double turnRadiansPerTick = (2.0 * Math.PI / Falcon.ticksPerRev) * steerReduction;
             public static final double maxVelocityMetersPerSecond = 4.14528; // With the L2... 4.96824
             public static final double maxAngularVelocityRadiansPerSecond = maxVelocityMetersPerSecond
                     / Constants.Chassis.wheelDiagnal;
@@ -59,8 +58,8 @@ public class Constants {
     }
 
     public static class Chassis {
-        public static final double length = 24.5 * Constants.Conv.MetersPerInch;
-        public static final double width = 24.5 * Constants.Conv.MetersPerInch;
+        public static final double length = 24.5 * Constants.Conv.metersPerInch;
+        public static final double width = 24.5 * Constants.Conv.metersPerInch;
         public static final double trackWidth = width - (2.0 * MK4i.wheelOffset);
         public static final double wheelBase = length - (2.0 * MK4i.wheelOffset);
         public static final double wheelDiagnal = Math.hypot(trackWidth/2.0, wheelBase/2.0); 
@@ -113,6 +112,7 @@ public class Constants {
         public static class Button {
             public static final int overrideFieldCentric = 1;
             public static final int resetNavx = 2;
+            public static final int lockIn = 4;
         }
     }
 

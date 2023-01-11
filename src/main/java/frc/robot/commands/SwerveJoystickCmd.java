@@ -27,6 +27,7 @@ public class SwerveJoystickCmd extends CommandBase {
         this.ySpdFunction = ySpdFunction;
         this.turningSpdFunction = turningSpdFunction;
         this.overrideFieldOriented = fieldOrientedFunction;
+        
         addRequirements(swerveSubsystem);
     }
 
