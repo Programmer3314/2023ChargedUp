@@ -73,7 +73,6 @@ public class RobotContainer {
                 new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
                 trajectoryConfig);
 
-        // TODO: this could be doubled... 1.6 for kp
         PIDController xController = new PIDController(10.0, 0, 0);
         PIDController yController = new PIDController(10.0, 0, 0);
         ProfiledPIDController thetaController = new ProfiledPIDController(10.0, 0, 0,
