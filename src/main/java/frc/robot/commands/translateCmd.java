@@ -17,6 +17,7 @@ public class translateCmd extends CommandBase {
     private final Translation2d desireTranslation;
     private final double maxSpeed;
 
+    // TODO: Since this is a class, capitalize TranlateCmd
     public translateCmd(MMSwerveSubsystem swerveSubsystem, Translation2d desiredTranslation, double maxSpeed) {
         this.swerveSubsystem = swerveSubsystem;
         this.desireTranslation = desiredTranslation;
