@@ -1,0 +1,14 @@
+1/11/23 - rich 
+I think we should "immediately" create a Subsystem that is dedicated to tracking our field position.
+This should integrate all of the sources our robot will have to detect location. 
+The drivetrain odometry may be able to be moved to the NavigationSubsystem. The AprilTag detection
+would also be integrated. The navx could be integrated as well. 
+Once this is done and we have a field position available from the NavigationSubsystem, we should start
+thinking about navigating based on target field position. For example, we will need to navigate to grid
+stations. We should be able to do this (while dodging the charging station) from anywhere in the community.
+We should be able to drive to a loading station fully autonomously even in teleop (assuming no robot 
+interferance).
+One key element will be initializing the odometry with it's initial position. If we can see a tag, 
+that should solve the problem, but if we can't, we might need a "standard" starting position.
+
+

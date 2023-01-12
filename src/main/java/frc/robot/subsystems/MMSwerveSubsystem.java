@@ -22,16 +22,20 @@ import frc.robot.Constants;
 public class MMSwerveSubsystem extends SubsystemBase {
     private final MMSwerveModule[] modules = new MMSwerveModule[] {
             new MMSwerveModule(Constants.FRONT_LEFT_MODULE_DRIVE_MOTOR, Constants.FRONT_LEFT_MODULE_STEER_MOTOR,
-                    Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted, Constants.FRONT_LEFT_MODULE_STEER_ENCODER,
+                    Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted,
+                    Constants.FRONT_LEFT_MODULE_STEER_ENCODER,
                     Constants.FRONT_LEFT_MODULE_STEER_OFFSET, Constants.MK4i.absoluteEncoderIsInverted),
             new MMSwerveModule(Constants.FRONT_RIGHT_MODULE_DRIVE_MOTOR, Constants.FRONT_RIGHT_MODULE_STEER_MOTOR,
-                    Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted, Constants.FRONT_RIGHT_MODULE_STEER_ENCODER,
+                    Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted,
+                    Constants.FRONT_RIGHT_MODULE_STEER_ENCODER,
                     Constants.FRONT_RIGHT_MODULE_STEER_OFFSET, Constants.MK4i.absoluteEncoderIsInverted),
             new MMSwerveModule(Constants.BACK_RIGHT_MODULE_DRIVE_MOTOR, Constants.BACK_RIGHT_MODULE_STEER_MOTOR,
-                    Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted, Constants.BACK_RIGHT_MODULE_STEER_ENCODER,
+                    Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted,
+                    Constants.BACK_RIGHT_MODULE_STEER_ENCODER,
                     Constants.BACK_RIGHT_MODULE_STEER_OFFSET, Constants.MK4i.absoluteEncoderIsInverted),
             new MMSwerveModule(Constants.BACK_LEFT_MODULE_DRIVE_MOTOR, Constants.BACK_LEFT_MODULE_STEER_MOTOR,
-                    Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted, Constants.BACK_LEFT_MODULE_STEER_ENCODER,
+                    Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted,
+                    Constants.BACK_LEFT_MODULE_STEER_ENCODER,
                     Constants.BACK_LEFT_MODULE_STEER_OFFSET, Constants.MK4i.absoluteEncoderIsInverted)
 
     };
@@ -95,13 +99,13 @@ public class MMSwerveSubsystem extends SubsystemBase {
             modules[i].setDesiredState(desiredStates[i]);
         }
     }
+
     public void setModuleStatesRaw(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.MK4i.L2.maxVelocityMetersPerSecond);
         for (int i = 0; i < modules.length; i++) {
             modules[i].setDesiredStateRaw(desiredStates[i]);
         }
     }
-    
 
     public void resetEncoders() {
         for (MMSwerveModule m : modules) {

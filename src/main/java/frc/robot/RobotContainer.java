@@ -45,6 +45,9 @@ public class RobotContainer {
         private final NetworkTable limelight = inst.getTable("limelight");
 
     public RobotContainer() {
+        // TODO: add demo command that translates and tracks a visible target. 
+        // This will be a "throw away command" since we will rarely ever need to 
+        // aim at a target
         swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
                 () -> driveXAxis.getSquared(),
                 () -> driveYAxis.getSquared(),
@@ -58,6 +61,8 @@ public class RobotContainer {
     private void configureBindings() {
         new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavx)
                 .onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
+
+        // TODO: complete the TranslateCmd and create the drive and lock compound command.        
         new JoystickButton(driverJoystick, Constants.Driver.Button.lockIn)
                 .onTrue(new LockedInCmd(swerveSubsystem));
     }
