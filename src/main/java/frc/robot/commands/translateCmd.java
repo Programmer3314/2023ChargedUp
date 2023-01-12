@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -17,7 +15,8 @@ public class translateCmd extends CommandBase {
     private final Translation2d desireTranslation;
     private final double maxSpeed;
 
-    // TODO: Since this is a class, capitalize TranlateCmd
+    // TODO: Since this is a class, capitalize TranlateCmd 
+    // and since we will have a TranslateAbsoluteCmd maybe call this one TranslateRelativeCmd 
     public translateCmd(MMSwerveSubsystem swerveSubsystem, Translation2d desiredTranslation, double maxSpeed) {
         this.swerveSubsystem = swerveSubsystem;
         this.desireTranslation = desiredTranslation;
