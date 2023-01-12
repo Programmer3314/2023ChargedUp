@@ -14,6 +14,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -37,14 +39,17 @@ public class RobotContainer {
             0.01,
             -1.3);
     private final MMJoystickAxis driveRAxis = new MMJoystickAxis(Constants.Driver.Controller, Constants.Driver.Axis.r,
-            0.01,
+            0.05,
             -(Math.PI / 2.0));
+        private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        private final NetworkTable limelight = inst.getTable("limelight");
 
     public RobotContainer() {
         swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
                 () -> driveXAxis.getSquared(),
                 () -> driveYAxis.getSquared(),
                 () -> driveRAxis.getSquared(),
+                //() -> limelight.getEntry("tx").getDouble(0) * -.1,
                 () -> driverJoystick.getRawButton(Constants.Driver.Button.overrideFieldCentric)));
 
         configureBindings();
