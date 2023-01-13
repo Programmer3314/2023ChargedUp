@@ -4,8 +4,11 @@
 
 package frc.robot.commands;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.MMSwerveSubsystem;
 
@@ -32,6 +35,7 @@ public class LockedInCmd extends CommandBase {
 
     @Override
     public void execute() {
+        SmartDashboard.putString("In LockedIn", "true");
         swerveSubsystem.setModuleStatesRaw(desiredState);
     }
 
@@ -42,6 +46,7 @@ public class LockedInCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
+        
         return false;
     }
 }

@@ -24,83 +24,97 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.LockedInCmd;
 import frc.robot.commands.SwerveJoystickCmd;
+import frc.robot.commands.TranslateRelativeCmd;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMJoystickAxis;
 
 public class RobotContainer {
 
-    private final MMSwerveSubsystem swerveSubsystem = new MMSwerveSubsystem();
+        private final MMSwerveSubsystem swerveSubsystem = new MMSwerveSubsystem();
 
-    private final Joystick driverJoystick = new Joystick(Constants.Driver.Controller);
-    private final MMJoystickAxis driveXAxis = new MMJoystickAxis(Constants.Driver.Controller, Constants.Driver.Axis.x,
-            0.01,
-            -1.3);
-    private final MMJoystickAxis driveYAxis = new MMJoystickAxis(Constants.Driver.Controller, Constants.Driver.Axis.y,
-            0.01,
-            -1.3);
-    private final MMJoystickAxis driveRAxis = new MMJoystickAxis(Constants.Driver.Controller, Constants.Driver.Axis.r,
-            0.05,
-            -(Math.PI / 2.0));
+        private final Joystick driverJoystick = new Joystick(Constants.Driver.Controller);
+        private final MMJoystickAxis driveXAxis = new MMJoystickAxis(Constants.Driver.Controller,
+                        Constants.Driver.Axis.x,
+                        0.01,
+                        -1.3);
+        private final MMJoystickAxis driveYAxis = new MMJoystickAxis(Constants.Driver.Controller,
+                        Constants.Driver.Axis.y,
+                        0.01,
+                        -1.3);
+        private final MMJoystickAxis driveRAxis = new MMJoystickAxis(Constants.Driver.Controller,
+                        Constants.Driver.Axis.r,
+                        0.05,
+                        -(Math.PI / 2.0));
         private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
         private final NetworkTable limelight = inst.getTable("limelight");
 
-    public RobotContainer() {
-        // TODO: add demo command that translates and tracks a visible target. 
-        // This will be a "throw away command" since we will rarely ever need to 
-        // aim at a target
-        swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
-                () -> driveXAxis.getSquared(),
-                () -> driveYAxis.getSquared(),
-                () -> driveRAxis.getSquared(),
-                //() -> limelight.getEntry("tx").getDouble(0) * -.1,
-                () -> driverJoystick.getRawButton(Constants.Driver.Button.overrideFieldCentric)));
+        public RobotContainer() {
+                // TODO: add demo command that translates and tracks a visible target.
+                // This will be a "throw away command" since we will rarely ever need to
+                // aim at a target
+                swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
+                                () -> driveXAxis.getSquared(),
+                                () -> driveYAxis.getSquared(),
+                                () -> driveRAxis.getSquared(),
+                                // () -> limelight.getEntry("tx").getDouble(0) * -.1,
+                                () -> driverJoystick.getRawButton(Constants.Driver.Button.overrideFieldCentric)));
 
-        configureBindings();
-    }
+                configureBindings();
+        }
 
-    private void configureBindings() {
-        new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavx)
-                .onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
+        private void configureBindings() {
+                new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavx)
+                                .onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
 
-        // TODO: complete the TranslateCmd and create the drive and lock compound command.        
-        new JoystickButton(driverJoystick, Constants.Driver.Button.lockIn)
-                .onTrue(new LockedInCmd(swerveSubsystem));
-    }
+                // TODO: complete the TranslateCmd and create the drive and lock compound
+                // command.
+                new JoystickButton(driverJoystick, Constants.Driver.Button.lockIn)
+                                .onTrue(new SequentialCommandGroup(
+                                                new TranslateRelativeCmd(swerveSubsystem, new Translation2d(1, 1), 1.5),
+                                                new LockedInCmd(swerveSubsystem)));
+                new JoystickButton(driverJoystick, Constants.Driver.Button.trackAprilTag)
+                                .whileTrue(new SwerveJoystickCmd(swerveSubsystem,
+                                                () -> driveXAxis.getSquared(),
+                                                () -> driveYAxis.getSquared(),
+                                                () -> limelight.getEntry("tx").getDouble(0) * .15,
+                                                () -> driverJoystick.getRawButton(
+                                                                Constants.Driver.Button.overrideFieldCentric)));
+        }
 
-    public Command getAutonomousCommand() {
-        TrajectoryConfig trajectoryConfig = new TrajectoryConfig(2, 1.7)
-                .setKinematics(Constants.Chassis.kinematics);
-        // return Commands.print("No autonomous command configured");
-        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d()),
-                List.of(
-                        new Translation2d(1, 0),
-                        new Translation2d(1, -1),
-                        new Translation2d(2.4, -1),
-                        new Translation2d(2.4, 0.8),
-                        new Translation2d(1, 0.8),
-                        new Translation2d(1, 0)),
-                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-                trajectoryConfig);
+        public Command getAutonomousCommand() {
+                TrajectoryConfig trajectoryConfig = new TrajectoryConfig(2, 1.7)
+                                .setKinematics(Constants.Chassis.kinematics);
+                // return Commands.print("No autonomous command configured");
+                Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+                                new Pose2d(0, 0, new Rotation2d()),
+                                List.of(
+                                                new Translation2d(1, 0),
+                                                new Translation2d(1, -1),
+                                                new Translation2d(2.4, -1),
+                                                new Translation2d(2.4, 0.8),
+                                                new Translation2d(1, 0.8),
+                                                new Translation2d(1, 0)),
+                                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                                trajectoryConfig);
 
-        PIDController xController = new PIDController(10.0, 0, 0);
-        PIDController yController = new PIDController(10.0, 0, 0);
-        ProfiledPIDController thetaController = new ProfiledPIDController(10.0, 0, 0,
-                Constants.thetaControllerConstraints);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+                PIDController xController = new PIDController(10.0, 0, 0);
+                PIDController yController = new PIDController(10.0, 0, 0);
+                ProfiledPIDController thetaController = new ProfiledPIDController(10.0, 0, 0,
+                                Constants.thetaControllerConstraints);
+                thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(trajectory,
-                swerveSubsystem::getPose,
-                Constants.Chassis.kinematics,
-                xController,
-                yController,
-                thetaController,
-                swerveSubsystem::setModuleStates,
-                swerveSubsystem);
+                SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(trajectory,
+                                swerveSubsystem::getPose,
+                                Constants.Chassis.kinematics,
+                                xController,
+                                yController,
+                                thetaController,
+                                swerveSubsystem::setModuleStates,
+                                swerveSubsystem);
 
-        return new SequentialCommandGroup(
-                new InstantCommand(() -> swerveSubsystem.resetOdometry(trajectory.getInitialPose())),
-                swerveControllerCommand,
-                new InstantCommand(() -> swerveSubsystem.stopModules()));
-    }
+                return new SequentialCommandGroup(
+                                new InstantCommand(() -> swerveSubsystem.resetOdometry(trajectory.getInitialPose())),
+                                swerveControllerCommand,
+                                new InstantCommand(() -> swerveSubsystem.stopModules()));
+        }
 }

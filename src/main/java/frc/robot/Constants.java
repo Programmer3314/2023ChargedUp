@@ -102,6 +102,7 @@ public class Constants {
             public static final int overrideFieldCentric = 1;
             public static final int resetNavx = 2;
             public static final int lockIn = 4;
+            public static final int trackAprilTag=3;
         }
     }
 
