@@ -62,9 +62,6 @@ public class RobotContainer {
         private void configureBindings() {
                 new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavx)
                                 .onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
-
-                // TODO: complete the TranslateCmd and create the drive and lock compound
-                // command.
                 new JoystickButton(driverJoystick, Constants.Driver.Button.lockIn)
                                 .onTrue(new SequentialCommandGroup(
                                                 new TranslateRelativeCmd(swerveSubsystem, new Translation2d(1, 1), 1.5),
