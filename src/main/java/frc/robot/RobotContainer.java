@@ -49,9 +49,6 @@ public class RobotContainer {
         private final NetworkTable limelight = inst.getTable("limelight");
 
         public RobotContainer() {
-                // TODO: add demo command that translates and tracks a visible target.
-                // This will be a "throw away command" since we will rarely ever need to
-                // aim at a target
                 swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
                                 () -> driveXAxis.getSquared(),
                                 () -> driveYAxis.getSquared(),
@@ -103,7 +100,8 @@ public class RobotContainer {
                                 Constants.thetaControllerConstraints);
                 thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-                SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(trajectory,
+                SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+                                trajectory,
                                 swerveSubsystem::getPose,
                                 Constants.Chassis.kinematics,
                                 xController,
