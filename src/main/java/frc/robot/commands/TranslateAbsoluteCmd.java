@@ -44,10 +44,13 @@ public class TranslateAbsoluteCmd extends CommandBase {
         Translation2d trip = targetPosition.minus(swerveSubsystem.getPose().getTranslation());
         double tripLength = targetPosition.getDistance(swerveSubsystem.getPose().getTranslation());
 
-        // TODO: replace getDistance(...) with getNorm()
         trip = trip.div(trip.getNorm());
 
         ChassisSpeeds chassisSpeeds;
+        //TODO: I think that this needs a different call
+        // .calculat(tripLength, goal); goal is the original trip length
+        // PS. this might invert the results, since it might have been trying to get to a goal of 0 
+        // lets play with this again. 
         double correction = tripPidController.calculate(tripLength);
         correction*=-1;
         if (correction > maxSpeed){
