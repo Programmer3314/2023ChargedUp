@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.LockedInCmd;
 import frc.robot.commands.SwerveJoystickCmd;
+import frc.robot.commands.TranslateAbsoluteCmd;
 import frc.robot.commands.TranslateRelativeCmd;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMJoystickAxis;
@@ -61,10 +62,12 @@ public class RobotContainer {
 
         private void configureBindings() {
                 new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavx)
-                                .onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
+                                .onTrue(new SequentialCommandGroup(
+                                                new InstantCommand(() -> swerveSubsystem.zeroHeading()),
+                                                new InstantCommand(() -> swerveSubsystem.resetOdometry(new Pose2d()))));
                 new JoystickButton(driverJoystick, Constants.Driver.Button.lockIn)
                                 .onTrue(new SequentialCommandGroup(
-                                                new TranslateRelativeCmd(swerveSubsystem, new Translation2d(1, 1), 1.5),
+                                                new TranslateAbsoluteCmd(swerveSubsystem, new Translation2d(3, 1), 1.0),
                                                 new LockedInCmd(swerveSubsystem)));
                 new JoystickButton(driverJoystick, Constants.Driver.Button.trackAprilTag)
                                 .whileTrue(new SwerveJoystickCmd(swerveSubsystem,

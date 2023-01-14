@@ -15,7 +15,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.MMSwerveSubsystem;
 
 /** Add your docs here. */
-public class TranslateRelativeCmd extends CommandBase {
+public class TranslateAbsoluteCmd extends CommandBase {
     private final MMSwerveSubsystem swerveSubsystem;
     private final Translation2d desireTranslation;
     private final double maxSpeed;
@@ -23,7 +23,7 @@ public class TranslateRelativeCmd extends CommandBase {
     private final TrapezoidProfile.Constraints constraints;
     private final ProfiledPIDController tripPidController;
 
-    public TranslateRelativeCmd(MMSwerveSubsystem swerveSubsystem, Translation2d desiredTranslation, double maxSpeed) {
+    public TranslateAbsoluteCmd(MMSwerveSubsystem swerveSubsystem, Translation2d desiredTranslation, double maxSpeed) {
         this.swerveSubsystem = swerveSubsystem;
         this.desireTranslation = desiredTranslation;
         this.maxSpeed = maxSpeed;
@@ -35,7 +35,7 @@ public class TranslateRelativeCmd extends CommandBase {
 
     @Override
     public void initialize() {
-        targetPosition = swerveSubsystem.getPose().getTranslation().plus(desireTranslation);
+        targetPosition = (desireTranslation);
         SmartDashboard.putString("In LockedIn", "false");
     }
 
