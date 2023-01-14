@@ -28,7 +28,6 @@ public class TranslateRelativeCmd extends CommandBase {
         this.desireTranslation = desiredTranslation;
         this.maxSpeed = maxSpeed;
         constraints = new TrapezoidProfile.Constraints(maxSpeed, maxSpeed/10);
-        // TODO: try increasing kP and create constant(s) to be used by TranslateAbsoluteCmd
         tripPidController = new ProfiledPIDController(4, 0, 0, constraints);
         addRequirements(swerveSubsystem);
     }
@@ -36,6 +35,7 @@ public class TranslateRelativeCmd extends CommandBase {
     @Override
     public void initialize() {
         targetPosition = swerveSubsystem.getPose().getTranslation().plus(desireTranslation);
+        // TODO: mimic fix (if it works) from TranslateAbsoluteCmd
         SmartDashboard.putString("In LockedIn", "false");
     }
 
@@ -44,7 +44,6 @@ public class TranslateRelativeCmd extends CommandBase {
         Translation2d trip = targetPosition.minus(swerveSubsystem.getPose().getTranslation());
         double tripLength = targetPosition.getDistance(swerveSubsystem.getPose().getTranslation());
 
-        // TODO: replace getDistance(...) with getNorm()
         trip = trip.div(trip.getNorm());
 
         ChassisSpeeds chassisSpeeds;
@@ -57,17 +56,12 @@ public class TranslateRelativeCmd extends CommandBase {
             correction=-maxSpeed;
         }
            
-        // TODO: add minimum/nominal value for small corrections
-    
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 trip.getX() * correction, trip.getY() * correction, 0, swerveSubsystem.getRotation2d());
 
         SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
 
         swerveSubsystem.setModuleStates(moduleStates);
-        // every execution, recalculated the positions needed to get from current
-        // position to the target
-
     }
 
     @Override

@@ -54,7 +54,6 @@ public class RobotContainer {
                                 () -> driveXAxis.getSquared(),
                                 () -> driveYAxis.getSquared(),
                                 () -> driveRAxis.getSquared(),
-                                // () -> limelight.getEntry("tx").getDouble(0) * -.1,
                                 () -> driverJoystick.getRawButton(Constants.Driver.Button.overrideFieldCentric)));
 
                 configureBindings();

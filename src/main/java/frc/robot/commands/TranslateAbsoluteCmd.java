@@ -28,7 +28,6 @@ public class TranslateAbsoluteCmd extends CommandBase {
         this.desireTranslation = desiredTranslation;
         this.maxSpeed = maxSpeed;
         constraints = new TrapezoidProfile.Constraints(maxSpeed, maxSpeed/10);
-        // TODO: try increasing kP and create constant(s) to be used by TranslateAbsoluteCmd
         tripPidController = new ProfiledPIDController(4, 0, 0, constraints);
         addRequirements(swerveSubsystem);
     }
@@ -36,6 +35,9 @@ public class TranslateAbsoluteCmd extends CommandBase {
     @Override
     public void initialize() {
         targetPosition = (desireTranslation);
+        // TODO: Try... The problem may be that the initial trip is from 0 to 0
+        // double tripLength = desireTranslation.minus(swerveSubsystem.getPose().getTranslation()).getNorm();
+        // tripPidController.reset(tripLength);
         SmartDashboard.putString("In LockedIn", "false");
     }
 
@@ -47,10 +49,6 @@ public class TranslateAbsoluteCmd extends CommandBase {
         trip = trip.div(trip.getNorm());
 
         ChassisSpeeds chassisSpeeds;
-        //TODO: I think that this needs a different call
-        // .calculat(tripLength, goal); goal is the original trip length
-        // PS. this might invert the results, since it might have been trying to get to a goal of 0 
-        // lets play with this again. 
         double correction = tripPidController.calculate(tripLength);
         correction*=-1;
         if (correction > maxSpeed){
@@ -60,17 +58,10 @@ public class TranslateAbsoluteCmd extends CommandBase {
             correction=-maxSpeed;
         }
            
-        // TODO: add minimum/nominal value for small corrections
-    
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 trip.getX() * correction, trip.getY() * correction, 0, swerveSubsystem.getRotation2d());
-
         SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
-
         swerveSubsystem.setModuleStates(moduleStates);
-        // every execution, recalculated the positions needed to get from current
-        // position to the target
-
     }
 
     @Override
@@ -80,7 +71,6 @@ public class TranslateAbsoluteCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-
         double tripLength = targetPosition.getDistance(swerveSubsystem.getPose().getTranslation());
         SmartDashboard.putNumber("Trip Length:", tripLength);
         SmartDashboard.putBoolean("Finished Translate", tripLength < .1);
