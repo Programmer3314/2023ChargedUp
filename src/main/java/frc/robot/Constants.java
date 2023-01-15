@@ -99,10 +99,18 @@ public class Constants {
         }
 
         public static class Button {
-            public static final int overrideFieldCentric = 1;
-            public static final int resetNavx = 2;
-            public static final int lockIn = 4;
-            public static final int trackAprilTag=3;
+            public static final int overrideFieldCentricA = 1;
+            public static final int resetNavxB = 2;
+            public static final int targetTagY = 4;
+            public static final int targetPegX = 3;
+        }
+    }
+
+    public static class ButtonBox1 {
+        public static final int button = 1;
+
+        public static class Button {
+            public static final int changePipeline = 1;
         }
     }
 

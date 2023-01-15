@@ -28,6 +28,8 @@ import frc.robot.commands.LockedInCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
 import frc.robot.commands.TranslateRelativeCmd;
+import frc.robot.commands.TargetPegCmd;
+import frc.robot.commands.TargetTagCmd;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.subsystems.MMnavigationSubsystem;
 import frc.robot.utility.MMJoystickAxis;
@@ -38,6 +40,7 @@ public class RobotContainer {
         private final MMnavigationSubsystem navigationSubsystem = new MMnavigationSubsystem(swerveSubsystem);
 
         private final Joystick driverJoystick = new Joystick(Constants.Driver.Controller);
+        private final Joystick buttonBox1 = new Joystick(Constants.ButtonBox1.button);
         private final MMJoystickAxis driveXAxis = new MMJoystickAxis(Constants.Driver.Controller,
                         Constants.Driver.Axis.x,
                         0.01,
@@ -56,14 +59,14 @@ public class RobotContainer {
                                 () -> driveXAxis.getSquared(),
                                 () -> driveYAxis.getSquared(),
                                 () -> driveRAxis.getSquared(),
-                                () -> driverJoystick.getRawButton(Constants.Driver.Button.overrideFieldCentric),
+                                () -> driverJoystick.getRawButton(Constants.Driver.Button.overrideFieldCentricA),
                                 navigationSubsystem));
 
                 configureBindings();
         }
 
         private void configureBindings() {
-                new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavx)
+                new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavxB)
                                 .onTrue(new SequentialCommandGroup(
                                                 new InstantCommand(() -> navigationSubsystem.zeroHeading()),
                                                 new InstantCommand(() -> navigationSubsystem
@@ -71,20 +74,32 @@ public class RobotContainer {
                                                                                 navigationSubsystem.getLimelightPose()
                                                                 // new Pose2d(3.3, -4, new Rotation2d())
                                                                 ))));
-                new JoystickButton(driverJoystick, Constants.Driver.Button.lockIn)
+                new JoystickButton(driverJoystick, Constants.Driver.Button.targetTagY)
                                 .onTrue(new SequentialCommandGroup(
-                                                new InstantCommand(() -> navigationSubsystem.syncCamPose()),
-                                                new TranslateAbsoluteCmd(swerveSubsystem,
-                                                                new Pose2d(5.5, -3.5, new Rotation2d(0)),
-                                                                0.75, navigationSubsystem),
-                                                new InstantCommand(() -> navigationSubsystem.syncCamPose()),
+                                                new InstantCommand(() -> navigationSubsystem.changePipeline(0)),
                                                 new TranslateAbsoluteCmd(swerveSubsystem,
                                                                 new Pose2d(6, -3.5, new Rotation2d(0)),
-                                                                0.5, navigationSubsystem),
-                                                new TranslateAbsoluteCmd(swerveSubsystem,
-                                                                new Pose2d(6, -2.2, new Rotation2d(0)),
                                                                 1, navigationSubsystem),
-                                                new LockedInCmd(swerveSubsystem)));
+                                                new TranslateAbsoluteCmd(swerveSubsystem,
+                                                                new Pose2d(6, -2.93, new Rotation2d(0)),
+                                                                1, navigationSubsystem),
+                                                // new LockedInCmd(swerveSubsystem)),
+                                                // new InstantCommand(() -> navigationSubsystem.changePipeline(1))));
+                                                new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem, 1)));
+                new JoystickButton(driverJoystick, Constants.Driver.Button.targetPegX)
+                                .onTrue(new SequentialCommandGroup(
+                                                new InstantCommand(() -> navigationSubsystem.changePipeline(0)),
+                                                new TranslateAbsoluteCmd(swerveSubsystem,
+                                                                new Pose2d(6, -3.5, new Rotation2d(0)),
+                                                                1, navigationSubsystem),
+                                                new TranslateAbsoluteCmd(swerveSubsystem,
+                                                                new Pose2d(6, -2.4, new Rotation2d(0)),
+                                                                1, navigationSubsystem),
+                                                // new LockedInCmd(swerveSubsystem)),
+                                                // new InstantCommand(() -> navigationSubsystem.changePipeline(1))));
+                                                new TargetPegCmd(swerveSubsystem, 2, navigationSubsystem, 1)));
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.changePipeline)
+                                .whileTrue(new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem, 1));
                 // new JoystickButton(driverJoystick, Constants.Driver.Button.trackAprilTag)
                 // .whileTrue(new SwerveJoystickCmd(swerveSubsystem,
                 // () -> driveXAxis.getSquared(),

@@ -13,7 +13,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -29,6 +31,8 @@ public class MMnavigationSubsystem extends SubsystemBase {
     private Pose2d mainPose = new Pose2d();
     private Pose2d aprilPose = new Pose2d();
     private int aprilCount = 0;
+    private boolean visionInitialized = false;
+    private long lastVisionHB;
 
     public MMnavigationSubsystem(MMSwerveSubsystem swerveSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
@@ -54,11 +58,12 @@ public class MMnavigationSubsystem extends SubsystemBase {
         odometer.update(getRotation2d(), swerveSubsystem.getSwerveModulePositions());
         mainPose = odometer.getEstimatedPosition();
         aprilPose = getLimelightPose();
-        syncCamPose();
+        // syncCamPose();
         mainPose = new Pose2d(mainPose.getTranslation(), navx.getRotation2d());
         SmartDashboard.putNumber("Robot Heading", Math.toDegrees(getHeadingRad()));
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
         SmartDashboard.putNumber("AprilTag Rotation Degrees", aprilPose.getRotation().getDegrees());
+        SmartDashboard.putNumber("Navx Pitch", navx.getPitch());
     }
 
     public void zeroHeading() {
@@ -89,15 +94,27 @@ public class MMnavigationSubsystem extends SubsystemBase {
         boolean hasTarget = limelight.getEntry("tv").getNumber(0).doubleValue() > 0.5;
 
         if (hasTarget) {
-            double[] def = new double[] { 0, 0, 0, 0, 0, 0 };
-            double[] bp = limelight.getEntry("botpose").getDoubleArray(def);
-            if (bp.length == 6) {
-                // SmartDashboard.putNumber("BP[5]", bp[5]);
-                Pose2d tempPose = new Pose2d(bp[0], bp[1], Rotation2d.fromDegrees(bp[5]));
-                aprilCount++;
-                return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
-                        (aprilPose.getY() + tempPose.getY()) / 2.0,
-                        new Rotation2d(tempPose.getRotation().getRadians()));
+            long currentVisionHB = limelight.getEntry("hb").getInteger(lastVisionHB);
+            if (currentVisionHB != lastVisionHB) {
+                lastVisionHB = currentVisionHB;
+                double[] def = new double[] { 0, 0, 0, 0, 0, 0 };
+                double[] bp = limelight.getEntry("botpose").getDoubleArray(def);
+                if (bp.length == 6) {
+                    Pose2d tempPose = new Pose2d(bp[0], bp[1], Rotation2d.fromDegrees(bp[5]));
+                    if (!visionInitialized) {
+                        visionInitialized = true;
+                        odometer.resetPosition(Rotation2d.fromDegrees(navx.getYaw()),
+                                swerveSubsystem.getSwerveModulePositions(), tempPose);
+                    }
+                    // SmartDashboard.putNumber("BP[5]", bp[5]);
+                    double latency = limelight.getEntry("tl").getDouble(0);
+                    latency = (latency + 11) / 1000.0;
+                    odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
+                    aprilCount++;
+                    return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
+                            (aprilPose.getY() + tempPose.getY()) / 2.0,
+                            new Rotation2d(tempPose.getRotation().getRadians()));
+                }
             }
         }
         aprilCount = 0;
@@ -106,11 +123,18 @@ public class MMnavigationSubsystem extends SubsystemBase {
     }
 
     public void syncCamPose() {
-        if (aprilCount >= 10) {
-            mainPose = new Pose2d(aprilPose.getTranslation(), aprilPose.getRotation());
-            resetOdometry(new Pose2d(mainPose.getTranslation(), aprilPose.getRotation()));
+        // if (aprilCount >= 10) {
+        // mainPose = new Pose2d(aprilPose.getTranslation(), aprilPose.getRotation());
+        // resetOdometry(new Pose2d(mainPose.getTranslation(),
+        // aprilPose.getRotation()));
 
-        }
+        // }
 
     }
+
+    public void changePipeline(int pipelineNumber) {
+        limelight.getEntry("pipeline").setNumber(pipelineNumber);
+        SmartDashboard.putString("Changing Pipeline:", "yes");
+    }
+
 }
