@@ -14,9 +14,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -27,11 +29,13 @@ import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
 import frc.robot.commands.TranslateRelativeCmd;
 import frc.robot.subsystems.MMSwerveSubsystem;
+import frc.robot.subsystems.MMnavigationSubsystem;
 import frc.robot.utility.MMJoystickAxis;
 
 public class RobotContainer {
 
         private final MMSwerveSubsystem swerveSubsystem = new MMSwerveSubsystem();
+        private final MMnavigationSubsystem navigationSubsystem = new MMnavigationSubsystem(swerveSubsystem);
 
         private final Joystick driverJoystick = new Joystick(Constants.Driver.Controller);
         private final MMJoystickAxis driveXAxis = new MMJoystickAxis(Constants.Driver.Controller,
@@ -46,15 +50,14 @@ public class RobotContainer {
                         Constants.Driver.Axis.r,
                         0.05,
                         -(Math.PI / 2.0));
-        private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        private final NetworkTable limelight = inst.getTable("limelight");
 
         public RobotContainer() {
                 swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
                                 () -> driveXAxis.getSquared(),
                                 () -> driveYAxis.getSquared(),
                                 () -> driveRAxis.getSquared(),
-                                () -> driverJoystick.getRawButton(Constants.Driver.Button.overrideFieldCentric)));
+                                () -> driverJoystick.getRawButton(Constants.Driver.Button.overrideFieldCentric),
+                                navigationSubsystem));
 
                 configureBindings();
         }
@@ -62,19 +65,34 @@ public class RobotContainer {
         private void configureBindings() {
                 new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavx)
                                 .onTrue(new SequentialCommandGroup(
-                                                new InstantCommand(() -> swerveSubsystem.zeroHeading()),
-                                                new InstantCommand(() -> swerveSubsystem.resetOdometry(new Pose2d()))));
+                                                new InstantCommand(() -> navigationSubsystem.zeroHeading()),
+                                                new InstantCommand(() -> navigationSubsystem
+                                                                .resetOdometry(
+                                                                                navigationSubsystem.getLimelightPose()
+                                                                // new Pose2d(3.3, -4, new Rotation2d())
+                                                                ))));
                 new JoystickButton(driverJoystick, Constants.Driver.Button.lockIn)
                                 .onTrue(new SequentialCommandGroup(
-                                                new TranslateAbsoluteCmd(swerveSubsystem, new Translation2d(3, 1), 1.0),
+                                                new InstantCommand(() -> navigationSubsystem.syncCamPose()),
+                                                new TranslateAbsoluteCmd(swerveSubsystem,
+                                                                new Pose2d(5.5, -3.5, new Rotation2d(0)),
+                                                                0.75, navigationSubsystem),
+                                                new InstantCommand(() -> navigationSubsystem.syncCamPose()),
+                                                new TranslateAbsoluteCmd(swerveSubsystem,
+                                                                new Pose2d(6, -3.5, new Rotation2d(0)),
+                                                                0.5, navigationSubsystem),
+                                                new TranslateAbsoluteCmd(swerveSubsystem,
+                                                                new Pose2d(6, -2.2, new Rotation2d(0)),
+                                                                1, navigationSubsystem),
                                                 new LockedInCmd(swerveSubsystem)));
-                new JoystickButton(driverJoystick, Constants.Driver.Button.trackAprilTag)
-                                .whileTrue(new SwerveJoystickCmd(swerveSubsystem,
-                                                () -> driveXAxis.getSquared(),
-                                                () -> driveYAxis.getSquared(),
-                                                () -> limelight.getEntry("tx").getDouble(0) * .15,
-                                                () -> driverJoystick.getRawButton(
-                                                                Constants.Driver.Button.overrideFieldCentric)));
+                // new JoystickButton(driverJoystick, Constants.Driver.Button.trackAprilTag)
+                // .whileTrue(new SwerveJoystickCmd(swerveSubsystem,
+                // () -> driveXAxis.getSquared(),
+                // () -> driveYAxis.getSquared(),
+                // () -> limelight.getEntry("tx").getDouble(0) * .15,
+                // () -> driverJoystick.getRawButton(
+                // Constants.Driver.Button.overrideFieldCentric),
+                // navigationSubsystem));
         }
 
         public Command getAutonomousCommand() {
@@ -101,7 +119,7 @@ public class RobotContainer {
 
                 SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
                                 trajectory,
-                                swerveSubsystem::getPose,
+                                navigationSubsystem::getPose,
                                 Constants.Chassis.kinematics,
                                 xController,
                                 yController,
@@ -110,8 +128,10 @@ public class RobotContainer {
                                 swerveSubsystem);
 
                 return new SequentialCommandGroup(
-                                new InstantCommand(() -> swerveSubsystem.resetOdometry(trajectory.getInitialPose())),
+                                new InstantCommand(
+                                                () -> navigationSubsystem.resetOdometry(trajectory.getInitialPose())),
                                 swerveControllerCommand,
                                 new InstantCommand(() -> swerveSubsystem.stopModules()));
         }
+
 }

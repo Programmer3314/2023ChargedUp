@@ -40,16 +40,11 @@ public class MMSwerveSubsystem extends SubsystemBase {
 
     };
 
-    private final AHRS navx = new AHRS(SPI.Port.kMXP);
-    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(Constants.Chassis.kinematics, new Rotation2d(),
-            getSwerveModulePositions());
-
     public MMSwerveSubsystem() {
         SmartDashboard.putString("Reset Running: ", "No");
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                zeroHeading();
                 resetEncoders();
                 SmartDashboard.putString("Reset Running: ", "Yes");
             } catch (Exception e) {
@@ -60,29 +55,14 @@ public class MMSwerveSubsystem extends SubsystemBase {
         // zeroHeading();
     }
 
-    public void zeroHeading() {
-        navx.reset();
-    }
-
-    public double getHeadingRad() {
-        return -MathUtil.angleModulus(navx.getAngle() * Math.PI / 180.0);
-    }
-
-    public Rotation2d getRotation2d() {
-        return Rotation2d.fromRadians(getHeadingRad());
-
-    }
-
     @Override
     public void periodic() {
-        odometer.update(getRotation2d(), getSwerveModulePositions());
-        SmartDashboard.putNumber("Robot Heading", Math.toDegrees(getHeadingRad()));
+
         for (int i = 0; i < modules.length; i++) {
             SmartDashboard.putNumber("Absolute Encoder Rotation " + i,
                     Math.toDegrees(modules[i].getAbsoluteEncoderRad()));
             SmartDashboard.putNumber("Motor  Rotation" + i, Math.toDegrees(modules[i].getTurningPositionRadians()));
         }
-        SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
 
     }
 
@@ -122,11 +102,4 @@ public class MMSwerveSubsystem extends SubsystemBase {
         };
     }
 
-    public Pose2d getPose() {
-        return odometer.getPoseMeters();
-    }
-
-    public void resetOdometry(Pose2d pose) {
-        odometer.resetPosition(getRotation2d(), getSwerveModulePositions(), pose);
-    }
 }

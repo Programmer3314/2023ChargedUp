@@ -11,22 +11,25 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.MMSwerveSubsystem;
+import frc.robot.subsystems.MMnavigationSubsystem;
 
 /** Add your docs here. */
 public class SwerveJoystickCmd extends CommandBase {
 
     private final MMSwerveSubsystem swerveSubsystem;
+    private final  MMnavigationSubsystem navigationSubsystem;
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction;
     private final Supplier<Boolean> overrideFieldOriented;
 
     public SwerveJoystickCmd(MMSwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction,
             Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction,
-            Supplier<Boolean> fieldOrientedFunction) {
+            Supplier<Boolean> fieldOrientedFunction, MMnavigationSubsystem navigationSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
         this.turningSpdFunction = turningSpdFunction;
         this.overrideFieldOriented = fieldOrientedFunction;
+        this.navigationSubsystem=navigationSubsystem;
         
         addRequirements(swerveSubsystem);
     }
@@ -46,7 +49,7 @@ public class SwerveJoystickCmd extends CommandBase {
 
         if (!overrideFieldOriented.get()) {
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
+                    xSpeed, ySpeed, turningSpeed, navigationSubsystem.getRotation2d());
         } else {
             chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
         }

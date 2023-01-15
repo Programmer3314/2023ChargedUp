@@ -62,7 +62,7 @@ public class MMSwerveModule {
         turnMotorController.setNeutralMode(NeutralMode.Brake);
         turnMotorController.setInverted(turnMotorReversed);
 
-        turnPidController = new PIDController(.65, 0, 0);
+        turnPidController = new PIDController(.7, 0, 0);
         turnPidController.enableContinuousInput(-Math.PI, Math.PI);
 
         // resetEncoders();
