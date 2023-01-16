@@ -13,20 +13,20 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.MMSwerveSubsystem;
-import frc.robot.subsystems.MMnavigationSubsystem;
+import frc.robot.subsystems.MMNavigationSubsystem;
 
 /** Add your docs here. */
-public class TargetTagCmd extends CommandBase{
+public class TargetTagCmd extends CommandBase {
     MMSwerveSubsystem swerveSubsystem;
     double maxRotationSpeed;
-    MMnavigationSubsystem navigationSubsystem;
+    MMNavigationSubsystem navigationSubsystem;
     PIDController turnPidController;
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
     private final NetworkTable limelight = inst.getTable("limelight");
     private final double margin;
 
     public TargetTagCmd(MMSwerveSubsystem swerveSubsystem, double maxRotationSpeed,
-            MMnavigationSubsystem navigationSubsystem, double margin) {
+            MMNavigationSubsystem navigationSubsystem, double margin) {
         this.swerveSubsystem = swerveSubsystem;
         this.maxRotationSpeed = maxRotationSpeed;
         this.navigationSubsystem = navigationSubsystem;

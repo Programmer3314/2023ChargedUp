@@ -10,19 +10,16 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Main;
 
 /** Add your docs here. */
-public class MMnavigationSubsystem extends SubsystemBase {
+public class MMNavigationSubsystem extends SubsystemBase {
     private final MMSwerveSubsystem swerveSubsystem;
     private final AHRS navx = new AHRS(SPI.Port.kMXP);
     private final SwerveDrivePoseEstimator odometer;
@@ -34,7 +31,7 @@ public class MMnavigationSubsystem extends SubsystemBase {
     private boolean visionInitialized = false;
     private long lastVisionHB;
 
-    public MMnavigationSubsystem(MMSwerveSubsystem swerveSubsystem) {
+    public MMNavigationSubsystem(MMSwerveSubsystem swerveSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
         odometer = new SwerveDrivePoseEstimator(Constants.Chassis.kinematics, new Rotation2d(),
                 swerveSubsystem.getSwerveModulePositions(), new Pose2d());
@@ -48,11 +45,6 @@ public class MMnavigationSubsystem extends SubsystemBase {
         }).start();
     }
 
-    // TODO: integrate gyro into the mainpose, when we have a good image, adjust the
-    // gyro. Have an offset adjustment variable to resetgyro and set gyro to that.
-    // TODO: update the mainpose only when we are confident in the value, tons of
-    // gittering in the robot, we can keep track of the value but only set it to
-    // Mainpose in specific instances.
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), swerveSubsystem.getSwerveModulePositions());

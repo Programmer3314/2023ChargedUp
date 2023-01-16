@@ -14,30 +14,24 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.networktables.DoubleArrayEntry;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.LockedInCmd;
 import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.commands.TranslateAbsoluteCmd;
-import frc.robot.commands.TranslateRelativeCmd;
 import frc.robot.commands.TargetPegCmd;
 import frc.robot.commands.TargetTagCmd;
+import frc.robot.commands.TranslateAbsoluteCmd;
+import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
-import frc.robot.subsystems.MMnavigationSubsystem;
 import frc.robot.utility.MMJoystickAxis;
 
 public class RobotContainer {
 
         private final MMSwerveSubsystem swerveSubsystem = new MMSwerveSubsystem();
-        private final MMnavigationSubsystem navigationSubsystem = new MMnavigationSubsystem(swerveSubsystem);
+        private final MMNavigationSubsystem navigationSubsystem = new MMNavigationSubsystem(swerveSubsystem);
 
         private final Joystick driverJoystick = new Joystick(Constants.Driver.Controller);
         private final Joystick buttonBox1 = new Joystick(Constants.ButtonBox1.button);

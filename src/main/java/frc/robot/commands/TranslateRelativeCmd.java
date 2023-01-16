@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.MMSwerveSubsystem;
-import frc.robot.subsystems.MMnavigationSubsystem;
+import frc.robot.subsystems.MMNavigationSubsystem;
 
 /** Add your docs here. */
 public class TranslateRelativeCmd extends CommandBase {
@@ -23,10 +23,10 @@ public class TranslateRelativeCmd extends CommandBase {
     private Translation2d targetPosition;
     private final TrapezoidProfile.Constraints constraints;
     private final ProfiledPIDController tripPidController;
-    private final MMnavigationSubsystem navigationSubsystem;
+    private final MMNavigationSubsystem navigationSubsystem;
 
     public TranslateRelativeCmd(MMSwerveSubsystem swerveSubsystem, Translation2d desiredTranslation, double maxSpeed,
-            MMnavigationSubsystem navigationSubsystem) {
+            MMNavigationSubsystem navigationSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
         this.desireTranslation = desiredTranslation;
         this.maxSpeed = maxSpeed;

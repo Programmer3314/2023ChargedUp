@@ -11,26 +11,26 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.MMSwerveSubsystem;
-import frc.robot.subsystems.MMnavigationSubsystem;
+import frc.robot.subsystems.MMNavigationSubsystem;
 
 /** Add your docs here. */
 public class SwerveJoystickCmd extends CommandBase {
 
     private final MMSwerveSubsystem swerveSubsystem;
-    private final  MMnavigationSubsystem navigationSubsystem;
+    private final MMNavigationSubsystem navigationSubsystem;
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction;
     private final Supplier<Boolean> overrideFieldOriented;
 
     public SwerveJoystickCmd(MMSwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction,
             Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction,
-            Supplier<Boolean> fieldOrientedFunction, MMnavigationSubsystem navigationSubsystem) {
+            Supplier<Boolean> fieldOrientedFunction, MMNavigationSubsystem navigationSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
         this.turningSpdFunction = turningSpdFunction;
         this.overrideFieldOriented = fieldOrientedFunction;
-        this.navigationSubsystem=navigationSubsystem;
-        
+        this.navigationSubsystem = navigationSubsystem;
+
         addRequirements(swerveSubsystem);
     }
 
