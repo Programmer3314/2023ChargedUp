@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,7 +44,7 @@ public class LockedInCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        
+
         return false;
     }
 }

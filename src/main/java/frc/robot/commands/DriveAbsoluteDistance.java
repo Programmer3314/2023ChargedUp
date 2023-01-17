@@ -13,38 +13,53 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.MMSwerveSubsystem;
 
 /** Add your docs here. */
-public class DriveAbsoluteDistance extends CommandBase{
+public class DriveAbsoluteDistance extends CommandBase {
     private final MMSwerveSubsystem swerveSubsystem;
     private final Translation2d desiredTranslation;
     private final double maxSpeed;
     private SwerveModulePosition[] initialPositions;
     private SwerveModuleState[] desiredState;
 
+    // TODO: implement full vectored driving (forward/backward,left/right (no
+    // rotation))
     public DriveAbsoluteDistance(MMSwerveSubsystem swerveSubsystem, Translation2d desiredTranslation, double maxSpeed) {
         this.swerveSubsystem = swerveSubsystem;
         this.desiredTranslation = desiredTranslation;
         this.maxSpeed = maxSpeed;
         addRequirements(swerveSubsystem);
         desiredState = new SwerveModuleState[] {
-            new SwerveModuleState(maxSpeed, new Rotation2d(0)),
-            new SwerveModuleState(maxSpeed, new Rotation2d(0)),
-            new SwerveModuleState(maxSpeed, new Rotation2d(0)),
-            new SwerveModuleState(maxSpeed, new Rotation2d(0))
-    };
+                new SwerveModuleState(maxSpeed, new Rotation2d(0)),
+                new SwerveModuleState(maxSpeed, new Rotation2d(0)),
+                new SwerveModuleState(maxSpeed, new Rotation2d(0)),
+                new SwerveModuleState(maxSpeed, new Rotation2d(0))
+        };
     }
+
     @Override
 
-    public void initialize(){
+    public void initialize() {
         initialPositions = swerveSubsystem.getSwerveModulePositions();
     }
 
-    public void execute(){
+    public void execute() {
+        // TODO: Should probably be setModuleStates (not raw)
         swerveSubsystem.setModuleStatesRaw(desiredState);
     }
+
     @Override
-    public boolean isFinished(){
+    public void end(boolean interrupted) {
+        swerveSubsystem.stopModules();
+    }
+
+    @Override
+    public boolean isFinished() {
         SwerveModulePosition[] currentPositions = swerveSubsystem.getSwerveModulePositions();
-        SmartDashboard.putNumber("driveAbsoluteDistance:", currentPositions[0].distanceMeters-initialPositions[0].distanceMeters);
-        return Math.abs(initialPositions[0].distanceMeters + desiredTranslation.getX() - currentPositions[0].distanceMeters) < .1;
+        SmartDashboard.putNumber("driveAbsoluteDistance:",
+                currentPositions[0].distanceMeters - initialPositions[0].distanceMeters);
+
+        // TODO: clean this up & and fix references
+        // like: abs(change in position)>=abs(length of trip)
+        return Math.abs(initialPositions[0].distanceMeters + desiredTranslation.getX()
+                - currentPositions[0].distanceMeters) < .1;
     }
 }

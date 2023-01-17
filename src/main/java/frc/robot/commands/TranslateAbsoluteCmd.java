@@ -43,8 +43,9 @@ public class TranslateAbsoluteCmd extends CommandBase {
     @Override
     public void initialize() {
         targetPosition = desireTranslation.getTranslation();
-        // double tripLength = desireTranslation.getTranslation().minus(navigationSubsystem.getPose().getTranslation())
-        //         .getNorm();
+        // double tripLength =
+        // desireTranslation.getTranslation().minus(navigationSubsystem.getPose().getTranslation())
+        // .getNorm();
         // tripPidController.reset(tripLength);
         SmartDashboard.putString("In LockedIn", "false");
         turnPidController.setSetpoint(desireTranslation.getRotation().getRadians());
@@ -59,7 +60,6 @@ public class TranslateAbsoluteCmd extends CommandBase {
 
         trip = trip.div(trip.getNorm());
 
-        ChassisSpeeds chassisSpeeds;
         double correction = tripPidController.calculate(tripLength);
         correction *= -1;
         if (correction > maxSpeed) {
@@ -69,10 +69,13 @@ public class TranslateAbsoluteCmd extends CommandBase {
             correction = -maxSpeed;
         }
 
+        // TODO: This should use swerveSubsystem.Drive method
+        ChassisSpeeds chassisSpeeds;
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 trip.getX() * correction, trip.getY() * correction, desiredTurn, navigationSubsystem.getRotation2d());
         SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
         swerveSubsystem.setModuleStates(moduleStates);
+        //
     }
 
     @Override

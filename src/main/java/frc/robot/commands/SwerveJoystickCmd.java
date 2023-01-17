@@ -45,18 +45,18 @@ public class SwerveJoystickCmd extends CommandBase {
         double ySpeed = ySpdFunction.get();
         double turningSpeed = turningSpdFunction.get();
 
+        // TODO: This should use swerveSubsystem.Drive method
         ChassisSpeeds chassisSpeeds;
-
         if (!overrideFieldOriented.get()) {
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     xSpeed, ySpeed, turningSpeed, navigationSubsystem.getRotation2d());
         } else {
             chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
         }
-
         SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
-
         swerveSubsystem.setModuleStates(moduleStates);
+        //
+
     }
 
     @Override

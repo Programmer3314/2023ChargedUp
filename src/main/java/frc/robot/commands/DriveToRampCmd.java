@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,6 +12,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 
+// TODO: Recode this without any specific angles. 
 /** Add your docs here. */
 public class DriveToRampCmd extends CommandBase {
     private MMSwerveSubsystem swerveSubsystem;
@@ -38,9 +37,13 @@ public class DriveToRampCmd extends CommandBase {
     public void execute() {
         ChassisSpeeds chassisSpeeds;
         SmartDashboard.putBoolean("angleFlag", angleDecreaseFlag);
+
+        // TODO: This should use swerveSubsystem.Drive method
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(maxSpeed, 0, 0, navigationSubsystem.getRotation2d());
         SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
         swerveSubsystem.setModuleStates(moduleStates);
+        //
+
         if (navigationSubsystem.getRoll() < -16) {
             angleDecreaseFlag = true;
         }

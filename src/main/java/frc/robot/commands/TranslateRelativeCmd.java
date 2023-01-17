@@ -15,6 +15,8 @@ import frc.robot.Constants;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
 
+// TODO: Check that this is working during normal (on the floor) driving
+// TODO: make this work with a regular pid controller (like TranslateAbsoluteCmd)
 /** Add your docs here. */
 public class TranslateRelativeCmd extends CommandBase {
     private final MMSwerveSubsystem swerveSubsystem;
@@ -42,7 +44,6 @@ public class TranslateRelativeCmd extends CommandBase {
         double tripLength = desireTranslation.minus(currentPosition).getNorm();
         tripPidController.reset(tripLength);
         targetPosition = currentPosition.plus(desireTranslation);
-        // TODO: mimic fix (if it works) from TranslateAbsoluteCmd
         SmartDashboard.putString("In LockedIn", "false");
     }
 
@@ -54,22 +55,23 @@ public class TranslateRelativeCmd extends CommandBase {
 
         trip = trip.div(trip.getNorm());
 
-        ChassisSpeeds chassisSpeeds;
         double correction = tripPidController.calculate(tripLength);
-        //correction *= -1;
-        if (correction > maxSpeed){
-        correction = maxSpeed;
+        correction *= -1;
+        if (correction > maxSpeed) {
+            correction = maxSpeed;
         }
-        if (correction < -maxSpeed ){
-        correction=-maxSpeed;
+        if (correction < -maxSpeed) {
+            correction = -maxSpeed;
         }
 
+        // TODO: This should use swerveSubsystem.Drive method
+        ChassisSpeeds chassisSpeeds;
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 trip.getX() * correction, trip.getY() * correction, 0, navigationSubsystem.getRotation2d());
-
         SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
-
         swerveSubsystem.setModuleStates(moduleStates);
+        //
+
     }
 
     @Override
@@ -83,7 +85,7 @@ public class TranslateRelativeCmd extends CommandBase {
         double tripLength = targetPosition.getDistance(navigationSubsystem.getPose().getTranslation());
         SmartDashboard.putNumber("Trip Length:", tripLength);
         SmartDashboard.putBoolean("Finished Translate", tripLength < .1);
-        return tripLength < .2;
+        return tripLength < .1;
     }
 
 }

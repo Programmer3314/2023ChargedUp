@@ -101,8 +101,10 @@ public class RobotContainer {
                 new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.autoDriveToRamp)
                                 .onTrue(new SequentialCommandGroup(
                                                 new DriveToRampCmd(swerveSubsystem, navigationSubsystem, 1),
-                                                new DriveAbsoluteDistance(swerveSubsystem, new Translation2d(-.9,0), .5),
-                                                //new TranslateRelativeCmd(swerveSubsystem, new Translation2d(0.25,0), 0.5, navigationSubsystem),
+                                                new DriveAbsoluteDistance(swerveSubsystem, new Translation2d(-.9, 0),
+                                                                .5),
+                                                // new TranslateRelativeCmd(swerveSubsystem, new Translation2d(0.25,0),
+                                                // 0.5, navigationSubsystem),
                                                 new LockedInCmd(swerveSubsystem)
 
                                 ));

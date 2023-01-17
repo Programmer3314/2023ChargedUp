@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 // Copyright (c) FIRST and other WPILib contributors.
+
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
@@ -74,7 +75,8 @@ public class MMSwerveModule {
     }
 
     public double getTurningPositionRadians() {
-        return MathUtil.angleModulus(turnMotorController.getSelectedSensorPosition() * Constants.MK4i.L2.turnRadiansPerTick);
+        return MathUtil
+                .angleModulus(turnMotorController.getSelectedSensorPosition() * Constants.MK4i.L2.turnRadiansPerTick);
     }
 
     public double getDriveVelocity() {
@@ -107,9 +109,9 @@ public class MMSwerveModule {
         }
         setDesiredStateRaw(state);
     };
-    public void setDesiredStateRaw(SwerveModuleState state){
 
-    
+    public void setDesiredStateRaw(SwerveModuleState state) {
+
         state = SwerveModuleState.optimize(state, getState().angle);
         driveMotorController.set(ControlMode.PercentOutput,
                 state.speedMetersPerSecond / Constants.MK4i.L2.maxVelocityMetersPerSecond);

@@ -120,6 +120,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         return mainPose;
     }
 
+    // TODO: Get rid of this
     public void syncCamPose() {
         // if (aprilCount >= 10) {
         // mainPose = new Pose2d(aprilPose.getTranslation(), aprilPose.getRotation());
