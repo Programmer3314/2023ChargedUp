@@ -55,7 +55,8 @@ public class MMNavigationSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Robot Heading", Math.toDegrees(getHeadingRad()));
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
         SmartDashboard.putNumber("AprilTag Rotation Degrees", aprilPose.getRotation().getDegrees());
-        SmartDashboard.putNumber("Navx Pitch", navx.getPitch());
+        SmartDashboard.putNumber("Navx Roll", navx.getRoll());
+        SmartDashboard.putNumber("Navx Yaw", navx.getYaw());
     }
 
     public void zeroHeading() {
@@ -75,6 +76,11 @@ public class MMNavigationSubsystem extends SubsystemBase {
     public Pose2d getPose() {
         // return odometer.getPoseMeters();
         return mainPose;
+    }
+
+    public double getRoll() {
+
+        return navx.getRoll();
     }
 
     public void resetOdometry(Pose2d pose) {

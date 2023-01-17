@@ -56,11 +56,11 @@ public class TranslateRelativeCmd extends CommandBase {
 
         ChassisSpeeds chassisSpeeds;
         double correction = tripPidController.calculate(tripLength);
-        correction *= -1;
+        //correction *= -1;
         if (correction > maxSpeed){
         correction = maxSpeed;
         }
-        if (correction <- maxSpeed ){
+        if (correction < -maxSpeed ){
         correction=-maxSpeed;
         }
 
@@ -83,7 +83,7 @@ public class TranslateRelativeCmd extends CommandBase {
         double tripLength = targetPosition.getDistance(navigationSubsystem.getPose().getTranslation());
         SmartDashboard.putNumber("Trip Length:", tripLength);
         SmartDashboard.putBoolean("Finished Translate", tripLength < .1);
-        return tripLength < .1;
+        return tripLength < .2;
     }
 
 }

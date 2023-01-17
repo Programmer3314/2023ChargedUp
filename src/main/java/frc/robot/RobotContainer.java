@@ -20,10 +20,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.DriveAbsoluteDistance;
+import frc.robot.commands.DriveToRampCmd;
+import frc.robot.commands.LockedInCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TargetPegCmd;
 import frc.robot.commands.TargetTagCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
+import frc.robot.commands.TranslateRelativeCmd;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMJoystickAxis;
@@ -94,6 +98,14 @@ public class RobotContainer {
                                                 new TargetPegCmd(swerveSubsystem, 2, navigationSubsystem, 1)));
                 new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.changePipeline)
                                 .whileTrue(new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem, 1));
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.autoDriveToRamp)
+                                .onTrue(new SequentialCommandGroup(
+                                                new DriveToRampCmd(swerveSubsystem, navigationSubsystem, 1),
+                                                new DriveAbsoluteDistance(swerveSubsystem, new Translation2d(-.9,0), .5),
+                                                //new TranslateRelativeCmd(swerveSubsystem, new Translation2d(0.25,0), 0.5, navigationSubsystem),
+                                                new LockedInCmd(swerveSubsystem)
+
+                                ));
                 // new JoystickButton(driverJoystick, Constants.Driver.Button.trackAprilTag)
                 // .whileTrue(new SwerveJoystickCmd(swerveSubsystem,
                 // () -> driveXAxis.getSquared(),
