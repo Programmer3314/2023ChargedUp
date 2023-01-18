@@ -34,7 +34,7 @@ public class DriveToRampCmd extends CommandBase {
 
     @Override
     public void execute() {
-        //SmartDashboard.putBoolean("angleFlag", angleDecreaseFlag);
+        // SmartDashboard.putBoolean("angleFlag", angleDecreaseFlag);
         // TODO: get roll once and store in class variable
         if (maxAngle < -navigationSubsystem.getRoll()) {
             maxAngle = -navigationSubsystem.getRoll();
