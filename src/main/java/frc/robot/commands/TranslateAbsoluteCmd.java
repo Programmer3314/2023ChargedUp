@@ -69,13 +69,14 @@ public class TranslateAbsoluteCmd extends CommandBase {
             correction = -maxSpeed;
         }
 
-        // TODO: This should use swerveSubsystem.Drive method
-        ChassisSpeeds chassisSpeeds;
-        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                trip.getX() * correction, trip.getY() * correction, desiredTurn, navigationSubsystem.getRotation2d());
-        SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
-        swerveSubsystem.setModuleStates(moduleStates);
+        // TODO: X This should use swerveSubsystem.Drive method
+      //  ChassisSpeeds chassisSpeeds;
+        // chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+        //         trip.getX() * correction, trip.getY() * correction, desiredTurn, navigationSubsystem.getRotation2d());
+        // SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
+        // swerveSubsystem.setModuleStates(moduleStates);
         //
+        swerveSubsystem.drive(trip.getX() * correction, trip.getY() * correction,  desiredTurn, true, navigationSubsystem.getRotation2d());
     }
 
     @Override

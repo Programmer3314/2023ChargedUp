@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -95,7 +97,13 @@ public class MMSwerveSubsystem extends SubsystemBase {
         };
     }
 
-    // TODO: add general drive method
-    // like: Drive(xMetersPerSec,yMetersPerSec,rRadPerSec,fieldCentric)
+    public void drive(double xMetersPerSec, double yMetersPerSec, double rRadPerSec, boolean isFieldCentric,
+            Rotation2d robotAngle) {
+        ChassisSpeeds chassisSpeeds;
 
+        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                xMetersPerSec, yMetersPerSec, rRadPerSec, isFieldCentric ? robotAngle : new Rotation2d());
+        SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
+        setModuleStates(moduleStates);
+    }
 }

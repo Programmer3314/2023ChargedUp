@@ -20,7 +20,7 @@ public class DriveAbsoluteDistance extends CommandBase {
     private SwerveModulePosition[] initialPositions;
     private SwerveModuleState[] desiredState;
 
-    // TODO: implement full vectored driving (forward/backward,left/right (no
+    // TODO: low priority implement full vectored driving (forward/backward,left/right (no
     // rotation))
     public DriveAbsoluteDistance(MMSwerveSubsystem swerveSubsystem, Translation2d desiredTranslation, double maxSpeed) {
         this.swerveSubsystem = swerveSubsystem;
@@ -42,8 +42,7 @@ public class DriveAbsoluteDistance extends CommandBase {
     }
 
     public void execute() {
-        // TODO: Should probably be setModuleStates (not raw)
-        swerveSubsystem.setModuleStatesRaw(desiredState);
+        swerveSubsystem.setModuleStates(desiredState);
     }
 
     @Override

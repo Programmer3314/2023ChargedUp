@@ -19,7 +19,7 @@ public class DriveToRampCmd extends CommandBase {
     private MMNavigationSubsystem navigationSubsystem;
     private double maxSpeed;
     private boolean angleDecreaseFlag = false;
-
+    private double maxAngle; 
     public DriveToRampCmd(MMSwerveSubsystem swerveSubsystem, MMNavigationSubsystem navigationSubsystem,
             double maxSpeed) {
         this.swerveSubsystem = swerveSubsystem;
@@ -31,22 +31,27 @@ public class DriveToRampCmd extends CommandBase {
     public void initialize() {
         addRequirements(swerveSubsystem);
         angleDecreaseFlag = false;
+        maxAngle = -navigationSubsystem.getRoll();
     }
 
     @Override
     public void execute() {
-        ChassisSpeeds chassisSpeeds;
+      //  ChassisSpeeds chassisSpeeds;
         SmartDashboard.putBoolean("angleFlag", angleDecreaseFlag);
-
-        // TODO: This should use swerveSubsystem.Drive method
-        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(maxSpeed, 0, 0, navigationSubsystem.getRotation2d());
-        SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
-        swerveSubsystem.setModuleStates(moduleStates);
-        //
-
-        if (navigationSubsystem.getRoll() < -16) {
-            angleDecreaseFlag = true;
+        if(maxAngle<-navigationSubsystem.getRoll()){
+            maxAngle = -navigationSubsystem.getRoll();
         }
+        SmartDashboard.putNumber("maxAngle", maxAngle);
+        SmartDashboard.putNumber("currentRoll", -navigationSubsystem.getRoll());
+        // TODO: X This should use swerveSubsystem.Drive method
+        // chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(maxSpeed, 0, 0, navigationSubsystem.getRotation2d());
+        // SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
+        // swerveSubsystem.setModuleStates(moduleStates);
+        //
+swerveSubsystem.drive(maxSpeed, 0, 0, true, navigationSubsystem.getRotation2d());
+        // if (navigationSubsystem.getRoll() < -16) {
+        //     angleDecreaseFlag = true;
+        // }
     }
 
     @Override
@@ -56,7 +61,9 @@ public class DriveToRampCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        double currentPitch = navigationSubsystem.getRoll();
-        return angleDecreaseFlag && currentPitch > -14;
+
+        // double currentPitch = navigationSubsystem.getRoll();
+        // return angleDecreaseFlag && currentPitch > -14;
+        return -navigationSubsystem.getRoll()<(maxAngle-1);
     }
 }
