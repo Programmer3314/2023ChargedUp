@@ -4,11 +4,8 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 
@@ -19,38 +16,34 @@ public class DriveToRampCmd extends CommandBase {
     private MMNavigationSubsystem navigationSubsystem;
     private double maxSpeed;
     private boolean angleDecreaseFlag = false;
-    private double maxAngle; 
+    private double maxAngle;
+
     public DriveToRampCmd(MMSwerveSubsystem swerveSubsystem, MMNavigationSubsystem navigationSubsystem,
             double maxSpeed) {
         this.swerveSubsystem = swerveSubsystem;
         this.navigationSubsystem = navigationSubsystem;
         this.maxSpeed = maxSpeed;
+        addRequirements(swerveSubsystem);
     }
 
     @Override
     public void initialize() {
-        addRequirements(swerveSubsystem);
         angleDecreaseFlag = false;
         maxAngle = -navigationSubsystem.getRoll();
     }
 
     @Override
     public void execute() {
-      //  ChassisSpeeds chassisSpeeds;
-        SmartDashboard.putBoolean("angleFlag", angleDecreaseFlag);
-        if(maxAngle<-navigationSubsystem.getRoll()){
+        //SmartDashboard.putBoolean("angleFlag", angleDecreaseFlag);
+        // TODO: get roll once and store in class variable
+        if (maxAngle < -navigationSubsystem.getRoll()) {
             maxAngle = -navigationSubsystem.getRoll();
         }
         SmartDashboard.putNumber("maxAngle", maxAngle);
         SmartDashboard.putNumber("currentRoll", -navigationSubsystem.getRoll());
-        // TODO: X This should use swerveSubsystem.Drive method
-        // chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(maxSpeed, 0, 0, navigationSubsystem.getRotation2d());
-        // SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
-        // swerveSubsystem.setModuleStates(moduleStates);
-        //
-swerveSubsystem.drive(maxSpeed, 0, 0, true, navigationSubsystem.getRotation2d());
+        swerveSubsystem.drive(maxSpeed, 0, 0, true, navigationSubsystem.getRotation2d());
         // if (navigationSubsystem.getRoll() < -16) {
-        //     angleDecreaseFlag = true;
+        // angleDecreaseFlag = true;
         // }
     }
 
@@ -61,9 +54,8 @@ swerveSubsystem.drive(maxSpeed, 0, 0, true, navigationSubsystem.getRotation2d())
 
     @Override
     public boolean isFinished() {
-
         // double currentPitch = navigationSubsystem.getRoll();
         // return angleDecreaseFlag && currentPitch > -14;
-        return -navigationSubsystem.getRoll()<(maxAngle-1);
+        return -navigationSubsystem.getRoll() < (maxAngle - 1);
     }
 }

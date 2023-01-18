@@ -64,22 +64,18 @@ public class MMNavigationSubsystem extends SubsystemBase {
     }
 
     public double getHeadingRad() {
-        // return -MathUtil.angleModulus(navx.getAngle() * Math.PI / 180.0);
         return MathUtil.angleModulus(mainPose.getRotation().getRadians());
     }
 
     public Rotation2d getRotation2d() {
-        // return Rotation2d.fromRadians(getHeadingRad());
         return mainPose.getRotation();
     }
 
     public Pose2d getPose() {
-        // return odometer.getPoseMeters();
         return mainPose;
     }
 
     public double getRoll() {
-
         return navx.getRoll();
     }
 
@@ -135,5 +131,4 @@ public class MMNavigationSubsystem extends SubsystemBase {
         limelight.getEntry("pipeline").setNumber(pipelineNumber);
         SmartDashboard.putString("Changing Pipeline:", "yes");
     }
-
 }

@@ -81,8 +81,8 @@ public class RobotContainer {
                 .onTrue(new SequentialCommandGroup(
                         new InstantCommand(() -> navigationSubsystem.changePipeline(0)),
                         new TranslateAbsoluteCmd(swerveSubsystem,
-                        new Pose2d(3.69, -3.93, new Rotation2d()), 1,
-                        navigationSubsystem),
+                                new Pose2d(3.69, -3.93, new Rotation2d()), 1,
+                                navigationSubsystem),
                         new TranslateAbsoluteCmd(swerveSubsystem,
                                 new Pose2d(6, -3.5, new Rotation2d(0)),
                                 1, navigationSubsystem),
@@ -96,8 +96,8 @@ public class RobotContainer {
                 .onTrue(new SequentialCommandGroup(
                         new InstantCommand(() -> navigationSubsystem.changePipeline(0)),
                         new TranslateAbsoluteCmd(swerveSubsystem,
-                                new Pose2d(3.69, -3.93, new Rotation2d()), 1,
-                                navigationSubsystem),
+                                new Pose2d(3.69, -3.93, new Rotation2d()), 
+                                1, navigationSubsystem),
                         new TranslateAbsoluteCmd(swerveSubsystem,
                                 new Pose2d(6, -3.5, new Rotation2d(0)),
                                 1, navigationSubsystem),
@@ -109,6 +109,8 @@ public class RobotContainer {
                         new TargetPegCmd(swerveSubsystem, 2, navigationSubsystem, 1)));
         new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.changePipeline)
                 .whileTrue(new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem, 1));
+
+        // TODO: For testing, comment out drive absolute
         new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.autoDriveToRamp)
                 .onTrue(new SequentialCommandGroup(
                         new DriveToRampCmd(swerveSubsystem, navigationSubsystem, 1),
@@ -117,7 +119,6 @@ public class RobotContainer {
                         // new TranslateRelativeCmd(swerveSubsystem, new Translation2d(0.25,0),
                         // 0.5, navigationSubsystem),
                         new LockedInCmd(swerveSubsystem)
-
                 ));
         // new JoystickButton(driverJoystick, Constants.Driver.Button.trackAprilTag)
         // .whileTrue(new SwerveJoystickCmd(swerveSubsystem,

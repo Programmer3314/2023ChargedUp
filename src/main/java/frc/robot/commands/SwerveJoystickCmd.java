@@ -6,12 +6,9 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
+import frc.robot.subsystems.MMSwerveSubsystem;
 
 /** Add your docs here. */
 public class SwerveJoystickCmd extends CommandBase {
@@ -45,17 +42,6 @@ public class SwerveJoystickCmd extends CommandBase {
         double ySpeed = ySpdFunction.get();
         double turningSpeed = turningSpdFunction.get();
 
-        // TODO: X This should use swerveSubsystem.Drive method
-        // ChassisSpeeds chassisSpeeds;
-        // if (!overrideFieldOriented.get()) {
-        //     chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        //             xSpeed, ySpeed, turningSpeed, navigationSubsystem.getRotation2d());
-        // } else {
-        //     chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
-        // }
-        // SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
-        // swerveSubsystem.setModuleStates(moduleStates);
-        //
        swerveSubsystem.drive(xSpeed, ySpeed, turningSpeed,!overrideFieldOriented.get() , navigationSubsystem.getRotation2d());
     }
 

@@ -51,8 +51,9 @@ public class TargetPegCmd extends CommandBase {
         if (correction < -maxRotationSpeed) {
             correction = -maxRotationSpeed;
         }
-        ChassisSpeeds chassisSpeeds;
 
+        //TODO: Use drive...
+        ChassisSpeeds chassisSpeeds;
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, correction, navigationSubsystem.getRotation2d());
         SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
         swerveSubsystem.setModuleStates(moduleStates);

@@ -6,14 +6,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
+import frc.robot.subsystems.MMSwerveSubsystem;
 
 // TODO: Check that this is working during normal (on the floor) driving
 // TODO: make this work with a regular pid controller (like TranslateAbsoluteCmd)
@@ -64,15 +61,6 @@ public class TranslateRelativeCmd extends CommandBase {
             correction = -maxSpeed;
         }
 
-        // TODO: X This should use swerveSubsystem.Drive method
-        // ChassisSpeeds chassisSpeeds;
-        // chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        // trip.getX() * correction, trip.getY() * correction, 0,
-        // navigationSubsystem.getRotation2d());
-        // SwerveModuleState[] moduleStates =
-        // Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
-        // swerveSubsystem.setModuleStates(moduleStates);
-        //
         swerveSubsystem.drive(trip.getX() * correction, trip.getY() * correction, 0, true,
                 navigationSubsystem.getRotation2d());
     }
