@@ -17,6 +17,7 @@ public class DriveToRampCmd extends CommandBase {
     private double maxSpeed;
     private boolean angleDecreaseFlag = false;
     private double maxAngle;
+    private double robotRoll;
 
     public DriveToRampCmd(MMSwerveSubsystem swerveSubsystem, MMNavigationSubsystem navigationSubsystem,
             double maxSpeed) {
@@ -24,6 +25,7 @@ public class DriveToRampCmd extends CommandBase {
         this.navigationSubsystem = navigationSubsystem;
         this.maxSpeed = maxSpeed;
         addRequirements(swerveSubsystem);
+        robotRoll=-navigationSubsystem.getRoll();
     }
 
     @Override
@@ -34,13 +36,14 @@ public class DriveToRampCmd extends CommandBase {
 
     @Override
     public void execute() {
+        robotRoll=-navigationSubsystem.getRoll();
         // SmartDashboard.putBoolean("angleFlag", angleDecreaseFlag);
         // TODO: get roll once and store in class variable
-        if (maxAngle < -navigationSubsystem.getRoll()) {
-            maxAngle = -navigationSubsystem.getRoll();
+        if (maxAngle < robotRoll) {
+            maxAngle = robotRoll;
         }
         SmartDashboard.putNumber("maxAngle", maxAngle);
-        SmartDashboard.putNumber("currentRoll", -navigationSubsystem.getRoll());
+        SmartDashboard.putNumber("currentRoll", robotRoll);
         swerveSubsystem.drive(maxSpeed, 0, 0, true, navigationSubsystem.getRotation2d());
         // if (navigationSubsystem.getRoll() < -16) {
         // angleDecreaseFlag = true;
@@ -56,6 +59,7 @@ public class DriveToRampCmd extends CommandBase {
     public boolean isFinished() {
         // double currentPitch = navigationSubsystem.getRoll();
         // return angleDecreaseFlag && currentPitch > -14;
-        return -navigationSubsystem.getRoll() < (maxAngle - 1);
+        SmartDashboard.putBoolean("Finished COndition:", robotRoll< (maxAngle - 1));
+        return robotRoll< (maxAngle - 3);
     }
 }

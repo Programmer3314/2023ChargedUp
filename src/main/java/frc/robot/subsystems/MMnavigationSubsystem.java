@@ -75,6 +75,10 @@ public class MMNavigationSubsystem extends SubsystemBase {
         return mainPose;
     }
 
+    public Rotation2d getYaw() {
+        return Rotation2d.fromDegrees(navx.getYaw());
+    }
+
     public double getRoll() {
         return navx.getRoll();
     }
@@ -114,17 +118,6 @@ public class MMNavigationSubsystem extends SubsystemBase {
         aprilCount = 0;
         // SmartDashboard.putNumber("BP[5]", bp[5]);
         return mainPose;
-    }
-
-    // TODO: Get rid of this
-    public void syncCamPose() {
-        // if (aprilCount >= 10) {
-        // mainPose = new Pose2d(aprilPose.getTranslation(), aprilPose.getRotation());
-        // resetOdometry(new Pose2d(mainPose.getTranslation(),
-        // aprilPose.getRotation()));
-
-        // }
-
     }
 
     public void changePipeline(int pipelineNumber) {

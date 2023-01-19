@@ -4,7 +4,9 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,38 +19,38 @@ import frc.robot.subsystems.MMSwerveSubsystem;
 /** Add your docs here. */
 public class TranslateRelativeCmd extends CommandBase {
     private final MMSwerveSubsystem swerveSubsystem;
-    private final Translation2d desireTranslation;
+    private final Pose2d desireTranslation;
     private final double maxSpeed;
     private Translation2d targetPosition;
-    private final TrapezoidProfile.Constraints constraints;
-    private final ProfiledPIDController tripPidController;
+    // private final TrapezoidProfile.Constraints constraints;
+    private final PIDController tripPidController;
     private final MMNavigationSubsystem navigationSubsystem;
 
-    public TranslateRelativeCmd(MMSwerveSubsystem swerveSubsystem, Translation2d desiredTranslation, double maxSpeed,
+    public TranslateRelativeCmd(MMSwerveSubsystem swerveSubsystem, Pose2d desiredTranslation, double maxSpeed,
             MMNavigationSubsystem navigationSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
         this.desireTranslation = desiredTranslation;
         this.maxSpeed = maxSpeed;
         this.navigationSubsystem = navigationSubsystem;
-        constraints = new TrapezoidProfile.Constraints(maxSpeed, maxSpeed / 10);
-        tripPidController = new ProfiledPIDController(4, 0, 0, constraints);
+        // constraints = new TrapezoidProfile.Constraints(maxSpeed, maxSpeed / 10);
+        tripPidController = new PIDController(4, 0, 0);
         addRequirements(swerveSubsystem);
     }
 
     @Override
     public void initialize() {
-        Translation2d currentPosition = navigationSubsystem.getPose().getTranslation();
-        double tripLength = desireTranslation.minus(currentPosition).getNorm();
-        tripPidController.reset(tripLength);
-        targetPosition = currentPosition.plus(desireTranslation);
+        Pose2d currentPosition = navigationSubsystem.getPose();
+        double tripLength = desireTranslation.getTranslation().minus(currentPosition.getTranslation()).getNorm();
+        // tripPidController.reset(tripLength);
+        targetPosition = currentPosition.getTranslation().plus(desireTranslation.getTranslation());
         SmartDashboard.putString("In LockedIn", "false");
     }
 
     @Override
     public void execute() {
-        Translation2d currentPosition = navigationSubsystem.getPose().getTranslation();
-        Translation2d trip = targetPosition.minus(currentPosition);
-        double tripLength = targetPosition.getDistance(currentPosition);
+        Pose2d currentPosition = navigationSubsystem.getPose();
+        Translation2d trip = targetPosition.minus(currentPosition.getTranslation());
+        double tripLength = targetPosition.getDistance(currentPosition.getTranslation());
 
         trip = trip.div(trip.getNorm());
 

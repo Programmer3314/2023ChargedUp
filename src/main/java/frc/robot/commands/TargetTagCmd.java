@@ -51,12 +51,14 @@ public class TargetTagCmd extends CommandBase {
             correction = -maxRotationSpeed;
         }
 
-        //TODO: Use drive...
-        ChassisSpeeds chassisSpeeds;
+        // ChassisSpeeds chassisSpeeds;
+        swerveSubsystem.drive(0, 0, correction, true, navigationSubsystem.getRotation2d());
 
-        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, correction, navigationSubsystem.getRotation2d());
-        SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
-        swerveSubsystem.setModuleStates(moduleStates);
+        // chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, correction,
+        // navigationSubsystem.getRotation2d());
+        // SwerveModuleState[] moduleStates =
+        // Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
+        // swerveSubsystem.setModuleStates(moduleStates);
     }
 
     @Override

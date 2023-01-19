@@ -112,6 +112,7 @@ public class Constants {
         public static class Button {
             public static final int changePipeline = 1;
             public static final int autoDriveToRamp=2;
+            public static final int driveRelative=3;
         }
     }
 
