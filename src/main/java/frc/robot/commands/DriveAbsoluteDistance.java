@@ -42,6 +42,7 @@ public class DriveAbsoluteDistance extends CommandBase {
                 new SwerveModuleState(maxSpeed, new Rotation2d(0))
         };
         turnPidController = new PIDController(-5, 0, 0);
+        turnPidController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     @Override

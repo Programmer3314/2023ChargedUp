@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
+import frc.robot.utility.MMTurnPIDController;
 
 // TODO: Check that this is working during normal (on the floor) driving
 // TODO: make this work with a regular pid controller (like TranslateAbsoluteCmd)
@@ -23,6 +24,7 @@ public class TranslateRelativeCmd extends CommandBase {
     // private final TrapezoidProfile.Constraints constraints;
     private final PIDController tripPidController;
     private final MMNavigationSubsystem navigationSubsystem;
+    private final MMTurnPIDController rotationPidController;
 
     public TranslateRelativeCmd(MMSwerveSubsystem swerveSubsystem, Pose2d desiredTranslation, double maxSpeed,
             MMNavigationSubsystem navigationSubsystem) {
@@ -32,6 +34,8 @@ public class TranslateRelativeCmd extends CommandBase {
         this.navigationSubsystem = navigationSubsystem;
         // constraints = new TrapezoidProfile.Constraints(maxSpeed, maxSpeed / 10);
         tripPidController = new PIDController(4, 0, 0);
+        rotationPidController = new MMTurnPIDController();
+
         addRequirements(swerveSubsystem);
     }
 
@@ -42,6 +46,8 @@ public class TranslateRelativeCmd extends CommandBase {
         // tripPidController.reset(tripLength);
         targetPosition = currentPosition.getTranslation().plus(desireTranslation.getTranslation());
         SmartDashboard.putString("In LockedIn", "false");
+        // rotationPidController.setSetpoint(desireTranslation.getRotation().getRadians());
+        rotationPidController.initialize(desireTranslation.getRotation());
     }
 
     @Override
@@ -49,9 +55,11 @@ public class TranslateRelativeCmd extends CommandBase {
         Pose2d currentPosition = navigationSubsystem.getPose();
         Translation2d trip = targetPosition.minus(currentPosition.getTranslation());
         double tripLength = targetPosition.getDistance(currentPosition.getTranslation());
+        double maxRotation = Math.PI / 2.0;
 
         trip = trip.div(trip.getNorm());
-
+        // rotationPidController.calculate(navigationSubsystem.getRotation2d().getRadians());
+        double rotationCorrection = rotationPidController.execute(navigationSubsystem.getRotation2d());
         double correction = tripPidController.calculate(tripLength);
         correction *= -1;
         if (correction > maxSpeed) {
@@ -60,8 +68,15 @@ public class TranslateRelativeCmd extends CommandBase {
         if (correction < -maxSpeed) {
             correction = -maxSpeed;
         }
+        // if (rotationCorrection > maxRotation) {
+        //     rotationCorrection = maxRotation;
+        // }
+        // if (rotationCorrection < -maxRotation) {
+        //     rotationCorrection = -maxRotation;
+        // }
+        SmartDashboard.putNumber("rotationCorrection: ", rotationCorrection);
 
-        swerveSubsystem.drive(trip.getX() * correction, trip.getY() * correction, 0, true,
+        swerveSubsystem.drive(trip.getX() * correction, trip.getY() * correction, rotationCorrection, true,
                 navigationSubsystem.getRotation2d());
     }
 
@@ -76,7 +91,7 @@ public class TranslateRelativeCmd extends CommandBase {
         double tripLength = targetPosition.getDistance(navigationSubsystem.getPose().getTranslation());
         SmartDashboard.putNumber("Trip Length:", tripLength);
         SmartDashboard.putBoolean("Finished Translate", tripLength < .1);
-        return tripLength < .1;
+        return tripLength < .1 && rotationPidController.isFinished();
     }
 
 }

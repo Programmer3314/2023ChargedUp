@@ -80,11 +80,11 @@ public class RobotContainer {
                 new JoystickButton(driverJoystick, Constants.Driver.Button.targetTagY)
                                 .onTrue(new SequentialCommandGroup(
                                                 new InstantCommand(() -> navigationSubsystem.changePipeline(0)),
+                                                // new TranslateAbsoluteCmd(swerveSubsystem,
+                                                //                 new Pose2d(3.69, -3.93, new Rotation2d()), 1,
+                                                //                 navigationSubsystem),
                                                 new TranslateAbsoluteCmd(swerveSubsystem,
-                                                                new Pose2d(3.69, -3.93, new Rotation2d()), 1,
-                                                                navigationSubsystem),
-                                                new TranslateAbsoluteCmd(swerveSubsystem,
-                                                                new Pose2d(6, -3.5, new Rotation2d(0)),
+                                                                new Pose2d(6, -3.5, new Rotation2d(90)),
                                                                 1, navigationSubsystem),
                                                 new TranslateAbsoluteCmd(swerveSubsystem,
                                                                 new Pose2d(6, -2.93, new Rotation2d(0)),
@@ -122,7 +122,7 @@ public class RobotContainer {
                 new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.driveRelative)
                                 .onTrue(
                                                 new TranslateRelativeCmd(swerveSubsystem,
-                                                                new Pose2d(3, 1, new Rotation2d()), 1,
+                                                                new Pose2d(3, 1, Rotation2d.fromDegrees(180)), 1,
                                                                 navigationSubsystem));
                 // new JoystickButton(driverJoystick, Constants.Driver.Button.trackAprilTag)
                 // .whileTrue(new SwerveJoystickCmd(swerveSubsystem,
