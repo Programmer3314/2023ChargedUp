@@ -13,8 +13,6 @@ import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMTurnPIDController;
 
-// TODO: Check that this is working during normal (on the floor) driving
-// TODO: make this work with a regular pid controller (like TranslateAbsoluteCmd)
 /** Add your docs here. */
 public class TranslateRelativeCmd extends CommandBase {
     private final MMSwerveSubsystem swerveSubsystem;
@@ -42,7 +40,7 @@ public class TranslateRelativeCmd extends CommandBase {
     @Override
     public void initialize() {
         Pose2d currentPosition = navigationSubsystem.getPose();
-        double tripLength = desireTranslation.getTranslation().minus(currentPosition.getTranslation()).getNorm();
+        //double tripLength = desireTranslation.getTranslation().minus(currentPosition.getTranslation()).getNorm();
         // tripPidController.reset(tripLength);
         targetPosition = currentPosition.getTranslation().plus(desireTranslation.getTranslation());
         SmartDashboard.putString("In LockedIn", "false");
@@ -55,7 +53,7 @@ public class TranslateRelativeCmd extends CommandBase {
         Pose2d currentPosition = navigationSubsystem.getPose();
         Translation2d trip = targetPosition.minus(currentPosition.getTranslation());
         double tripLength = targetPosition.getDistance(currentPosition.getTranslation());
-        double maxRotation = Math.PI / 2.0;
+        //double maxRotation = Math.PI / 2.0;
 
         trip = trip.div(trip.getNorm());
         // rotationPidController.calculate(navigationSubsystem.getRotation2d().getRadians());

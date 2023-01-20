@@ -6,14 +6,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
+import frc.robot.subsystems.MMSwerveSubsystem;
 
 /** Add your docs here. */
 public class TargetTagCmd extends CommandBase {
@@ -31,8 +28,9 @@ public class TargetTagCmd extends CommandBase {
         this.maxRotationSpeed = maxRotationSpeed;
         this.navigationSubsystem = navigationSubsystem;
         this.margin = margin;
-        addRequirements(swerveSubsystem);
         turnPidController = new PIDController(.175, 0, 0);
+
+        addRequirements(swerveSubsystem);
     }
 
     @Override
@@ -51,14 +49,7 @@ public class TargetTagCmd extends CommandBase {
             correction = -maxRotationSpeed;
         }
 
-        // ChassisSpeeds chassisSpeeds;
         swerveSubsystem.drive(0, 0, correction, true, navigationSubsystem.getRotation2d());
-
-        // chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, correction,
-        // navigationSubsystem.getRotation2d());
-        // SwerveModuleState[] moduleStates =
-        // Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
-        // swerveSubsystem.setModuleStates(moduleStates);
     }
 
     @Override

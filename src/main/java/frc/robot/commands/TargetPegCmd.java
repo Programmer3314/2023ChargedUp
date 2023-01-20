@@ -6,14 +6,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
+import frc.robot.subsystems.MMSwerveSubsystem;
+
+// TODO: Try using MMTurnPIDController, but rember that TX is in degrees not radians 
+// if this works, do the same for TargetTagCmd
 
 /** Add your docs here. */
 public class TargetPegCmd extends CommandBase {
@@ -32,8 +32,9 @@ public class TargetPegCmd extends CommandBase {
         this.maxRotationSpeed = maxRotationSpeed;
         this.navigationSubsystem = navigationSubsystem;
         this.margin = margin;
-        addRequirements(swerveSubsystem);
         turnPidController = new PIDController(.25, 0, 0);
+
+        addRequirements(swerveSubsystem);
     }
 
     @Override
@@ -52,11 +53,6 @@ public class TargetPegCmd extends CommandBase {
             correction = -maxRotationSpeed;
         }
 
-        // ChassisSpeeds chassisSpeeds;
-        // chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, correction, );
-        // SwerveModuleState[] moduleStates =
-        // Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
-        // swerveSubsystem.setModuleStates(moduleStates);
         swerveSubsystem.drive(0, 0, correction, true, navigationSubsystem.getRotation2d());
     }
 

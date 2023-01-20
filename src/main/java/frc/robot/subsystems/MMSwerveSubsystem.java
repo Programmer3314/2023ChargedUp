@@ -16,23 +16,30 @@ import frc.robot.Constants;
 /** Add your docs here. */
 public class MMSwerveSubsystem extends SubsystemBase {
     private final MMSwerveModule[] modules = new MMSwerveModule[] {
-            new MMSwerveModule(Constants.FRONT_LEFT_MODULE_DRIVE_MOTOR, Constants.FRONT_LEFT_MODULE_STEER_MOTOR,
+            new MMSwerveModule(Constants.Chassis.frontLeftModule.driveMotor,
+                    Constants.Chassis.frontLeftModule.steerMotor,
                     Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted,
-                    Constants.FRONT_LEFT_MODULE_STEER_ENCODER,
-                    Constants.FRONT_LEFT_MODULE_STEER_OFFSET, Constants.MK4i.absoluteEncoderIsInverted),
-            new MMSwerveModule(Constants.FRONT_RIGHT_MODULE_DRIVE_MOTOR, Constants.FRONT_RIGHT_MODULE_STEER_MOTOR,
+                    Constants.Chassis.frontLeftModule.absoluteEncoderId,
+                    Constants.Chassis.frontLeftModule.absoluteEncoderOffset,
+                    Constants.MK4i.absoluteEncoderIsInverted),
+            new MMSwerveModule(Constants.Chassis.frontRightModule.driveMotor,
+                    Constants.Chassis.frontRightModule.steerMotor,
                     Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted,
-                    Constants.FRONT_RIGHT_MODULE_STEER_ENCODER,
-                    Constants.FRONT_RIGHT_MODULE_STEER_OFFSET, Constants.MK4i.absoluteEncoderIsInverted),
-            new MMSwerveModule(Constants.BACK_RIGHT_MODULE_DRIVE_MOTOR, Constants.BACK_RIGHT_MODULE_STEER_MOTOR,
+                    Constants.Chassis.frontRightModule.absoluteEncoderId,
+                    Constants.Chassis.frontRightModule.absoluteEncoderOffset,
+                    Constants.MK4i.absoluteEncoderIsInverted),
+            new MMSwerveModule(Constants.Chassis.backRightModule.driveMotor,
+                    Constants.Chassis.backRightModule.steerMotor,
                     Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted,
-                    Constants.BACK_RIGHT_MODULE_STEER_ENCODER,
-                    Constants.BACK_RIGHT_MODULE_STEER_OFFSET, Constants.MK4i.absoluteEncoderIsInverted),
-            new MMSwerveModule(Constants.BACK_LEFT_MODULE_DRIVE_MOTOR, Constants.BACK_LEFT_MODULE_STEER_MOTOR,
+                    Constants.Chassis.backRightModule.absoluteEncoderId,
+                    Constants.Chassis.backRightModule.absoluteEncoderOffset,
+                    Constants.MK4i.absoluteEncoderIsInverted),
+            new MMSwerveModule(Constants.Chassis.backLeftModule.driveMotor,
+                    Constants.Chassis.backLeftModule.steerMotor,
                     Constants.MK4i.driveIsInverted, Constants.MK4i.steerIsInverted,
-                    Constants.BACK_LEFT_MODULE_STEER_ENCODER,
-                    Constants.BACK_LEFT_MODULE_STEER_OFFSET, Constants.MK4i.absoluteEncoderIsInverted)
-
+                    Constants.Chassis.backLeftModule.absoluteEncoderId,
+                    Constants.Chassis.backLeftModule.absoluteEncoderOffset,
+                    Constants.MK4i.absoluteEncoderIsInverted)
     };
 
     public MMSwerveSubsystem() {
@@ -46,26 +53,21 @@ public class MMSwerveSubsystem extends SubsystemBase {
                 SmartDashboard.putString("Reset Running: ", "Error");
             }
         }).start();
-        // resetEncoders();
-        // zeroHeading();
     }
 
     @Override
     public void periodic() {
-
         for (int i = 0; i < modules.length; i++) {
             SmartDashboard.putNumber("Absolute Encoder Rotation " + i,
                     Math.toDegrees(modules[i].getAbsoluteEncoderRad()));
             SmartDashboard.putNumber("Motor  Rotation" + i, Math.toDegrees(modules[i].getTurningPositionRadians()));
         }
-
     }
 
     public void stopModules() {
         for (MMSwerveModule m : modules) {
             m.stop();
         }
-
     }
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -100,11 +102,10 @@ public class MMSwerveSubsystem extends SubsystemBase {
     public void drive(double xMetersPerSec, double yMetersPerSec, double rRadPerSec, boolean isFieldCentric,
             Rotation2d robotAngle) {
         ChassisSpeeds chassisSpeeds;
-
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 xMetersPerSec, yMetersPerSec, rRadPerSec, isFieldCentric ? robotAngle : new Rotation2d());
         SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
         setModuleStates(moduleStates);
     }
-    
+
 }

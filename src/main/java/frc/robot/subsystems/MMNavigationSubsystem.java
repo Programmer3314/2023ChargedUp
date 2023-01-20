@@ -27,7 +27,6 @@ public class MMNavigationSubsystem extends SubsystemBase {
     private final NetworkTable limelight = inst.getTable("limelight");
     private Pose2d mainPose = new Pose2d();
     private Pose2d aprilPose = new Pose2d();
-    private int aprilCount = 0;
     private boolean visionInitialized = false;
     private long lastVisionHB;
 
@@ -50,7 +49,6 @@ public class MMNavigationSubsystem extends SubsystemBase {
         odometer.update(getRotation2d(), swerveSubsystem.getSwerveModulePositions());
         mainPose = odometer.getEstimatedPosition();
         aprilPose = getLimelightPose();
-        // syncCamPose();
         mainPose = new Pose2d(mainPose.getTranslation(), navx.getRotation2d());
         SmartDashboard.putNumber("Robot Heading", Math.toDegrees(getHeadingRad()));
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
@@ -108,18 +106,16 @@ public class MMNavigationSubsystem extends SubsystemBase {
                     double latency = limelight.getEntry("tl").getDouble(0);
                     latency = (latency + 11) / 1000.0;
                     odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
-                    aprilCount++;
                     return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
                             (aprilPose.getY() + tempPose.getY()) / 2.0,
                             new Rotation2d(tempPose.getRotation().getRadians()));
                 }
             }
         }
-        aprilCount = 0;
-        // SmartDashboard.putNumber("BP[5]", bp[5]);
         return mainPose;
     }
 
+    // TODO: change "change" to "set" for general consistency
     public void changePipeline(int pipelineNumber) {
         limelight.getEntry("pipeline").setNumber(pipelineNumber);
         SmartDashboard.putString("Changing Pipeline:", "yes");

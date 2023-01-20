@@ -31,15 +31,36 @@ public class Constants {
         public static final double wheelCircumference = wheelDiameter * Math.PI;
         public static final double wheelOffset = 2.625 * Constants.Conv.metersPerInch;
 
+        public static class L1 {
+            public static final double driveReduction = (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0);
+            public static final double steerReduction = (14.0 / 50.0) * (10.0 / 60.0);
+            public static final double driveMetersPerTick = (wheelCircumference / Falcon.ticksPerRev) * driveReduction;
+            public static final double turnRadiansPerTick = (2.0 * Math.PI / Falcon.ticksPerRev) * steerReduction;
+            public static final double maxVelocityMetersPerSecond = 13.5 * Constants.Conv.metersPerFeet;
+            public static final double maxAngularVelocityRadiansPerSecond = maxVelocityMetersPerSecond
+                    / Constants.Chassis.wheelDiagnal;
+        }
+
         public static class L2 {
             public static final double driveReduction = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
             public static final double steerReduction = (14.0 / 50.0) * (10.0 / 60.0);
             public static final double driveMetersPerTick = (wheelCircumference / Falcon.ticksPerRev) * driveReduction;
             public static final double turnRadiansPerTick = (2.0 * Math.PI / Falcon.ticksPerRev) * steerReduction;
-            public static final double maxVelocityMetersPerSecond = 4.14528; // With the L2... 4.96824
+            public static final double maxVelocityMetersPerSecond = 16.3 * Constants.Conv.metersPerFeet;
             public static final double maxAngularVelocityRadiansPerSecond = maxVelocityMetersPerSecond
                     / Constants.Chassis.wheelDiagnal;
         }
+
+        public static class L3 {
+            public static final double driveReduction = (14.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0);
+            public static final double steerReduction = (14.0 / 50.0) * (10.0 / 60.0);
+            public static final double driveMetersPerTick = (wheelCircumference / Falcon.ticksPerRev) * driveReduction;
+            public static final double turnRadiansPerTick = (2.0 * Math.PI / Falcon.ticksPerRev) * steerReduction;
+            public static final double maxVelocityMetersPerSecond = 18.0 * Constants.Conv.metersPerFeet;
+            public static final double maxAngularVelocityRadiansPerSecond = maxVelocityMetersPerSecond
+                    / Constants.Chassis.wheelDiagnal;
+        }
+
     }
 
     public static class Robot {
@@ -67,27 +88,52 @@ public class Constants {
 
         public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
                 moduleOffset);
+
+        public static class frontLeftModule{
+            public static final int driveMotor=2;
+            public static final int steerMotor=1;
+            public static final int absoluteEncoderId=1;
+            public static final double absoluteEncoderOffset=-Math.toRadians(28);
+        }
+        public static class frontRightModule{
+            public static final int driveMotor=4;
+            public static final int steerMotor=3;
+            public static final int absoluteEncoderId=2;
+            public static final double absoluteEncoderOffset=-Math.toRadians(-87);
+        }
+        public static class backRightModule{
+            public static final int driveMotor=6;
+            public static final int steerMotor=5;
+            public static final int absoluteEncoderId=3;
+            public static final double absoluteEncoderOffset=-Math.toRadians(49);
+        }
+        public static class backLeftModule{
+            public static final int driveMotor=8;
+            public static final int steerMotor=7;
+            public static final int absoluteEncoderId=4;
+            public static final double absoluteEncoderOffset=-Math.toRadians(59);
+        }
     }
 
-    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
-    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 1;
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1;
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(28);
+    // public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
+    // public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 1;
+    // public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1;
+    // public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(28);
 
-    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 4;
-    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 3;
-    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 2;
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-87);
+    // public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 4;
+    // public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 3;
+    // public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 2;
+    // public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-87);
 
-    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 8;
-    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 7;
-    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 4;
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(59);
+    // public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 8;
+    // public static final int BACK_LEFT_MODULE_STEER_MOTOR = 7;
+    // public static final int BACK_LEFT_MODULE_STEER_ENCODER = 4;
+    // public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(59);
 
-    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 6;
-    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 5;
-    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 3;
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(49);
+    // public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 6;
+    // public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 5;
+    // public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 3;
+    // public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(49);
 
     public static class Driver {
         public static final int Controller = 4;
@@ -111,8 +157,8 @@ public class Constants {
 
         public static class Button {
             public static final int changePipeline = 1;
-            public static final int autoDriveToRamp=2;
-            public static final int driveRelative=3;
+            public static final int autoDriveToRamp = 2;
+            public static final int driveRelative = 3;
         }
     }
 

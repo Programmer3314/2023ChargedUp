@@ -9,13 +9,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 
-// TODO: Recode this without any specific angles. 
 /** Add your docs here. */
 public class DriveToRampCmd extends CommandBase {
     private MMSwerveSubsystem swerveSubsystem;
     private MMNavigationSubsystem navigationSubsystem;
     private double maxSpeed;
-    private boolean angleDecreaseFlag = false;
     private double maxAngle;
     private double robotRoll;
 
@@ -30,24 +28,18 @@ public class DriveToRampCmd extends CommandBase {
 
     @Override
     public void initialize() {
-        angleDecreaseFlag = false;
         maxAngle = -navigationSubsystem.getRoll();
     }
 
     @Override
     public void execute() {
         robotRoll=-navigationSubsystem.getRoll();
-        // SmartDashboard.putBoolean("angleFlag", angleDecreaseFlag);
-        // TODO: get roll once and store in class variable
         if (maxAngle < robotRoll) {
             maxAngle = robotRoll;
         }
         SmartDashboard.putNumber("maxAngle", maxAngle);
         SmartDashboard.putNumber("currentRoll", robotRoll);
         swerveSubsystem.drive(maxSpeed, 0, 0, true, navigationSubsystem.getRotation2d());
-        // if (navigationSubsystem.getRoll() < -16) {
-        // angleDecreaseFlag = true;
-        // }
     }
 
     @Override
@@ -57,9 +49,8 @@ public class DriveToRampCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        // double currentPitch = navigationSubsystem.getRoll();
-        // return angleDecreaseFlag && currentPitch > -14;
-        SmartDashboard.putBoolean("Finished COndition:", robotRoll< (maxAngle - 1));
+        // TODO: fix this to be consistent
+        SmartDashboard.putBoolean("Finished Condition:", robotRoll< (maxAngle - 1));
         return robotRoll< (maxAngle - 3);
     }
 }

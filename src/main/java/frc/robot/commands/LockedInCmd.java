@@ -44,7 +44,6 @@ public class LockedInCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-
         return false;
     }
 }
