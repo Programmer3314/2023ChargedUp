@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 
@@ -23,7 +24,7 @@ public class TargetPegCmd extends CommandBase {
     MMNavigationSubsystem navigationSubsystem;
     PIDController turnPidController;
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    private final NetworkTable limelight = inst.getTable("limelight");
+    private final NetworkTable limelight = inst.getTable(Constants.Limelight.fLimelight);
     private final double margin;
 
     public TargetPegCmd(MMSwerveSubsystem swerveSubsystem, double maxRotationSpeed,

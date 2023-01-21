@@ -85,7 +85,7 @@ public class Constants {
                 new Translation2d(-Constants.Chassis.wheelBase / 2.0,
                         Constants.Chassis.trackWidth / 2.0)
         };
-
+    
         public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
                 moduleOffset);
 
@@ -113,6 +113,9 @@ public class Constants {
             public static final int absoluteEncoderId=4;
             public static final double absoluteEncoderOffset=-Math.toRadians(59);
         }
+    }
+    public static class Limelight{
+        public static final String fLimelight = "limelight-front";
     }
 
     // public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;

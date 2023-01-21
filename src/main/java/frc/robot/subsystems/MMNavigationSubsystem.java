@@ -24,7 +24,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
     private final AHRS navx = new AHRS(SPI.Port.kMXP);
     private final SwerveDrivePoseEstimator odometer;
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    private final NetworkTable limelight = inst.getTable("limelight");
+    private final NetworkTable limelight = inst.getTable(Constants.Limelight.fLimelight);
     private Pose2d mainPose = new Pose2d();
     private Pose2d aprilPose = new Pose2d();
     private boolean visionInitialized = false;
@@ -115,7 +115,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         return mainPose;
     }
 
-    // TODO: change "change" to "set" for general consistency
+    // TODO: change "change" to "set" fr general consistency
     public void changePipeline(int pipelineNumber) {
         limelight.getEntry("pipeline").setNumber(pipelineNumber);
         SmartDashboard.putString("Changing Pipeline:", "yes");

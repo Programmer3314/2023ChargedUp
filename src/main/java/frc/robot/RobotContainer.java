@@ -84,10 +84,10 @@ public class RobotContainer {
                         // new Pose2d(3.69, -3.93, new Rotation2d()), 1,
                         // navigationSubsystem),
                         new TranslateAbsoluteCmd(swerveSubsystem,
-                                new Pose2d(6, -3.5, new Rotation2d(90)),
+                                new Pose2d(6.3, -3.5, new Rotation2d(0)),
                                 1, navigationSubsystem),
                         new TranslateAbsoluteCmd(swerveSubsystem,
-                                new Pose2d(6, -2.93, new Rotation2d(0)),
+                                new Pose2d(6, -2.93, new Rotation2d(Math.toRadians(20))),
                                 1, navigationSubsystem),
                         // new LockedInCmd(swerveSubsystem)),
                         // new InstantCommand(() -> navigationSubsystem.changePipeline(1))));
