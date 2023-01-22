@@ -14,7 +14,17 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -22,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DriveAbsoluteDistance;
+import frc.robot.commands.DriveToCell;
 import frc.robot.commands.DriveToRampCmd;
 import frc.robot.commands.LockedInCmd;
 import frc.robot.commands.SwerveJoystickCmd;
@@ -35,6 +46,12 @@ import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMJoystickAxis;
 
 public class RobotContainer {
+
+        private final SendableChooser<Integer> getDesiredCell = new SendableChooser<>();
+
+        private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        private static Alliance alliance;
+        private static boolean isRedAlliance;
 
         private final MMSwerveSubsystem swerveSubsystem = new MMSwerveSubsystem();
         private final MMNavigationSubsystem navigationSubsystem = new MMNavigationSubsystem(swerveSubsystem);
@@ -55,6 +72,17 @@ public class RobotContainer {
                         -(Math.PI / 2.0));
 
         public RobotContainer() {
+
+                getDesiredCell.setDefaultOption("None Selected", 0);
+                for (int i = 1; i < 10; i++) {
+                        getDesiredCell.addOption("Cell: " + i, i);
+                }
+                
+                Shuffleboard.getTab("In Match").add(getDesiredCell).withWidget(BuiltInWidgets.kComboBoxChooser);
+                
+                alliance = DriverStation.getAlliance();
+                isRedAlliance = Alliance.Red == alliance;
+
                 swerveSubsystem.setDefaultCommand(
                                 new SequentialCommandGroup(
                                                 new InstantCommand(() -> navigationSubsystem.setPipeline(0)),
@@ -68,6 +96,7 @@ public class RobotContainer {
 
                 );
                 configureBindings();
+
         }
 
         private void configureBindings() {
@@ -126,17 +155,20 @@ public class RobotContainer {
 
                 new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.autoDriveToRamp)
                                 .onTrue(new SequentialCommandGroup(
-                                                new DriveToRampCmd(swerveSubsystem, navigationSubsystem, 1),
-                                                new DriveAbsoluteDistance(swerveSubsystem, new Translation2d(-.9, 0),
-                                                                1, navigationSubsystem),
+                                                new DriveToRampCmd(swerveSubsystem, navigationSubsystem, .9),
+                                                new DriveAbsoluteDistance(swerveSubsystem, new Translation2d(-.75, 0),
+                                                                .25, navigationSubsystem),
                                                 // new TranslateRelativeCmd(swerveSubsystem, new Translation2d(0.25,0),
                                                 // 0.5, navigationSubsystem),
                                                 new LockedInCmd(swerveSubsystem)));
+
                 new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.driveRelative)
                                 .onTrue(
-                                                new TranslateRelativeCmd(swerveSubsystem,
-                                                                new Pose2d(3, 1, Rotation2d.fromDegrees(180)), 1,
-                                                                navigationSubsystem));
+                                                new DriveToCell(swerveSubsystem,
+                                                                () -> getDesiredCell.getSelected(),
+                                                                navigationSubsystem,
+                                                                isRedAlliance,
+                                                                1));
                 // new JoystickButton(driverJoystick, Constants.Driver.Button.trackAprilTag)
                 // .whileTrue(new SwerveJoystickCmd(swerveSubsystem,
                 // () -> driveXAxis.getSquared(),

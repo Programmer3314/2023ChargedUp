@@ -55,7 +55,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("AprilTag Rotation Degrees", aprilPose.getRotation().getDegrees());
         SmartDashboard.putNumber("Navx Roll", navx.getRoll());
         SmartDashboard.putNumber("Navx Yaw", navx.getYaw());
-        SmartDashboard.putNumber("NavX Pitch", navx.getPitch());
+        SmartDashboard.putNumber("NavX Pitch", getPitch());
     }
 
     public void zeroHeading() {

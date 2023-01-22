@@ -63,8 +63,8 @@ public class DriveAbsoluteDistance extends CommandBase {
     public boolean isFinished() {
         SwerveModulePosition[] currentPositions = swerveSubsystem.getSwerveModulePositions();
         SmartDashboard.putNumber("driveAbsoluteDistance:",
-                currentPositions[0].distanceMeters - initialPositions[0].distanceMeters);
-        return Math.abs(initialPositions[0].distanceMeters - currentPositions[0].distanceMeters) 
+                currentPositions[3].distanceMeters - initialPositions[3].distanceMeters);
+        return Math.abs(initialPositions[3].distanceMeters - currentPositions[3].distanceMeters) 
                     > Math.abs(desiredTranslation.getX());
     }
 }
