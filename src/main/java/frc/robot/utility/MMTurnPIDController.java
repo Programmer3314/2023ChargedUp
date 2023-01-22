@@ -10,8 +10,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public class MMTurnPIDController extends MMPIDController {
 
     public MMTurnPIDController() {
-        super(2.5, 0, 0, Math.PI / 2.0, Math.toRadians(3), true);
-
+        super(5, 0, 0, Math.PI / 2.0, Math.toRadians(3), true);
+//2.5
     }
 
     public double execute(Rotation2d rotation) {

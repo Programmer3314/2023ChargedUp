@@ -32,6 +32,13 @@ public class Constants {
         public static final double wheelOffset = 2.625 * Constants.Conv.metersPerInch;
 
         public static class L1 {
+            public static final double kfalconDrivetrainKI = 0.000000;
+            public static final double kfalconDrivetrainKD = 0.00025;
+            public static final double kfalconDrivetrainKP = 0.002500;// 5e-5;
+            public static final double kfalconDrivetrainKIz = 0;
+            public static final double kfalconDrivetrainKFF = 0.050000;
+            public static final double kfalconDrivetrainKMaxOutput = 0.869990;
+            public static final double kfalconDrivetrainKMinOutput = -0.869990;
             public static final double driveReduction = (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0);
             public static final double steerReduction = (14.0 / 50.0) * (10.0 / 60.0);
             public static final double driveMetersPerTick = (wheelCircumference / Falcon.ticksPerRev) * driveReduction;
@@ -41,7 +48,7 @@ public class Constants {
                     / Constants.Chassis.wheelDiagnal;
         }
 
-        public static class L2 {
+        public static class L2A {
             public static final double driveReduction = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
             public static final double steerReduction = (14.0 / 50.0) * (10.0 / 60.0);
             public static final double driveMetersPerTick = (wheelCircumference / Falcon.ticksPerRev) * driveReduction;
@@ -49,6 +56,13 @@ public class Constants {
             public static final double maxVelocityMetersPerSecond = 16.3 * Constants.Conv.metersPerFeet;
             public static final double maxAngularVelocityRadiansPerSecond = maxVelocityMetersPerSecond
                     / Constants.Chassis.wheelDiagnal;
+            public static final double kfalconDrivetrainKI = 0.000000;
+            public static final double kfalconDrivetrainKD = 0.00025;
+            public static final double kfalconDrivetrainKP = 0.002500;// 5e-5;
+            public static final double kfalconDrivetrainKIz = 0;
+            public static final double kfalconDrivetrainKFF = 0.050000;
+            public static final double kfalconDrivetrainKMaxOutput = 0.869990;
+            public static final double kfalconDrivetrainKMinOutput = -0.869990;
         }
 
         public static class L3 {
@@ -69,8 +83,10 @@ public class Constants {
     }
 
     public static class Chassis {
-        public static final double length = 24.5 * Constants.Conv.metersPerInch;
-        public static final double width = 24.5 * Constants.Conv.metersPerInch;
+        // public static final double length = 24.5 * Constants.Conv.metersPerInch;
+        // public static final double width = 24.5 * Constants.Conv.metersPerInch;
+        public static final double width = 27 * Constants.Conv.metersPerInch;
+        public static final double length = 33 * Constants.Conv.metersPerInch;
         public static final double trackWidth = width - (2.0 * MK4i.wheelOffset);
         public static final double wheelBase = length - (2.0 * MK4i.wheelOffset);
         public static final double wheelDiagnal = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
@@ -85,58 +101,74 @@ public class Constants {
                 new Translation2d(-Constants.Chassis.wheelBase / 2.0,
                         Constants.Chassis.trackWidth / 2.0)
         };
-    
+
         public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
                 moduleOffset);
 
-        public static class frontLeftModule{
-            public static final int driveMotor=2;
-            public static final int steerMotor=1;
-            public static final int absoluteEncoderId=1;
-            public static final double absoluteEncoderOffset=-Math.toRadians(28);
+        public static class frontLeftModule {
+            public static final int driveMotor = 2;
+            public static final int steerMotor = 1;
+            public static final int absoluteEncoderId = 1;
+            public static final double absoluteEncoderOffset = -Math.toRadians(103);//28
         }
-        public static class frontRightModule{
-            public static final int driveMotor=4;
-            public static final int steerMotor=3;
-            public static final int absoluteEncoderId=2;
-            public static final double absoluteEncoderOffset=-Math.toRadians(-87);
+
+        public static class frontRightModule {
+            public static final int driveMotor = 4;
+            public static final int steerMotor = 3;
+            public static final int absoluteEncoderId = 2;
+            public static final double absoluteEncoderOffset = -Math.toRadians(-24);//-87
         }
-        public static class backRightModule{
-            public static final int driveMotor=6;
-            public static final int steerMotor=5;
-            public static final int absoluteEncoderId=3;
-            public static final double absoluteEncoderOffset=-Math.toRadians(49);
+
+        public static class backRightModule {
+            public static final int driveMotor = 6;
+            public static final int steerMotor = 5;
+            public static final int absoluteEncoderId = 3;
+            public static final double absoluteEncoderOffset = -Math.toRadians(-61);//49
         }
-        public static class backLeftModule{
-            public static final int driveMotor=8;
-            public static final int steerMotor=7;
-            public static final int absoluteEncoderId=4;
-            public static final double absoluteEncoderOffset=-Math.toRadians(59);
+
+        public static class backLeftModule {
+            public static final int driveMotor = 8;
+            public static final int steerMotor = 7;
+            public static final int absoluteEncoderId = 4;
+            public static final double absoluteEncoderOffset = -Math.toRadians(33);//59
         }
     }
-    public static class Limelight{
+
+    public static class Limelight {
         public static final String fLimelight = "limelight-front";
     }
+
+    public static final double kfalconDrivetrainKI = 0.000000;
+    public static final double kfalconDrivetrainKD = 0.00025;
+    public static final double kfalconDrivetrainKP = 0.002500;// 5e-5;
+    public static final double kfalconDrivetrainKIz = 0;
+    public static final double kfalconDrivetrainKFF = 0.050000;
+    public static final double kfalconDrivetrainKMaxOutput = 0.869990;
+    public static final double kfalconDrivetrainKMinOutput = -0.869990;
 
     // public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
     // public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 1;
     // public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1;
-    // public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(28);
+    // public static final double FRONT_LEFT_MODULE_STEER_OFFSET =
+    // -Math.toRadians(28);
 
     // public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 4;
     // public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 3;
     // public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 2;
-    // public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(-87);
+    // public static final double FRONT_RIGHT_MODULE_STEER_OFFSET =
+    // -Math.toRadians(-87);
 
     // public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 8;
     // public static final int BACK_LEFT_MODULE_STEER_MOTOR = 7;
     // public static final int BACK_LEFT_MODULE_STEER_ENCODER = 4;
-    // public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(59);
+    // public static final double BACK_LEFT_MODULE_STEER_OFFSET =
+    // -Math.toRadians(59);
 
     // public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 6;
     // public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 5;
     // public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 3;
-    // public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(49);
+    // public static final double BACK_RIGHT_MODULE_STEER_OFFSET =
+    // -Math.toRadians(49);
 
     public static class Driver {
         public static final int Controller = 4;

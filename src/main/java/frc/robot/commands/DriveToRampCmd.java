@@ -9,13 +9,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 
+
 /** Add your docs here. */
 public class DriveToRampCmd extends CommandBase {
     private MMSwerveSubsystem swerveSubsystem;
     private MMNavigationSubsystem navigationSubsystem;
     private double maxSpeed;
     private double maxAngle;
-    private double robotRoll;
+    private double robotPitch;
 
     public DriveToRampCmd(MMSwerveSubsystem swerveSubsystem, MMNavigationSubsystem navigationSubsystem,
             double maxSpeed) {
@@ -23,22 +24,22 @@ public class DriveToRampCmd extends CommandBase {
         this.navigationSubsystem = navigationSubsystem;
         this.maxSpeed = maxSpeed;
         addRequirements(swerveSubsystem);
-        robotRoll=-navigationSubsystem.getRoll();
+        robotPitch = navigationSubsystem.getPitch();
     }
 
     @Override
     public void initialize() {
-        maxAngle = -navigationSubsystem.getRoll();
+        maxAngle = navigationSubsystem.getPitch();
     }
 
     @Override
     public void execute() {
-        robotRoll=-navigationSubsystem.getRoll();
-        if (maxAngle < robotRoll) {
-            maxAngle = robotRoll;
+        robotPitch = navigationSubsystem.getPitch();
+        if (maxAngle < robotPitch) {
+            maxAngle = robotPitch;
         }
         SmartDashboard.putNumber("maxAngle", maxAngle);
-        SmartDashboard.putNumber("currentRoll", robotRoll);
+        SmartDashboard.putNumber("currentPitch", robotPitch);
         swerveSubsystem.drive(maxSpeed, 0, 0, true, navigationSubsystem.getRotation2d());
     }
 
@@ -49,8 +50,8 @@ public class DriveToRampCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        // TODO: fix this to be consistent
-        SmartDashboard.putBoolean("Finished Condition:", robotRoll< (maxAngle - 1));
-        return robotRoll< (maxAngle - 3);
+        boolean finishedCondition = robotPitch < (maxAngle - 3);
+        SmartDashboard.putBoolean("Finished Condition:", finishedCondition);
+        return finishedCondition;
     }
 }

@@ -55,6 +55,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("AprilTag Rotation Degrees", aprilPose.getRotation().getDegrees());
         SmartDashboard.putNumber("Navx Roll", navx.getRoll());
         SmartDashboard.putNumber("Navx Yaw", navx.getYaw());
+        SmartDashboard.putNumber("NavX Pitch", navx.getPitch());
     }
 
     public void zeroHeading() {
@@ -79,6 +80,10 @@ public class MMNavigationSubsystem extends SubsystemBase {
 
     public double getRoll() {
         return navx.getRoll();
+    }
+
+    public double getPitch(){
+        return -navx.getPitch();
     }
 
     public void resetOdometry(Pose2d pose) {
@@ -115,8 +120,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         return mainPose;
     }
 
-    // TODO: change "change" to "set" fr general consistency
-    public void changePipeline(int pipelineNumber) {
+    public void setPipeline(int pipelineNumber) {
         limelight.getEntry("pipeline").setNumber(pipelineNumber);
         SmartDashboard.putString("Changing Pipeline:", "yes");
     }

@@ -71,14 +71,14 @@ public class MMSwerveSubsystem extends SubsystemBase {
     }
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.MK4i.L2.maxVelocityMetersPerSecond);
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.MK4i.L1.maxVelocityMetersPerSecond);
         for (int i = 0; i < modules.length; i++) {
             modules[i].setDesiredState(desiredStates[i]);
         }
     }
 
     public void setModuleStatesRaw(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.MK4i.L2.maxVelocityMetersPerSecond);
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.MK4i.L1.maxVelocityMetersPerSecond);
         for (int i = 0; i < modules.length; i++) {
             modules[i].setDesiredStateRaw(desiredStates[i]);
         }

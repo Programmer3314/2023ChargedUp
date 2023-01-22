@@ -21,7 +21,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
-// TODO: Add PID Control for Drive Motor
 
 /** Add your docs here. */
 public class MMSwerveModule {
@@ -41,19 +40,24 @@ public class MMSwerveModule {
         this.magneticCanCoderId = absoluteEncoderId;
         magneticCanCoder = new WPI_CANCoder(magneticCanCoderId);
 
-        magneticCanCoder.configFactoryDefault();
-        magneticCanCoder.configMagnetOffset(Math.toDegrees(0));
-        magneticCanCoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
+        magneticCanCoder.configFactoryDefault(Constants.Robot.canBusTimeoutMs);
+        magneticCanCoder.configMagnetOffset(Math.toDegrees(0),Constants.Robot.canBusTimeoutMs);
+        magneticCanCoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180,Constants.Robot.canBusTimeoutMs);
 
         driveMotorController = new WPI_TalonFX(driveMotorCanId);
-        driveMotorController.configFactoryDefault();
+        driveMotorController.configFactoryDefault(Constants.Robot.canBusTimeoutMs);
 
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
-        driveMotorController.getAllConfigs(driveConfigs);
+        driveMotorController.getAllConfigs(driveConfigs,Constants.Robot.canBusTimeoutMs);
         driveConfigs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
         driveMotorController.configAllSettings(driveConfigs, Constants.Robot.canBusTimeoutMs);
         driveMotorController.setNeutralMode(NeutralMode.Brake);
         driveMotorController.setInverted(driveMotorReversed);
+        driveMotorController.config_kF(0, Constants.MK4i.L1.kfalconDrivetrainKFF,Constants.Robot.canBusTimeoutMs);
+        driveMotorController.config_kP(0, Constants.MK4i.L1.kfalconDrivetrainKP,Constants.Robot.canBusTimeoutMs);
+        driveMotorController.config_kI(0, Constants.MK4i.L1.kfalconDrivetrainKI, Constants.Robot.canBusTimeoutMs);
+        driveMotorController.config_kD(0, Constants.MK4i.L1.kfalconDrivetrainKD, Constants.Robot.canBusTimeoutMs);
+        driveMotorController.config_IntegralZone(0,Constants.MK4i.L1.kfalconDrivetrainKIz , Constants.Robot.canBusTimeoutMs);
 
         turnMotorController = new WPI_TalonFX(turnMotorCanId);
         turnMotorController.configFactoryDefault();
@@ -73,20 +77,20 @@ public class MMSwerveModule {
     }
 
     public double getDrivePositionMeters() {
-        return driveMotorController.getSelectedSensorPosition() * Constants.MK4i.L2.driveMetersPerTick;
+        return driveMotorController.getSelectedSensorPosition() * Constants.MK4i.L1.driveMetersPerTick;
     }
 
     public double getTurningPositionRadians() {
         return MathUtil
-                .angleModulus(turnMotorController.getSelectedSensorPosition() * Constants.MK4i.L2.turnRadiansPerTick);
+                .angleModulus(turnMotorController.getSelectedSensorPosition() * Constants.MK4i.L1.turnRadiansPerTick);
     }
 
     public double getDriveVelocity() {
-        return driveMotorController.getSelectedSensorVelocity() * 10 * Constants.MK4i.L2.driveMetersPerTick;
+        return driveMotorController.getSelectedSensorVelocity() * 10 * Constants.MK4i.L1.driveMetersPerTick;
     }
 
     public double getTurningVelocity() {
-        return turnMotorController.getSelectedSensorVelocity() * 10 * Constants.MK4i.L2.turnRadiansPerTick;
+        return turnMotorController.getSelectedSensorVelocity() * 10 * Constants.MK4i.L1.turnRadiansPerTick;
     }
 
     public double getAbsoluteEncoderRad() {
@@ -97,7 +101,7 @@ public class MMSwerveModule {
 
     public void resetEncoders() {
         driveMotorController.setSelectedSensorPosition(0);
-        turnMotorController.setSelectedSensorPosition(getAbsoluteEncoderRad() / Constants.MK4i.L2.turnRadiansPerTick);
+        turnMotorController.setSelectedSensorPosition(getAbsoluteEncoderRad() / Constants.MK4i.L1.turnRadiansPerTick);
     }
 
     public SwerveModuleState getState() {
@@ -115,8 +119,10 @@ public class MMSwerveModule {
     public void setDesiredStateRaw(SwerveModuleState state) {
 
         state = SwerveModuleState.optimize(state, getState().angle);
-        driveMotorController.set(ControlMode.PercentOutput,
-                state.speedMetersPerSecond / Constants.MK4i.L2.maxVelocityMetersPerSecond);
+        //driveMotorController.set(ControlMode.PercentOutput,
+        //        state.speedMetersPerSecond / Constants.MK4i.L2.maxVelocityMetersPerSecond);
+        double velocity=state.speedMetersPerSecond/Constants.MK4i.L1.driveMetersPerTick/10.0;
+        driveMotorController.set(ControlMode.Velocity,velocity);
         turnMotorController.set(turnPidController.calculate(getTurningPositionRadians(), state.angle.getRadians()));
         SmartDashboard.putString("Swerve[" + magneticCanCoderId + "] State", state.toString());
 

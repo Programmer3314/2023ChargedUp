@@ -49,11 +49,9 @@ public class TranslateAbsoluteCmd extends CommandBase {
     public void execute() {
         Translation2d currentPosition = navigationSubsystem.getPose().getTranslation();
         Translation2d trip = targetPosition.minus(currentPosition);
-        // TODO: tripLength = trip.getNorm();  simplify
-        double tripLength = targetPosition.getDistance(currentPosition);
+        double tripLength = trip.getNorm();
 
-        // TODO: already have tripLength, don't calculate it again.
-        trip = trip.div(trip.getNorm());
+        trip = trip.div(tripLength);
 
         double correction = tripPidController.calculate(tripLength);
         correction *= -1;
