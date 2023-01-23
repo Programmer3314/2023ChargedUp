@@ -14,17 +14,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -39,7 +34,6 @@ import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TargetPegCmd;
 import frc.robot.commands.TargetTagCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
-import frc.robot.commands.TranslateRelativeCmd;
 import frc.robot.commands.WaitToDeliverCmd;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
@@ -49,7 +43,6 @@ public class RobotContainer {
 
         private final SendableChooser<Integer> getDesiredCell = new SendableChooser<>();
 
-        private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
         private static Alliance alliance;
         private static boolean isRedAlliance;
 
