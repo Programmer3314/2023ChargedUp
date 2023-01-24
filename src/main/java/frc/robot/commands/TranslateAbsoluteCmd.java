@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,7 +18,7 @@ import frc.robot.utility.MMTurnPIDController;
 /** Add your docs here. */
 public class TranslateAbsoluteCmd extends CommandBase {
     private final MMSwerveSubsystem swerveSubsystem;
-    private final Pose2d desireTranslation;
+    private final Supplier<Pose2d> desiredPosition;
     private final double maxSpeed;
     private Translation2d targetPosition;
     //private final TrapezoidProfile.Constraints constraints;
@@ -24,10 +26,10 @@ public class TranslateAbsoluteCmd extends CommandBase {
     private final MMNavigationSubsystem navigationSubsystem;
     private final MMTurnPIDController turnPidController;
 
-    public TranslateAbsoluteCmd(MMSwerveSubsystem swerveSubsystem, Pose2d desiredTranslation, double maxSpeed,
+    public TranslateAbsoluteCmd(MMSwerveSubsystem swerveSubsystem, Supplier<Pose2d> desiredTranslation, double maxSpeed,
             MMNavigationSubsystem navigationSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
-        this.desireTranslation = desiredTranslation;
+        this.desiredPosition = desiredTranslation;
         this.maxSpeed = maxSpeed;
         this.navigationSubsystem = navigationSubsystem;
         //constraints = new TrapezoidProfile.Constraints(maxSpeed, maxSpeed);
@@ -40,9 +42,9 @@ public class TranslateAbsoluteCmd extends CommandBase {
 
     @Override
     public void initialize() {
-        targetPosition = desireTranslation.getTranslation();
+        targetPosition = desiredPosition.get().getTranslation();
         SmartDashboard.putString("In LockedIn", "false");
-        turnPidController.initialize(desireTranslation.getRotation().getRadians());
+        turnPidController.initialize(desiredPosition.get().getRotation().getRadians());
     }
 
     @Override

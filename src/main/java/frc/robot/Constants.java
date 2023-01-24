@@ -14,6 +14,10 @@ public class Constants {
         public static final double metersPerInch = 0.0254;
         public static final double metersPerFeet = 0.3048;
     }
+    public static class targetPositions {
+        public static final double fieldXCoordinate = 6.0;
+        
+    }
 
     public static class Falcon {
         public static final double ticksPerRev = 2048.0;

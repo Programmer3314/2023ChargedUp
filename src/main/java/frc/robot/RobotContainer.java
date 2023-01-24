@@ -70,9 +70,9 @@ public class RobotContainer {
                 for (int i = 1; i < 10; i++) {
                         getDesiredCell.addOption("Cell: " + i, i);
                 }
-                
+
                 Shuffleboard.getTab("In Match").add(getDesiredCell).withWidget(BuiltInWidgets.kComboBoxChooser);
-                
+
                 alliance = DriverStation.getAlliance();
                 isRedAlliance = Alliance.Red == alliance;
 
@@ -113,10 +113,10 @@ public class RobotContainer {
                                                 // new Pose2d(3.69, -3.93, new Rotation2d()), 1,
                                                 // navigationSubsystem),
                                                 new TranslateAbsoluteCmd(swerveSubsystem,
-                                                                new Pose2d(6.1, -3.5, new Rotation2d(0)),
+                                                              () ->  new Pose2d(6.0, -3.5, new Rotation2d(0)),
                                                                 1, navigationSubsystem),
                                                 new TranslateAbsoluteCmd(swerveSubsystem,
-                                                                new Pose2d(6, -2.93, new Rotation2d(0)),
+                                                            ()->    new Pose2d(6, -2.93, new Rotation2d(0)),
                                                                 1, navigationSubsystem),
                                                 // new LockedInCmd(swerveSubsystem)),
                                                 // new InstantCommand(() -> navigationSubsystem.changePipeline(1))));
@@ -132,11 +132,29 @@ public class RobotContainer {
                                                 // new Pose2d(3.69, -3.93, new Rotation2d()),
                                                 // 1, navigationSubsystem),
                                                 new TranslateAbsoluteCmd(swerveSubsystem,
-                                                                new Pose2d(6, -3.5, new Rotation2d(0)),
+                                                          ()->      new Pose2d(6, -3.5, new Rotation2d(0)),
                                                                 1, navigationSubsystem),
                                                 new TranslateAbsoluteCmd(swerveSubsystem,
-                                                                new Pose2d(6, -2.4, new Rotation2d(0)),
+                                                          ()->      new Pose2d(6, -2.4, new Rotation2d(0)),
                                                                 1, navigationSubsystem),
+                                                // new LockedInCmd(swerveSubsystem)),
+                                                new ParallelRaceGroup(
+                                                                new TargetPegCmd(swerveSubsystem, 2,
+                                                                                navigationSubsystem),
+                                                                new WaitToDeliverCmd(30))));
+
+                new JoystickButton(buttonBox1, 4)
+                                .onTrue(new SequentialCommandGroup(
+                                                new InstantCommand(() -> navigationSubsystem.setPipeline(0)),
+                                               
+                                                new TranslateAbsoluteCmd(swerveSubsystem,
+                                                         ()->       new Pose2d(Constants.targetPositions.fieldXCoordinate*(isRedAlliance?1:-1), navigationSubsystem.getPose().getY(), new Rotation2d(isRedAlliance?0:Math.PI)),
+                                                                1, navigationSubsystem),
+                                               new DriveToCell(swerveSubsystem,
+                                               () -> getDesiredCell.getSelected(),
+                                               navigationSubsystem,
+                                               isRedAlliance,
+                                               1),
                                                 // new LockedInCmd(swerveSubsystem)),
                                                 new ParallelRaceGroup(
                                                                 new TargetPegCmd(swerveSubsystem, 2,
