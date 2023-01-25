@@ -25,6 +25,7 @@ public class WaitToDeliverCmd extends CommandBase{
         
     }
 
+    // TODO: Oh no! do it again.
     @Override
     public boolean isFinished() {
         SmartDashboard.putBoolean("WaitToDeliverDone", seconds<=0);

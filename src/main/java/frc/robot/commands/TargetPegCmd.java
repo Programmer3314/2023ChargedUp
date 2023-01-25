@@ -30,7 +30,6 @@ public class TargetPegCmd extends CommandBase {
         this.swerveSubsystem = swerveSubsystem;
         this.maxRotationSpeed = maxRotationSpeed;
         this.navigationSubsystem = navigationSubsystem;
-        // turnPidController = new PIDController(-5,0,0);
         turnPidController = new MMTurnPIDController();
 
         addRequirements(swerveSubsystem);
@@ -39,7 +38,6 @@ public class TargetPegCmd extends CommandBase {
     @Override
     public void initialize() {
         navigationSubsystem.setPipeline(1);
-        //turnPidController.setSetpoint(0);
         turnPidController.initialize(new Rotation2d());
     }
 
@@ -47,14 +45,6 @@ public class TargetPegCmd extends CommandBase {
     public void execute() {
         Rotation2d targetAngle = new Rotation2d(Math.toRadians(limelight.getEntry("tx").getDouble(0)));
         double correction = turnPidController.execute(targetAngle.getRadians());
-        //double correction = turnPidController.calculate(targetAngle.getRadians());
-        // if (correction > maxRotationSpeed) {
-        //     correction = maxRotationSpeed;
-        // }
-        // if (correction < -maxRotationSpeed) {
-        //     correction = -maxRotationSpeed;
-        // }
-
         swerveSubsystem.drive(0, 0, correction, true, navigationSubsystem.getRotation2d());
     }
 

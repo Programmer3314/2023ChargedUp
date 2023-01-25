@@ -42,13 +42,6 @@ public class TargetTagCmd extends CommandBase {
     public void execute() {
         Rotation2d targetAngle = new Rotation2d(Math.toRadians(limelight.getEntry("tx").getDouble(0)));
         double correction = turnPidController.execute(targetAngle.getRadians());
-        // if (correction > maxRotationSpeed) {
-        //     correction = maxRotationSpeed;
-        // }
-        // if (correction < -maxRotationSpeed) {
-        //     correction = -maxRotationSpeed;
-        // }
-
         swerveSubsystem.drive(0, 0, correction, true, navigationSubsystem.getRotation2d());
     }
 

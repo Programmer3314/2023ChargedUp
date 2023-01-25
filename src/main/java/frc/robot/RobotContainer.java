@@ -112,6 +112,7 @@ public class RobotContainer {
                                         navigationSubsystem.getLimelightPose()
                                 // new Pose2d(3.3, -4, new Rotation2d())
                                 ))));
+        // TODO: Consolidate X&Y into right bumper command below (6)                        
         new JoystickButton(driverJoystick, Constants.Driver.Button.targetTagY)
                 // .onTrue(new ParallelCommandGroup(
                 // new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem, 1)),

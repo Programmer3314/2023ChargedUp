@@ -32,11 +32,9 @@ public class TranslateAbsoluteCmd extends CommandBase {
         this.desiredPosition = desiredTranslation;
         this.maxSpeed = maxSpeed;
         this.navigationSubsystem = navigationSubsystem;
-        //constraints = new TrapezoidProfile.Constraints(maxSpeed, maxSpeed);
         tripPidController = new PIDController(4, 0, 0);
         turnPidController=new MMTurnPIDController();
-        // turnPidController = new PIDController(5, 0, 0);
-        // turnPidController.enableContinuousInput(-Math.PI, Math.PI);
+
         addRequirements(swerveSubsystem);
     }
 
@@ -75,6 +73,7 @@ public class TranslateAbsoluteCmd extends CommandBase {
         swerveSubsystem.stopModules();
     }
 
+    // TODO: Make the comparisons consistent
     @Override
     public boolean isFinished() {
         double tripLength = targetPosition.getDistance(navigationSubsystem.getPose().getTranslation());

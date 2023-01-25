@@ -60,7 +60,7 @@ public class MMSwerveModule {
         driveMotorController.config_IntegralZone(0,Constants.MK4i.L1.kfalconDrivetrainKIz , Constants.Robot.canBusTimeoutMs);
 
         turnMotorController = new WPI_TalonFX(turnMotorCanId);
-        turnMotorController.configFactoryDefault();
+        turnMotorController.configFactoryDefault(Constants.Robot.canBusTimeoutMs);
 
         TalonFXConfiguration turnConfigs = new TalonFXConfiguration();
         turnMotorController.getAllConfigs(driveConfigs, Constants.Robot.canBusTimeoutMs);
@@ -73,7 +73,6 @@ public class MMSwerveModule {
         turnPidController.enableContinuousInput(-Math.PI, Math.PI);
 
         // resetEncoders();
-
     }
 
     public double getDrivePositionMeters() {
@@ -96,7 +95,6 @@ public class MMSwerveModule {
     public double getAbsoluteEncoderRad() {
         return MathUtil.angleModulus((magneticCanCoder.getAbsolutePosition() * Math.PI / 180.0) + absoluteEncoderOffset)
                 * (absoluteEncoderReversed ? -1.0 : 1.0);
-
     }
 
     public void resetEncoders() {
@@ -131,7 +129,6 @@ public class MMSwerveModule {
     public void stop() {
         driveMotorController.set(ControlMode.PercentOutput, 0);
         turnMotorController.set(ControlMode.PercentOutput, 0);
-
     }
 
     public SwerveModulePosition getSwerveModulePosition() {
