@@ -26,10 +26,10 @@ public class DriveToCell extends CommandBase {
     private final PIDController tripPidController;
     private final MMTurnPIDController turnPidController;
     private Pose2d targetPose2d;
-    private boolean isRedAlliance;
+    private Supplier<Boolean> isRedAlliance;
 
     public DriveToCell(MMSwerveSubsystem swerveSubsystem, Supplier<Integer> desiredCell,
-            MMNavigationSubsystem navigationSubsystem, boolean isRedAlliance, double maxSpeed) {
+            MMNavigationSubsystem navigationSubsystem, Supplier<Boolean> isRedAlliance, double maxSpeed) {
         this.desiredCell = desiredCell;
         this.swerveSubsystem = swerveSubsystem;
         this.navigationSubsystem = navigationSubsystem;
@@ -43,13 +43,14 @@ public class DriveToCell extends CommandBase {
 
     @Override
     public void initialize() {
-        targetPose2d = MMField.getCellPose(desiredCell.get(), isRedAlliance);
+        targetPose2d = MMField.getCellPose(desiredCell.get(), isRedAlliance.get());
         targetPosition = targetPose2d.getTranslation();
         turnPidController.initialize(targetPose2d.getRotation());
     }
 
     @Override
     public void execute() {
+        SmartDashboard.putBoolean("isRedAlliance: ", isRedAlliance.get());
         Translation2d currentPosition = navigationSubsystem.getPose().getTranslation();
         Translation2d trip = targetPosition.minus(currentPosition);
         double tripLength = trip.getNorm();
