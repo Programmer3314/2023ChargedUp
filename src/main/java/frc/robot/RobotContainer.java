@@ -15,13 +15,11 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,10 +28,7 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.DriveAbsoluteDistance;
 import frc.robot.commands.DriveToCell;
-import frc.robot.commands.DriveToRampCmd;
-import frc.robot.commands.LockedInCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TargetPegCmd;
 import frc.robot.commands.TargetTagCmd;
@@ -92,6 +87,7 @@ public class RobotContainer {
             } catch (Exception e) {
             }
         }).start();
+
         swerveSubsystem.setDefaultCommand(
                 new SequentialCommandGroup(
                         new InstantCommand(() -> navigationSubsystem.setPipeline(0)),
@@ -105,7 +101,6 @@ public class RobotContainer {
 
         );
         configureBindings();
-
     }
 
     private void configureBindings() {
@@ -263,8 +258,7 @@ public class RobotContainer {
                 swerveSubsystem);
 
         return new SequentialCommandGroup(
-                new InstantCommand(
-                        () -> navigationSubsystem.resetOdometry(trajectory.getInitialPose())),
+                new InstantCommand(() -> navigationSubsystem.resetOdometry(trajectory.getInitialPose())),
                 swerveControllerCommand,
                 new InstantCommand(() -> swerveSubsystem.stopModules()));
     }
