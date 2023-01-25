@@ -195,9 +195,15 @@ public class Constants {
         public static final int button = 1;
 
         public static class Button {
-            public static final int changePipeline = 1;
-            public static final int autoDriveToRamp = 2;
-            public static final int driveRelative = 3;
+            public static final int gridGroup1 = 1;
+            public static final int gridGroup2 = 2;
+            public static final int gridGroup3 = 3;
+            public static final int gridGroupCell1=4;
+            public static final int gridGroupCell2=5;
+            public static final int gridGroupCell3=6;
+            public static final int gridGroupHeightLow=7;
+            public static final int gridGroupHeightMed=8;
+            public static final int gridGroupHeightHigh=9;
         }
     }
 

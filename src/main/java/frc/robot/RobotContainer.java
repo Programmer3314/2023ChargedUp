@@ -14,11 +14,15 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -40,6 +44,7 @@ import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMJoystickAxis;
 
 public class RobotContainer {
+        private ShuffleboardTab tab = Shuffleboard.getTab("In Match");
 
         private final SendableChooser<Integer> getDesiredCell = new SendableChooser<>();
 
@@ -63,6 +68,11 @@ public class RobotContainer {
                         Constants.Driver.Axis.r,
                         0.05,
                         -(Math.PI / 2.0));
+        private int gridHeight;
+        private int gridGroup;
+        private int gridGroupCell;
+        private int gridCell;
+        private GenericEntry gridCellEntry = tab.add("Grid Cell: ", "None").getEntry();
 
         public RobotContainer() {
 
@@ -149,7 +159,7 @@ public class RobotContainer {
                                                                                 navigationSubsystem),
                                                                 new WaitToDeliverCmd(30))));
 
-                new JoystickButton(buttonBox1, 4)
+                new JoystickButton(driverJoystick, 6)
                                 .onTrue(new SequentialCommandGroup(
                                                 new InstantCommand(() -> navigationSubsystem.setPipeline(0)),
 
@@ -163,7 +173,7 @@ public class RobotContainer {
                                                                                                 : Math.PI)),
                                                                 1, navigationSubsystem),
                                                 new DriveToCell(swerveSubsystem,
-                                                                () -> getDesiredCell.getSelected(),
+                                                                () -> gridCell,
                                                                 navigationSubsystem,
                                                                 () -> isRedAlliance,
                                                                 1),
@@ -173,25 +183,43 @@ public class RobotContainer {
                                                                                 navigationSubsystem),
                                                                 new WaitToDeliverCmd(30))));
                 // new TargetPegCmd(swerveSubsystem, 2, navigationSubsystem, 1)));
-                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.changePipeline)
-                                .whileTrue(new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem));
+                // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.changePipeline)
+                // .whileTrue(new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem));
 
-                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.autoDriveToRamp)
-                                .onTrue(new SequentialCommandGroup(
-                                                new DriveToRampCmd(swerveSubsystem, navigationSubsystem, .9),
-                                                new DriveAbsoluteDistance(swerveSubsystem, new Translation2d(-.75, 0),
-                                                                .25, navigationSubsystem),
-                                                // new TranslateRelativeCmd(swerveSubsystem, new Translation2d(0.25,0),
-                                                // 0.5, navigationSubsystem),
-                                                new LockedInCmd(swerveSubsystem)));
+                // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.autoDriveToRamp)
+                // .onTrue(new SequentialCommandGroup(
+                // new DriveToRampCmd(swerveSubsystem, navigationSubsystem, .9),
+                // new DriveAbsoluteDistance(swerveSubsystem, new Translation2d(-.75, 0),
+                // .25, navigationSubsystem),
+                // // new TranslateRelativeCmd(swerveSubsystem, new Translation2d(0.25,0),
+                // // 0.5, navigationSubsystem),
+                // new LockedInCmd(swerveSubsystem)));
 
-                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.driveRelative)
-                                .onTrue(
-                                                new DriveToCell(swerveSubsystem,
-                                                                () -> getDesiredCell.getSelected(),
-                                                                navigationSubsystem,
-                                                                () -> isRedAlliance,
-                                                                1));
+                // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.driveRelative)
+                // .onTrue(
+                // new DriveToCell(swerveSubsystem,
+                // () -> getDesiredCell.getSelected(),
+                // navigationSubsystem,
+                // () -> isRedAlliance,
+                // 1));
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup1)
+                                .onTrue(new InstantCommand(() -> selectCell(gridHeight, 1, gridGroupCell)));
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup2)
+                                .onTrue(new InstantCommand(() -> selectCell(gridHeight, 2, gridGroupCell)));
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup3)
+                                .onTrue(new InstantCommand(() -> selectCell(gridHeight, 3, gridGroupCell)));
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell1)
+                                .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 1)));
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell2)
+                                .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 2)));
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell3)
+                                .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 3)));
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupHeightLow)
+                                .onTrue(new InstantCommand(() -> selectCell(1, gridGroup, gridGroupCell)));
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupHeightMed)
+                                .onTrue(new InstantCommand(() -> selectCell(2, gridGroup, gridGroupCell)));
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupHeightHigh)
+                                .onTrue(new InstantCommand(() -> selectCell(3, gridGroup, gridGroupCell)));
                 // new JoystickButton(driverJoystick, Constants.Driver.Button.trackAprilTag)
                 // .whileTrue(new SwerveJoystickCmd(swerveSubsystem,
                 // () -> driveXAxis.getSquared(),
@@ -239,6 +267,15 @@ public class RobotContainer {
                                                 () -> navigationSubsystem.resetOdometry(trajectory.getInitialPose())),
                                 swerveControllerCommand,
                                 new InstantCommand(() -> swerveSubsystem.stopModules()));
+        }
+
+        public void selectCell(int gridHeight, int gridGroup, int gridGroupCell) {
+                gridCell = gridGroup * 3 - 3 + gridGroupCell;
+                this.gridGroup = gridGroup;
+                this.gridGroupCell = gridGroupCell;
+                this.gridHeight = gridHeight;
+                gridCellEntry.setString("Grid Group: " + gridGroup + "Grid GroupCell: " + gridGroupCell
+                                + " Grid Height: " + gridHeight + " Grid Cell: " + gridCell);
         }
 
 }
