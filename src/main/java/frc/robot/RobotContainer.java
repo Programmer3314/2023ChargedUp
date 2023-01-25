@@ -113,7 +113,8 @@ public class RobotContainer {
                                 // new Pose2d(3.3, -4, new Rotation2d())
                                 ))));
                                 
-        // TODO: Consolidate X&Y into right bumper command below (6)                        
+        // TODO: Consolidate X&Y into right bumper command below (6) 
+        // Use Commands.Select and a method that will return the type of delivery (enum)                       
         new JoystickButton(driverJoystick, Constants.Driver.Button.targetTagY)
                 // .onTrue(new ParallelCommandGroup(
                 // new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem, 1)),
