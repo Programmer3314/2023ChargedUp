@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -36,10 +35,7 @@ import frc.robot.commands.DeliverCubeHighCmd;
 import frc.robot.commands.DriveToCell;
 import frc.robot.commands.DriveToPegCmd;
 import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.commands.TargetPegCmd;
-import frc.robot.commands.TargetTagCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
-import frc.robot.commands.WaitToDeliverCmd;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMField;
@@ -181,6 +177,9 @@ public class RobotContainer {
                 .onTrue(
                         new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .1));
 
+        // TODO: Make this run only while the button is held
+        // TODO: Make this a "constructor only command" something like AutoDelivery 
+        //       to make RobotContainer cleaner                
         new JoystickButton(driverJoystick, 6)
                 .onTrue(new SequentialCommandGroup(
                         new InstantCommand(() -> navigationSubsystem.setPipeline(0)),
