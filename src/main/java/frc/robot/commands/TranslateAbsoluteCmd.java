@@ -21,7 +21,7 @@ public class TranslateAbsoluteCmd extends CommandBase {
     private final Supplier<Pose2d> desiredPosition;
     private final double maxSpeed;
     private Translation2d targetPosition;
-    //private final TrapezoidProfile.Constraints constraints;
+    // private final TrapezoidProfile.Constraints constraints;
     private final PIDController tripPidController;
     private final MMNavigationSubsystem navigationSubsystem;
     private final MMTurnPIDController turnPidController;
@@ -33,7 +33,7 @@ public class TranslateAbsoluteCmd extends CommandBase {
         this.maxSpeed = maxSpeed;
         this.navigationSubsystem = navigationSubsystem;
         tripPidController = new PIDController(4, 0, 0);
-        turnPidController=new MMTurnPIDController();
+        turnPidController = new MMTurnPIDController();
 
         addRequirements(swerveSubsystem);
     }
@@ -73,13 +73,14 @@ public class TranslateAbsoluteCmd extends CommandBase {
         swerveSubsystem.stopModules();
     }
 
-    // TODO: Make the comparisons consistent
     @Override
     public boolean isFinished() {
+
         double tripLength = targetPosition.getDistance(navigationSubsystem.getPose().getTranslation());
+        boolean finishedTranslate = tripLength < .05;
         SmartDashboard.putNumber("Trip Length:", tripLength);
-        SmartDashboard.putBoolean("Finished Translate", tripLength < .1);
-        return tripLength < .05 &&turnPidController.isFinished();
+        SmartDashboard.putBoolean("Finished Translate", finishedTranslate);
+        return finishedTranslate && turnPidController.isFinished();
     }
 
 }

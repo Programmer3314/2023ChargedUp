@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.List;
+import java.util.Map;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -23,11 +24,15 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.DeliverConeCmd;
+import frc.robot.commands.DeliverCubeFloorCmd;
+import frc.robot.commands.DeliverCubeHighCmd;
 import frc.robot.commands.DriveToCell;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TargetPegCmd;
@@ -36,6 +41,7 @@ import frc.robot.commands.TranslateAbsoluteCmd;
 import frc.robot.commands.WaitToDeliverCmd;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
+import frc.robot.utility.MMField;
 import frc.robot.utility.MMJoystickAxis;
 
 public class RobotContainer {
@@ -103,7 +109,21 @@ public class RobotContainer {
         configureBindings();
     }
 
+    private enum DeliveryMethod {
+        DeliverCone,
+        DeliverFloorCube,
+        DeliverHighCube
+    }
+
+    private DeliveryMethod selectDeliveryMethod() {
+        if (MMField.isCellCone(gridCell)) {
+            return DeliveryMethod.DeliverCone;
+        }
+        return DeliveryMethod.DeliverHighCube;
+    }
+
     private void configureBindings() {
+
         new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavxB)
                 .onTrue(new SequentialCommandGroup(
                         new InstantCommand(() -> navigationSubsystem.zeroHeading()),
@@ -112,9 +132,9 @@ public class RobotContainer {
                                         navigationSubsystem.getLimelightPose()
                                 // new Pose2d(3.3, -4, new Rotation2d())
                                 ))));
-                                
-        // TODO: Consolidate X&Y into right bumper command below (6) 
-        // Use Commands.Select and a method that will return the type of delivery (enum)                       
+
+        // TODO: Consolidate X&Y into right bumper command below (6)
+        // Use Commands.Select and a method that will return the type of delivery (enum)
         new JoystickButton(driverJoystick, Constants.Driver.Button.targetTagY)
                 // .onTrue(new ParallelCommandGroup(
                 // new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem, 1)),
@@ -176,10 +196,28 @@ public class RobotContainer {
                                 () -> isRedAlliance,
                                 1),
                         // new LockedInCmd(swerveSubsystem)),
-                        new ParallelRaceGroup(
-                                new TargetPegCmd(swerveSubsystem, 2,
-                                        navigationSubsystem),
-                                new WaitToDeliverCmd(30))));
+                        // new ParallelRaceGroup(
+                        // new TargetPegCmd(swerveSubsystem, 2,
+                        // navigationSubsystem),
+                        // new WaitToDeliverCmd(30)
+                        Commands.select(
+                                Map.ofEntries(
+                                        Map.entry(DeliveryMethod.DeliverCone,
+                                                new DeliverConeCmd(
+                                                        navigationSubsystem,
+                                                        2,
+                                                        swerveSubsystem)),
+                                        Map.entry(DeliveryMethod.DeliverFloorCube,
+                                                new DeliverCubeFloorCmd(
+                                                        swerveSubsystem,
+                                                        2,
+                                                        navigationSubsystem)),
+                                        Map.entry(DeliveryMethod.DeliverHighCube,
+                                                new DeliverCubeHighCmd(
+                                                        swerveSubsystem,
+                                                        2,
+                                                        navigationSubsystem))),
+                                this::selectDeliveryMethod)));
         // new TargetPegCmd(swerveSubsystem, 2, navigationSubsystem, 1)));
         // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.changePipeline)
         // .whileTrue(new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem));
@@ -261,7 +299,8 @@ public class RobotContainer {
                 swerveSubsystem);
 
         return new SequentialCommandGroup(
-                new InstantCommand(() -> navigationSubsystem.resetOdometry(trajectory.getInitialPose())),
+                new InstantCommand(
+                        () -> navigationSubsystem.resetOdometry(trajectory.getInitialPose())),
                 swerveControllerCommand,
                 new InstantCommand(() -> swerveSubsystem.stopModules()));
     }

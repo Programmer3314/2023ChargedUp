@@ -70,14 +70,14 @@ public class TranslateRelativeCmd extends CommandBase {
         swerveSubsystem.stopModules();
     }
 
-    // TODO: consolidate comparisons
     @Override
     public boolean isFinished() {
 
         double tripLength = targetPosition.getDistance(navigationSubsystem.getPose().getTranslation());
+        boolean finishedTranslate = tripLength < .1;
         SmartDashboard.putNumber("Trip Length:", tripLength);
-        SmartDashboard.putBoolean("Finished Translate", tripLength < .1);
-        return tripLength < .1 && rotationPidController.isFinished();
+        SmartDashboard.putBoolean("Finished Translate", finishedTranslate);
+        return finishedTranslate && rotationPidController.isFinished();
     }
 
 }
