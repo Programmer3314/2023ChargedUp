@@ -34,6 +34,7 @@ import frc.robot.commands.DeliverConeCmd;
 import frc.robot.commands.DeliverCubeFloorCmd;
 import frc.robot.commands.DeliverCubeHighCmd;
 import frc.robot.commands.DriveToCell;
+import frc.robot.commands.DriveToPegCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TargetPegCmd;
 import frc.robot.commands.TargetTagCmd;
@@ -135,47 +136,50 @@ public class RobotContainer {
 
         // TODO: Consolidate X&Y into right bumper command below (6)
         // Use Commands.Select and a method that will return the type of delivery (enum)
-        new JoystickButton(driverJoystick, Constants.Driver.Button.targetTagY)
-                // .onTrue(new ParallelCommandGroup(
-                // new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem, 1)),
-                // new WaitRO);
-                // ))
-                .onTrue(new SequentialCommandGroup(
+        // new JoystickButton(driverJoystick, Constants.Driver.Button.targetTagY)
+        // // .onTrue(new ParallelCommandGroup(
+        // // new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem, 1)),
+        // // new WaitRO);
+        // // ))
+        // .onTrue(new SequentialCommandGroup(
 
-                        // new InstantCommand(() -> navigationSubsystem.changePipeline(0)),
-                        // new TranslateAbsoluteCmd(swerveSubsystem,
-                        // new Pose2d(3.69, -3.93, new Rotation2d()), 1,
-                        // navigationSubsystem),
-                        new TranslateAbsoluteCmd(swerveSubsystem,
-                                () -> new Pose2d(6.0, -3.5, new Rotation2d(0)),
-                                1, navigationSubsystem),
-                        new TranslateAbsoluteCmd(swerveSubsystem,
-                                () -> new Pose2d(6, -2.93, new Rotation2d(0)),
-                                1, navigationSubsystem),
-                        // new LockedInCmd(swerveSubsystem)),
-                        // new InstantCommand(() -> navigationSubsystem.changePipeline(1))));
-                        new ParallelRaceGroup(
-                                new TargetTagCmd(swerveSubsystem, 2,
-                                        navigationSubsystem),
-                                new WaitToDeliverCmd(30))));
+        // // new InstantCommand(() -> navigationSubsystem.changePipeline(0)),
+        // // new TranslateAbsoluteCmd(swerveSubsystem,
+        // // new Pose2d(3.69, -3.93, new Rotation2d()), 1,
+        // // navigationSubsystem),
+        // new TranslateAbsoluteCmd(swerveSubsystem,
+        // () -> new Pose2d(6.0, -3.5, new Rotation2d(0)),
+        // 1, navigationSubsystem),
+        // new TranslateAbsoluteCmd(swerveSubsystem,
+        // () -> new Pose2d(6, -2.93, new Rotation2d(0)),
+        // 1, navigationSubsystem),
+        // // new LockedInCmd(swerveSubsystem)),
+        // // new InstantCommand(() -> navigationSubsystem.changePipeline(1))));
+        // new ParallelRaceGroup(
+        // new TargetTagCmd(swerveSubsystem, 2,
+        // navigationSubsystem),
+        // new WaitToDeliverCmd(30))));
 
-        new JoystickButton(driverJoystick, Constants.Driver.Button.targetPegX)
-                .onTrue(new SequentialCommandGroup(
-                        new InstantCommand(() -> navigationSubsystem.setPipeline(0)),
-                        // new TranslateAbsoluteCmd(swerveSubsystem,
-                        // new Pose2d(3.69, -3.93, new Rotation2d()),
-                        // 1, navigationSubsystem),
-                        new TranslateAbsoluteCmd(swerveSubsystem,
-                                () -> new Pose2d(6, -3.5, new Rotation2d(0)),
-                                1, navigationSubsystem),
-                        new TranslateAbsoluteCmd(swerveSubsystem,
-                                () -> new Pose2d(6, -2.4, new Rotation2d(0)),
-                                1, navigationSubsystem),
-                        // new LockedInCmd(swerveSubsystem)),
-                        new ParallelRaceGroup(
-                                new TargetPegCmd(swerveSubsystem, 2,
-                                        navigationSubsystem),
-                                new WaitToDeliverCmd(30))));
+        // new JoystickButton(driverJoystick, Constants.Driver.Button.targetPegX)
+        // .onTrue(new SequentialCommandGroup(
+        // new InstantCommand(() -> navigationSubsystem.setPipeline(0)),
+        // // new TranslateAbsoluteCmd(swerveSubsystem,
+        // // new Pose2d(3.69, -3.93, new Rotation2d()),
+        // // 1, navigationSubsystem),
+        // new TranslateAbsoluteCmd(swerveSubsystem,
+        // () -> new Pose2d(6, -3.5, new Rotation2d(0)),
+        // 1, navigationSubsystem),
+        // new TranslateAbsoluteCmd(swerveSubsystem,
+        // () -> new Pose2d(6, -2.4, new Rotation2d(0)),
+        // 1, navigationSubsystem),
+        // // new LockedInCmd(swerveSubsystem)),
+        // new ParallelRaceGroup(
+        // new TargetPegCmd(swerveSubsystem, 2,
+        // navigationSubsystem),
+        // new WaitToDeliverCmd(30))));
+        new JoystickButton(driverJoystick, Constants.Driver.Button.testPeg)
+                .onTrue(
+                        new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .1));
 
         new JoystickButton(driverJoystick, 6)
                 .onTrue(new SequentialCommandGroup(

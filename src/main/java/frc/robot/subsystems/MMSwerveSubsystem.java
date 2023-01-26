@@ -99,6 +99,14 @@ public class MMSwerveSubsystem extends SubsystemBase {
         };
     }
 
+    public double getAverageDriveVelocity() {
+        double avgVelocity = 0;
+        for (int i = 0; i < 4; i++) {
+            avgVelocity += modules[i].getDriveVelocity();
+        }
+        return avgVelocity / 4.0;
+    }
+
     public void drive(double xMetersPerSec, double yMetersPerSec, double rRadPerSec, boolean isFieldCentric,
             Rotation2d robotAngle) {
         ChassisSpeeds chassisSpeeds;

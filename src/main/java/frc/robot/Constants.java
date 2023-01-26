@@ -14,9 +14,10 @@ public class Constants {
         public static final double metersPerInch = 0.0254;
         public static final double metersPerFeet = 0.3048;
     }
+
     public static class targetPositions {
         public static final double fieldXCoordinate = 6.0;
-        
+
     }
 
     public static class Falcon {
@@ -113,28 +114,28 @@ public class Constants {
             public static final int driveMotor = 2;
             public static final int steerMotor = 1;
             public static final int absoluteEncoderId = 1;
-            public static final double absoluteEncoderOffset = -Math.toRadians(103);//28
+            public static final double absoluteEncoderOffset = -Math.toRadians(103);// 28
         }
 
         public static class frontRightModule {
             public static final int driveMotor = 4;
             public static final int steerMotor = 3;
             public static final int absoluteEncoderId = 2;
-            public static final double absoluteEncoderOffset = -Math.toRadians(-24);//-87
+            public static final double absoluteEncoderOffset = -Math.toRadians(-24);// -87
         }
 
         public static class backRightModule {
             public static final int driveMotor = 6;
             public static final int steerMotor = 5;
             public static final int absoluteEncoderId = 3;
-            public static final double absoluteEncoderOffset = -Math.toRadians(-61);//49
+            public static final double absoluteEncoderOffset = -Math.toRadians(-61);// 49
         }
 
         public static class backLeftModule {
             public static final int driveMotor = 8;
             public static final int steerMotor = 7;
             public static final int absoluteEncoderId = 4;
-            public static final double absoluteEncoderOffset = -Math.toRadians(33);//59
+            public static final double absoluteEncoderOffset = -Math.toRadians(33);// 59
         }
     }
 
@@ -186,8 +187,7 @@ public class Constants {
         public static class Button {
             public static final int overrideFieldCentricA = 1;
             public static final int resetNavxB = 2;
-            public static final int targetTagY = 4;
-            public static final int targetPegX = 3;
+            public static final int testPeg = 3;
         }
     }
 
@@ -198,12 +198,12 @@ public class Constants {
             public static final int gridGroup1 = 1;
             public static final int gridGroup2 = 2;
             public static final int gridGroup3 = 3;
-            public static final int gridGroupCell1=4;
-            public static final int gridGroupCell2=5;
-            public static final int gridGroupCell3=6;
-            public static final int gridGroupHeightLow=7;
-            public static final int gridGroupHeightMed=8;
-            public static final int gridGroupHeightHigh=9;
+            public static final int gridGroupCell1 = 4;
+            public static final int gridGroupCell2 = 5;
+            public static final int gridGroupCell3 = 6;
+            public static final int gridGroupHeightLow = 7;
+            public static final int gridGroupHeightMed = 8;
+            public static final int gridGroupHeightHigh = 9;
         }
     }
 
