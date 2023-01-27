@@ -13,14 +13,13 @@ import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMTurnPIDController;
 
-
 /** Add your docs here. */
 public class TargetPegCmd extends CommandBase {
 
     MMSwerveSubsystem swerveSubsystem;
     double maxRotationSpeed;
     MMNavigationSubsystem navigationSubsystem;
-    //MMTurnPIDController turnPidController;
+    // MMTurnPIDController turnPidController;
     MMTurnPIDController turnPidController;
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
     private final NetworkTable limelight = inst.getTable(Constants.Limelight.fLimelight);
@@ -40,7 +39,7 @@ public class TargetPegCmd extends CommandBase {
     public void initialize() {
         navigationSubsystem.setPipeline(1);
         turnPidController.initialize(new Rotation2d());
-        cyclesOnTarget=0;
+        cyclesOnTarget = 0;
     }
 
     @Override
@@ -48,12 +47,11 @@ public class TargetPegCmd extends CommandBase {
         Rotation2d targetAngle = new Rotation2d(Math.toRadians(limelight.getEntry("tx").getDouble(0)));
         double correction = turnPidController.execute(targetAngle.getRadians());
         swerveSubsystem.drive(0, 0, correction, true, navigationSubsystem.getRotation2d());
-       if( Math.abs(limelight.getEntry("tx").getDouble(0)) < 5){
-        cyclesOnTarget++;
-       }
-       else{
-        cyclesOnTarget=0;
-       }
+        if (Math.abs(limelight.getEntry("tx").getDouble(0)) < 5) {
+            cyclesOnTarget++;
+        } else {
+            cyclesOnTarget = 0;
+        }
     }
 
     @Override
@@ -65,6 +63,6 @@ public class TargetPegCmd extends CommandBase {
     @Override
     public boolean isFinished() {
         // return Math.abs(limelight.getEntry("tx").getDouble(0)) < margin;
-        return cyclesOnTarget>=100;
+        return cyclesOnTarget >= 100;
     }
 }

@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,7 +21,7 @@ public class DriveToPegCmd extends CommandBase {
     private MMNavigationSubsystem navigationSubsystem;
     private MMSwerveSubsystem swerveSubsystem;
     private double maxSpeed;
-    private PIDController tripPidController;
+    //private PIDController tripPidController;
     private MMTurnPIDController turnPidController;
     private Rotation2d gyroLockAngle;
     private boolean pastStartUpFlag;
@@ -32,7 +31,7 @@ public class DriveToPegCmd extends CommandBase {
         this.navigationSubsystem = navigationSubsystem;
         this.swerveSubsystem = swerveSubsystem;
         this.maxSpeed = maxSpeed;
-        tripPidController = new PIDController(4, 0, 0);
+        //tripPidController = new PIDController(4, 0, 0);
         turnPidController = new MMTurnPIDController();
 
         addRequirements(swerveSubsystem);
