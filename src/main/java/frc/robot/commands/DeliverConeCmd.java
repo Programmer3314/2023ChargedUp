@@ -17,6 +17,7 @@ public class DeliverConeCmd extends SequentialCommandGroup {
         addCommands(
                 Commands.race(
                         new TargetPegCmd(swerveSubsystem, 2, navigationSubsystem),
-                        new WaitToDeliverCmd(30)));
+                        new WaitToDeliverCmd(30)),
+                new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .5));
     }
 }

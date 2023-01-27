@@ -129,9 +129,6 @@ public class RobotContainer {
                                         navigationSubsystem.getLimelightPose()
                                 // new Pose2d(3.3, -4, new Rotation2d())
                                 ))));
-
-        // TODO: Consolidate X&Y into right bumper command below (6)
-        // Use Commands.Select and a method that will return the type of delivery (enum)
         // new JoystickButton(driverJoystick, Constants.Driver.Button.targetTagY)
         // // .onTrue(new ParallelCommandGroup(
         // // new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem, 1)),
@@ -175,7 +172,7 @@ public class RobotContainer {
         // new WaitToDeliverCmd(30))));
         new JoystickButton(driverJoystick, Constants.Driver.Button.testPeg)
                 .onTrue(
-                        new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .1));
+                        new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .5));
 
         // TODO: Make this run only while the button is held
         // TODO: Make this a "constructor only command" something like AutoDelivery 

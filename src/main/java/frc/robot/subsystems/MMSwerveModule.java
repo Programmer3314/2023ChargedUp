@@ -21,7 +21,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
-
 /** Add your docs here. */
 public class MMSwerveModule {
     private final WPI_TalonFX driveMotorController;
@@ -41,23 +40,25 @@ public class MMSwerveModule {
         magneticCanCoder = new WPI_CANCoder(magneticCanCoderId);
 
         magneticCanCoder.configFactoryDefault(Constants.Robot.canBusTimeoutMs);
-        magneticCanCoder.configMagnetOffset(Math.toDegrees(0),Constants.Robot.canBusTimeoutMs);
-        magneticCanCoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180,Constants.Robot.canBusTimeoutMs);
+        magneticCanCoder.configMagnetOffset(Math.toDegrees(0), Constants.Robot.canBusTimeoutMs);
+        magneticCanCoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180,
+                Constants.Robot.canBusTimeoutMs);
 
         driveMotorController = new WPI_TalonFX(driveMotorCanId);
         driveMotorController.configFactoryDefault(Constants.Robot.canBusTimeoutMs);
 
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
-        driveMotorController.getAllConfigs(driveConfigs,Constants.Robot.canBusTimeoutMs);
+        driveMotorController.getAllConfigs(driveConfigs, Constants.Robot.canBusTimeoutMs);
         driveConfigs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
         driveMotorController.configAllSettings(driveConfigs, Constants.Robot.canBusTimeoutMs);
         driveMotorController.setNeutralMode(NeutralMode.Brake);
         driveMotorController.setInverted(driveMotorReversed);
-        driveMotorController.config_kF(0, Constants.MK4i.L1.kfalconDrivetrainKFF,Constants.Robot.canBusTimeoutMs);
-        driveMotorController.config_kP(0, Constants.MK4i.L1.kfalconDrivetrainKP,Constants.Robot.canBusTimeoutMs);
+        driveMotorController.config_kF(0, Constants.MK4i.L1.kfalconDrivetrainKFF, Constants.Robot.canBusTimeoutMs);
+        driveMotorController.config_kP(0, Constants.MK4i.L1.kfalconDrivetrainKP, Constants.Robot.canBusTimeoutMs);
         driveMotorController.config_kI(0, Constants.MK4i.L1.kfalconDrivetrainKI, Constants.Robot.canBusTimeoutMs);
         driveMotorController.config_kD(0, Constants.MK4i.L1.kfalconDrivetrainKD, Constants.Robot.canBusTimeoutMs);
-        driveMotorController.config_IntegralZone(0,Constants.MK4i.L1.kfalconDrivetrainKIz , Constants.Robot.canBusTimeoutMs);
+        driveMotorController.config_IntegralZone(0, Constants.MK4i.L1.kfalconDrivetrainKIz,
+                Constants.Robot.canBusTimeoutMs);
 
         turnMotorController = new WPI_TalonFX(turnMotorCanId);
         turnMotorController.configFactoryDefault(Constants.Robot.canBusTimeoutMs);
@@ -111,16 +112,20 @@ public class MMSwerveModule {
             stop();
             return;
         }
-        setDesiredStateRaw(state);
+        setDesiredStateRaw(state, false);
     };
 
-    public void setDesiredStateRaw(SwerveModuleState state) {
+    public void setDesiredStateRaw(SwerveModuleState state, boolean usePercentOutput) {
 
         state = SwerveModuleState.optimize(state, getState().angle);
-        //driveMotorController.set(ControlMode.PercentOutput,
-        //        state.speedMetersPerSecond / Constants.MK4i.L2.maxVelocityMetersPerSecond);
-        double velocity=state.speedMetersPerSecond/Constants.MK4i.L1.driveMetersPerTick/10.0;
-        driveMotorController.set(ControlMode.Velocity,velocity);
+        if (usePercentOutput) {
+            driveMotorController.set(ControlMode.PercentOutput,
+                    state.speedMetersPerSecond / Constants.MK4i.L1.maxVelocityMetersPerSecond);
+        } else {
+            double velocity = state.speedMetersPerSecond / Constants.MK4i.L1.driveMetersPerTick / 10.0;
+            driveMotorController.set(ControlMode.Velocity, velocity);
+        }
+
         turnMotorController.set(turnPidController.calculate(getTurningPositionRadians(), state.angle.getRadians()));
         SmartDashboard.putString("Swerve[" + magneticCanCoderId + "] State", state.toString());
 

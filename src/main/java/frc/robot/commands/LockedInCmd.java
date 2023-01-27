@@ -34,7 +34,7 @@ public class LockedInCmd extends CommandBase {
     @Override
     public void execute() {
         SmartDashboard.putString("In LockedIn", "true");
-        swerveSubsystem.setModuleStatesRaw(desiredState);
+        swerveSubsystem.setModuleStatesRaw(desiredState,true);
     }
 
     @Override

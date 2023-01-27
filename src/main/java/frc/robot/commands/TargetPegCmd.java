@@ -24,6 +24,7 @@ public class TargetPegCmd extends CommandBase {
     MMTurnPIDController turnPidController;
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
     private final NetworkTable limelight = inst.getTable(Constants.Limelight.fLimelight);
+    private int cyclesOnTarget;
 
     public TargetPegCmd(MMSwerveSubsystem swerveSubsystem, double maxRotationSpeed,
             MMNavigationSubsystem navigationSubsystem) {
@@ -39,6 +40,7 @@ public class TargetPegCmd extends CommandBase {
     public void initialize() {
         navigationSubsystem.setPipeline(1);
         turnPidController.initialize(new Rotation2d());
+        cyclesOnTarget=0;
     }
 
     @Override
@@ -46,6 +48,12 @@ public class TargetPegCmd extends CommandBase {
         Rotation2d targetAngle = new Rotation2d(Math.toRadians(limelight.getEntry("tx").getDouble(0)));
         double correction = turnPidController.execute(targetAngle.getRadians());
         swerveSubsystem.drive(0, 0, correction, true, navigationSubsystem.getRotation2d());
+       if( Math.abs(limelight.getEntry("tx").getDouble(0)) < 5){
+        cyclesOnTarget++;
+       }
+       else{
+        cyclesOnTarget=0;
+       }
     }
 
     @Override
@@ -57,6 +65,6 @@ public class TargetPegCmd extends CommandBase {
     @Override
     public boolean isFinished() {
         // return Math.abs(limelight.getEntry("tx").getDouble(0)) < margin;
-        return false;
+        return cyclesOnTarget>=100;
     }
 }

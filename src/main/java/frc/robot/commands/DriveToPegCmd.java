@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.MMNavigationSubsystem;
@@ -42,20 +43,29 @@ public class DriveToPegCmd extends CommandBase {
         gyroLockAngle = navigationSubsystem.getRotation2d();
 
         turnPidController.initialize(gyroLockAngle);
+        pastStartUpFlag = false;
     }
 
     @Override
     public void execute() {
         if (!pastStartUpFlag) {
-            pastStartUpFlag = swerveSubsystem.getAverageDriveVelocity() > .7;
+            pastStartUpFlag = swerveSubsystem.getAverageDriveVelocity() > .25;
         }
 
-        double desiredTurn = turnPidController.execute(navigationSubsystem.getHeadingRad());
-        double desiredX = Math.cos(gyroLockAngle.getRadians() * maxSpeed);
-        double desiredY = Math.sin(gyroLockAngle.getRadians() * maxSpeed);
+        SwerveModuleState[] desiredStates = new SwerveModuleState[] {
+            new SwerveModuleState(maxSpeed, new Rotation2d()),
+            new SwerveModuleState(maxSpeed, new Rotation2d()),
+            new SwerveModuleState(maxSpeed, new Rotation2d()),
+            new SwerveModuleState(maxSpeed, new Rotation2d())
+        };
+       swerveSubsystem.setModuleStatesRaw(desiredStates, true);
+       SmartDashboard.putNumber("Velocity", swerveSubsystem.getAverageDriveVelocity());
+        // double desiredTurn = turnPidController.execute(navigationSubsystem.getHeadingRad());
+        // double desiredX = Math.cos(gyroLockAngle.getRadians() * maxSpeed);
+        // double desiredY = Math.sin(gyroLockAngle.getRadians() * maxSpeed);
 
-        swerveSubsystem.drive(desiredX, desiredY, desiredTurn, true,
-                navigationSubsystem.getRotation2d());
+        // swerveSubsystem.drive(desiredX, desiredY, desiredTurn, true,
+        //         navigationSubsystem.getRotation2d());
     }
 
     @Override
@@ -65,7 +75,7 @@ public class DriveToPegCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        boolean droveToPeg = swerveSubsystem.getAverageDriveVelocity() <= .05 && pastStartUpFlag;
+        boolean droveToPeg = swerveSubsystem.getAverageDriveVelocity() <= .22 && pastStartUpFlag;
         SmartDashboard.putBoolean("Drove To Peg", droveToPeg);
         return droveToPeg;
     }

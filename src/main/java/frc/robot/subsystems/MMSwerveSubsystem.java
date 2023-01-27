@@ -77,10 +77,10 @@ public class MMSwerveSubsystem extends SubsystemBase {
         }
     }
 
-    public void setModuleStatesRaw(SwerveModuleState[] desiredStates) {
+    public void setModuleStatesRaw(SwerveModuleState[] desiredStates, boolean usePercentOutput) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.MK4i.L1.maxVelocityMetersPerSecond);
         for (int i = 0; i < modules.length; i++) {
-            modules[i].setDesiredStateRaw(desiredStates[i]);
+            modules[i].setDesiredStateRaw(desiredStates[i],usePercentOutput);
         }
     }
 
@@ -102,7 +102,7 @@ public class MMSwerveSubsystem extends SubsystemBase {
     public double getAverageDriveVelocity() {
         double avgVelocity = 0;
         for (int i = 0; i < 4; i++) {
-            avgVelocity += modules[i].getDriveVelocity();
+            avgVelocity += Math.abs(modules[i].getDriveVelocity());
         }
         return avgVelocity / 4.0;
     }

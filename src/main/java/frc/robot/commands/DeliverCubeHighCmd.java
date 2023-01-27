@@ -16,6 +16,9 @@ public class DeliverCubeHighCmd extends SequentialCommandGroup {
         addCommands(
                 Commands.race(
                         new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem),
-                        new WaitToDeliverCmd(30)));
+                        new WaitToDeliverCmd(30)),
+                new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .5));
+
     }
+
 }
