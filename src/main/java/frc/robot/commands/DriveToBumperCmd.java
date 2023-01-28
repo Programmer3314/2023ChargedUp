@@ -17,22 +17,21 @@ import frc.robot.utility.MMTurnPIDController;
 // drive slowly forwards
 // gyro lock angle
 // stop when our speed is near 0
-public class DriveToPegCmd extends CommandBase {
+public class DriveToBumperCmd extends CommandBase {
     private MMNavigationSubsystem navigationSubsystem;
     private MMSwerveSubsystem swerveSubsystem;
     private double maxSpeed;
-    //private PIDController tripPidController;
+    // private PIDController tripPidController;
     private MMTurnPIDController turnPidController;
     private Rotation2d gyroLockAngle;
     private boolean pastStartUpFlag;
 
-    // TODO: Rename this using whatever you want to call those things that stop the robot, but not Peg.
-    public DriveToPegCmd(MMNavigationSubsystem navigationSubsystem, MMSwerveSubsystem swerveSubsystem,
+    public DriveToBumperCmd(MMNavigationSubsystem navigationSubsystem, MMSwerveSubsystem swerveSubsystem,
             double maxSpeed) {
         this.navigationSubsystem = navigationSubsystem;
         this.swerveSubsystem = swerveSubsystem;
         this.maxSpeed = maxSpeed;
-        //tripPidController = new PIDController(4, 0, 0);
+        // tripPidController = new PIDController(4, 0, 0);
         turnPidController = new MMTurnPIDController();
 
         addRequirements(swerveSubsystem);
@@ -53,19 +52,20 @@ public class DriveToPegCmd extends CommandBase {
         }
 
         SwerveModuleState[] desiredStates = new SwerveModuleState[] {
-            new SwerveModuleState(maxSpeed, new Rotation2d()),
-            new SwerveModuleState(maxSpeed, new Rotation2d()),
-            new SwerveModuleState(maxSpeed, new Rotation2d()),
-            new SwerveModuleState(maxSpeed, new Rotation2d())
+                new SwerveModuleState(maxSpeed, new Rotation2d()),
+                new SwerveModuleState(maxSpeed, new Rotation2d()),
+                new SwerveModuleState(maxSpeed, new Rotation2d()),
+                new SwerveModuleState(maxSpeed, new Rotation2d())
         };
-       swerveSubsystem.setModuleStatesRaw(desiredStates, true);
-       SmartDashboard.putNumber("Velocity", swerveSubsystem.getAverageDriveVelocity());
-        // double desiredTurn = turnPidController.execute(navigationSubsystem.getHeadingRad());
+        swerveSubsystem.setModuleStatesRaw(desiredStates, true);
+        SmartDashboard.putNumber("Velocity", swerveSubsystem.getAverageDriveVelocity());
+        // double desiredTurn =
+        // turnPidController.execute(navigationSubsystem.getHeadingRad());
         // double desiredX = Math.cos(gyroLockAngle.getRadians() * maxSpeed);
         // double desiredY = Math.sin(gyroLockAngle.getRadians() * maxSpeed);
 
         // swerveSubsystem.drive(desiredX, desiredY, desiredTurn, true,
-        //         navigationSubsystem.getRotation2d());
+        // navigationSubsystem.getRotation2d());
     }
 
     @Override

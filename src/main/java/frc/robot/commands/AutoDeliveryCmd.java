@@ -5,61 +5,60 @@
 package frc.robot.commands;
 
 import java.util.Map;
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.MMNavigationSubsystem;
-import frc.robot.subsystems.MMSwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.DeliveryMethod;
+import frc.robot.RobotContainer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 // TODO: consider passing in robotContainer instead of everything else? Maybe?
 /** Add your docs here. */
 public class AutoDeliveryCmd extends SequentialCommandGroup {
-    public AutoDeliveryCmd(MMSwerveSubsystem swerveSubsystem, MMNavigationSubsystem navigationSubsystem,
-            Supplier<Boolean> isRedAlliance, Supplier<Integer> gridCell,
-            Supplier<Object> selectDeliveryMethod) {
+    public AutoDeliveryCmd(RobotContainer rc) {
+        // MMSwerveSubsystem swerveSubsystem, MMNavigationSubsystem navigationSubsystem,
+        // Supplier<Boolean> isRedAlliance, Supplier<Integer> gridCell,
+        // Supplier<Object> selectDeliveryMethod
         addCommands(
-                new InstantCommand(() -> navigationSubsystem.setPipeline(0)),
+                new InstantCommand(() -> rc.navigationSubsystem.setPipeline(0)),
 
-                new TranslateAbsoluteCmd(swerveSubsystem,
+                new TranslateAbsoluteCmd(rc.swerveSubsystem,
                         () -> new Pose2d(
                                 Constants.targetPositions.fieldXCoordinate
-                                        * (isRedAlliance.get() ? 1
+                                        * (rc.getIsRedAlliance() ? 1
                                                 : -1),
-                                navigationSubsystem.getPose().getY(),
-                                new Rotation2d(isRedAlliance.get() ? 0
+                                rc.navigationSubsystem.getPose().getY(),
+                                new Rotation2d(rc.getIsRedAlliance() ? 0
                                         : Math.PI)),
-                        1, navigationSubsystem),
-                new DriveToCell(swerveSubsystem,
-                        () -> gridCell.get(),
-                        navigationSubsystem,
-                        () -> isRedAlliance.get(),
+                        1, rc.navigationSubsystem),
+                new DriveToCell(rc.swerveSubsystem,
+                        rc::getGridCell,
+                        rc.navigationSubsystem,
+                        rc::getIsRedAlliance,
                         1),
                 Commands.select(
                         Map.ofEntries(
                                 Map.entry(DeliveryMethod.DeliverCone,
                                         new DeliverConeCmd(
-                                                navigationSubsystem,
+                                                rc.navigationSubsystem,
                                                 2,
-                                                swerveSubsystem,
-                                                isRedAlliance)),
+                                                rc.swerveSubsystem,
+                                                rc::getIsRedAlliance)),
                                 Map.entry(DeliveryMethod.DeliverFloorCube,
                                         new DeliverCubeFloorCmd(
-                                                swerveSubsystem,
+                                                rc.swerveSubsystem,
                                                 2,
-                                                navigationSubsystem,
-                                                isRedAlliance)),
+                                                rc.navigationSubsystem,
+                                                rc::getIsRedAlliance)),
                                 Map.entry(DeliveryMethod.DeliverHighCube,
                                         new DeliverCubeHighCmd(
-                                                swerveSubsystem,
+                                                rc.swerveSubsystem,
                                                 2,
-                                                navigationSubsystem,
-                                                isRedAlliance))),
-                        selectDeliveryMethod));
+                                                rc.navigationSubsystem,
+                                                rc::getIsRedAlliance))),
+                        rc::selectDeliveryMethod),
+                new InstantCommand(rc::clearSelectedCell));
     }
 }

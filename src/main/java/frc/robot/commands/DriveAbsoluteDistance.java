@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
-import frc.robot.utility.MMTurnPIDController;
 
 /** Add your docs here. */
 public class DriveAbsoluteDistance extends CommandBase {

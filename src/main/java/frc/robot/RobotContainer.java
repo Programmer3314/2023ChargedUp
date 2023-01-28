@@ -18,17 +18,15 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoDeliveryCmd;
-import frc.robot.commands.DriveToPegCmd;
+import frc.robot.commands.DriveToBumperCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
@@ -38,13 +36,14 @@ import frc.robot.utility.MMJoystickAxis;
 public class RobotContainer {
     private ShuffleboardTab tab = Shuffleboard.getTab("In Match");
 
-    private final SendableChooser<Integer> getDesiredCell = new SendableChooser<>();
+    // private final SendableChooser<Integer> getDesiredCell = new
+    // SendableChooser<>();
 
     private static Alliance alliance;
     private static boolean isRedAlliance = true;
 
-    private final MMSwerveSubsystem swerveSubsystem = new MMSwerveSubsystem();
-    private final MMNavigationSubsystem navigationSubsystem = new MMNavigationSubsystem(swerveSubsystem);
+    public final MMSwerveSubsystem swerveSubsystem = new MMSwerveSubsystem();
+    public final MMNavigationSubsystem navigationSubsystem = new MMNavigationSubsystem(swerveSubsystem);
 
     private final Joystick driverJoystick = new Joystick(Constants.Driver.Controller);
     private final Joystick buttonBox1 = new Joystick(Constants.ButtonBox1.button);
@@ -68,13 +67,13 @@ public class RobotContainer {
 
     public RobotContainer() {
 
-        // TODO: remove the cell selector
-        getDesiredCell.setDefaultOption("None Selected", 0);
-        for (int i = 1; i < 10; i++) {
-            getDesiredCell.addOption("Cell: " + i, i);
-        }
+        // getDesiredCell.setDefaultOption("None Selected", 0);
+        // for (int i = 1; i < 10; i++) {
+        // getDesiredCell.addOption("Cell: " + i, i);
+        // }
 
-        Shuffleboard.getTab("In Match").add(getDesiredCell).withWidget(BuiltInWidgets.kComboBoxChooser);
+        // Shuffleboard.getTab("In
+        // Match").add(getDesiredCell).withWidget(BuiltInWidgets.kComboBoxChooser);
 
         new Thread(() -> {
             try {
@@ -101,7 +100,7 @@ public class RobotContainer {
         configureBindings();
     }
 
-    private DeliveryMethod selectDeliveryMethod() {
+    public DeliveryMethod selectDeliveryMethod() {
         if (MMField.isCellCone(gridCell)) {
             return DeliveryMethod.DeliverCone;
         }
@@ -118,22 +117,17 @@ public class RobotContainer {
                                         navigationSubsystem.getLimelightPose()
                                 // new Pose2d(3.3, -4, new Rotation2d())
                                 ))));
-                                
+
         new JoystickButton(driverJoystick, Constants.Driver.Button.testPeg)
                 .onTrue(
-                        new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .5));
+                        new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5));
 
-        // TODO: for consistency use this::getIsRedAlliance,
-        // if you have a method you should use that "everywhere" so that the code is consistent
-        // TODO: create and use a getGridCell method and use this::get...
-        // TODO: create isGridCellSelected (did we forget to select a cell) and use .unless()
-        // to check that we don't run off to cell 0
-        // TODO: create method to clear selected cell, and add to completed delivery. 
         new JoystickButton(driverJoystick, 6)
-                .whileTrue(new AutoDeliveryCmd(swerveSubsystem, navigationSubsystem,
-                        () -> isRedAlliance,
-                        () -> gridCell,
-                        this::selectDeliveryMethod));
+                .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
+        // swerveSubsystem, navigationSubsystem,
+        // this::getIsRedAlliance,
+        // this::getGridCell,
+        // this::selectDeliveryMethod
 
         new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup1)
                 .onTrue(new InstantCommand(() -> selectCell(gridHeight, 1, gridGroupCell)));
@@ -207,4 +201,19 @@ public class RobotContainer {
         return isRedAlliance;
     }
 
+    public int getGridCell() {
+        return gridCell;
+    }
+
+    public boolean isGridCellSelected() {
+        return gridCell >= 1 && gridCell <= 9;
+    }
+
+    public boolean isNotGridCellSelected() {
+        return !(isGridCellSelected());
+    }
+
+    public void clearSelectedCell() {
+        gridCell = 0;
+    }
 }

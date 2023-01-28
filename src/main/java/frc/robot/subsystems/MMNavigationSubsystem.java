@@ -109,15 +109,15 @@ public class MMNavigationSubsystem extends SubsystemBase {
                         odometer.resetPosition(Rotation2d.fromDegrees(navx.getYaw()),
                                 swerveSubsystem.getSwerveModulePositions(), tempPose);
                     }
-                    if (tempPose.getTranslation().getDistance(aprilPose.getTranslation()) < 1) {
-                        // SmartDashboard.putNumber("BP[5]", bp[5]);
-                        double latency = limelight.getEntry("tl").getDouble(0);
-                        latency = (latency + 11) / 1000.0;
-                        odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
-                        return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
-                                (aprilPose.getY() + tempPose.getY()) / 2.0,
-                                new Rotation2d(tempPose.getRotation().getRadians()));
-                    }
+                    // if (tempPose.getTranslation().getDistance(aprilPose.getTranslation()) < 1) {
+                    // SmartDashboard.putNumber("BP[5]", bp[5]);
+                    double latency = limelight.getEntry("tl").getDouble(0);
+                    latency = (latency + 11) / 1000.0;
+                    odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
+                    return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
+                            (aprilPose.getY() + tempPose.getY()) / 2.0,
+                            new Rotation2d(tempPose.getRotation().getRadians()));
+                    // }
                 }
             }
         }

@@ -41,13 +41,14 @@ public class TranslateAbsoluteCmd extends CommandBase {
     @Override
     public void initialize() {
         targetPosition = desiredPosition.get().getTranslation();
+        SmartDashboard.putString("Target Position", targetPosition.toString());
         SmartDashboard.putString("In LockedIn", "false");
         turnPidController.initialize(desiredPosition.get().getRotation().getRadians());
     }
 
     @Override
     public void execute() {
-        
+
         Translation2d currentPosition = navigationSubsystem.getPose().getTranslation();
         Translation2d trip = targetPosition.minus(currentPosition);
         double tripLength = trip.getNorm();

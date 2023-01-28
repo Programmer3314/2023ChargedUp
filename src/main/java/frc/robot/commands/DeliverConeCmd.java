@@ -23,7 +23,7 @@ public class DeliverConeCmd extends SequentialCommandGroup {
                 Commands.race(
                         new TargetPegCmd(swerveSubsystem, 2, navigationSubsystem),
                         new WaitToDeliverCmd(2)),
-                new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .5),
+                new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5),
                 new TranslateAbsoluteCmd(swerveSubsystem,
                         () -> new Pose2d(
                                 Constants.targetPositions.fieldXCoordinate
