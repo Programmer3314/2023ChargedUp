@@ -26,6 +26,7 @@ public class DriveToPegCmd extends CommandBase {
     private Rotation2d gyroLockAngle;
     private boolean pastStartUpFlag;
 
+    // TODO: Rename this using whatever you want to call those things that stop the robot, but not Peg.
     public DriveToPegCmd(MMNavigationSubsystem navigationSubsystem, MMSwerveSubsystem swerveSubsystem,
             double maxSpeed) {
         this.navigationSubsystem = navigationSubsystem;

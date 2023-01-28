@@ -5,8 +5,6 @@
 package frc.robot;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -25,19 +23,13 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoDeliveryCmd;
-import frc.robot.commands.DeliverConeCmd;
-import frc.robot.commands.DeliverCubeFloorCmd;
-import frc.robot.commands.DeliverCubeHighCmd;
-import frc.robot.commands.DriveToCell;
 import frc.robot.commands.DriveToPegCmd;
 import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.commands.TranslateAbsoluteCmd;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMField;
@@ -76,6 +68,7 @@ public class RobotContainer {
 
     public RobotContainer() {
 
+        // TODO: remove the cell selector
         getDesiredCell.setDefaultOption("None Selected", 0);
         for (int i = 1; i < 10; i++) {
             getDesiredCell.addOption("Cell: " + i, i);
@@ -125,76 +118,23 @@ public class RobotContainer {
                                         navigationSubsystem.getLimelightPose()
                                 // new Pose2d(3.3, -4, new Rotation2d())
                                 ))));
-        // new JoystickButton(driverJoystick, Constants.Driver.Button.targetTagY)
-        // // .onTrue(new ParallelCommandGroup(
-        // // new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem, 1)),
-        // // new WaitRO);
-        // // ))
-        // .onTrue(new SequentialCommandGroup(
-
-        // // new InstantCommand(() -> navigationSubsystem.changePipeline(0)),
-        // // new TranslateAbsoluteCmd(swerveSubsystem,
-        // // new Pose2d(3.69, -3.93, new Rotation2d()), 1,
-        // // navigationSubsystem),
-        // new TranslateAbsoluteCmd(swerveSubsystem,
-        // () -> new Pose2d(6.0, -3.5, new Rotation2d(0)),
-        // 1, navigationSubsystem),
-        // new TranslateAbsoluteCmd(swerveSubsystem,
-        // () -> new Pose2d(6, -2.93, new Rotation2d(0)),
-        // 1, navigationSubsystem),
-        // // new LockedInCmd(swerveSubsystem)),
-        // // new InstantCommand(() -> navigationSubsystem.changePipeline(1))));
-        // new ParallelRaceGroup(
-        // new TargetTagCmd(swerveSubsystem, 2,
-        // navigationSubsystem),
-        // new WaitToDeliverCmd(30))));
-
-        // new JoystickButton(driverJoystick, Constants.Driver.Button.targetPegX)
-        // .onTrue(new SequentialCommandGroup(
-        // new InstantCommand(() -> navigationSubsystem.setPipeline(0)),
-        // // new TranslateAbsoluteCmd(swerveSubsystem,
-        // // new Pose2d(3.69, -3.93, new Rotation2d()),
-        // // 1, navigationSubsystem),
-        // new TranslateAbsoluteCmd(swerveSubsystem,
-        // () -> new Pose2d(6, -3.5, new Rotation2d(0)),
-        // 1, navigationSubsystem),
-        // new TranslateAbsoluteCmd(swerveSubsystem,
-        // () -> new Pose2d(6, -2.4, new Rotation2d(0)),
-        // 1, navigationSubsystem),
-        // // new LockedInCmd(swerveSubsystem)),
-        // new ParallelRaceGroup(
-        // new TargetPegCmd(swerveSubsystem, 2,
-        // navigationSubsystem),
-        // new WaitToDeliverCmd(30))));
+                                
         new JoystickButton(driverJoystick, Constants.Driver.Button.testPeg)
                 .onTrue(
                         new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .5));
 
-        // TODO: Make this a "constructor only command" something like AutoDelivery
-        // to make RobotContainer cleaner
+        // TODO: for consistency use this::getIsRedAlliance,
+        // if you have a method you should use that "everywhere" so that the code is consistent
+        // TODO: create and use a getGridCell method and use this::get...
+        // TODO: create isGridCellSelected (did we forget to select a cell) and use .unless()
+        // to check that we don't run off to cell 0
+        // TODO: create method to clear selected cell, and add to completed delivery. 
         new JoystickButton(driverJoystick, 6)
-                .whileTrue(new AutoDeliveryCmd(swerveSubsystem, navigationSubsystem, () -> isRedAlliance,
-                        () -> gridCell, this::selectDeliveryMethod));
-        // new TargetPegCmd(swerveSubsystem, 2, navigationSubsystem, 1)));
-        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.changePipeline)
-        // .whileTrue(new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem));
+                .whileTrue(new AutoDeliveryCmd(swerveSubsystem, navigationSubsystem,
+                        () -> isRedAlliance,
+                        () -> gridCell,
+                        this::selectDeliveryMethod));
 
-        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.autoDriveToRamp)
-        // .onTrue(new SequentialCommandGroup(
-        // new DriveToRampCmd(swerveSubsystem, navigationSubsystem, .9),
-        // new DriveAbsoluteDistance(swerveSubsystem, new Translation2d(-.75, 0),
-        // .25, navigationSubsystem),
-        // // new TranslateRelativeCmd(swerveSubsystem, new Translation2d(0.25,0),
-        // // 0.5, navigationSubsystem),
-        // new LockedInCmd(swerveSubsystem)));
-
-        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.driveRelative)
-        // .onTrue(
-        // new DriveToCell(swerveSubsystem,
-        // () -> getDesiredCell.getSelected(),
-        // navigationSubsystem,
-        // () -> isRedAlliance,
-        // 1));
         new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup1)
                 .onTrue(new InstantCommand(() -> selectCell(gridHeight, 1, gridGroupCell)));
         new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup2)
@@ -213,14 +153,6 @@ public class RobotContainer {
                 .onTrue(new InstantCommand(() -> selectCell(2, gridGroup, gridGroupCell)));
         new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupHeightHigh)
                 .onTrue(new InstantCommand(() -> selectCell(3, gridGroup, gridGroupCell)));
-        // new JoystickButton(driverJoystick, Constants.Driver.Button.trackAprilTag)
-        // .whileTrue(new SwerveJoystickCmd(swerveSubsystem,
-        // () -> driveXAxis.getSquared(),
-        // () -> driveYAxis.getSquared(),
-        // () -> limelight.getEntry("tx").getDouble(0) * .15,
-        // () -> driverJoystick.getRawButton(
-        // Constants.Driver.Button.overrideFieldCentric),
-        // navigationSubsystem));
     }
 
     public Command getAutonomousCommand() {
