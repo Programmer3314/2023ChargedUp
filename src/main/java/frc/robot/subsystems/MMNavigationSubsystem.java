@@ -15,6 +15,11 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -32,6 +37,8 @@ public class MMNavigationSubsystem extends SubsystemBase {
     private boolean visionInitialized = false;
     private long lastVisionHB;
     public static AnalogInput ultraSonicSensor;
+    private final Field2d m_field = new Field2d();
+    // private final SendableChooser fieldWidget;
 
     public MMNavigationSubsystem(MMSwerveSubsystem swerveSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
@@ -45,11 +52,17 @@ public class MMNavigationSubsystem extends SubsystemBase {
             } catch (Exception e) {
             }
         }).start();
+        SmartDashboard.putData("Field", m_field);
         ultraSonicSensor = new AnalogInput(Constants.RoboRio.Analog.ultraSonicSensor);
+        // Shuffleboard.getTab("In Match").addString("Robo Pose", () ->
+        // getPose().toString())
+        // .withWidget(BuiltInWidgets.kField);
     }
 
     @Override
     public void periodic() {
+        m_field.setRobotPose(convertPoseToField(getPose()));
+        SmartDashboard.putString("onField Pos",convertPoseToField(getPose()).toString());
         odometer.update(getRotation2d(), swerveSubsystem.getSwerveModulePositions());
         mainPose = odometer.getEstimatedPosition();
         aprilPose = getLimelightPose();
@@ -61,6 +74,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Navx Yaw", navx.getYaw());
         SmartDashboard.putNumber("NavX Pitch", getPitch());
         SmartDashboard.putNumber("UltraSonicSensor", ultraSonicSensor.getVoltage());
+
     }
 
     public void zeroHeading() {
@@ -140,5 +154,11 @@ public class MMNavigationSubsystem extends SubsystemBase {
     public void setPipeline(int pipelineNumber) {
         limelight.getEntry("pipeline").setNumber(pipelineNumber);
         SmartDashboard.putString("Changing Pipeline:", "yes");
+    }
+
+    public Pose2d convertPoseToField(Pose2d position) {
+        double x = position.getX() + 7.90;
+        double y = position.getY() + 3;
+        return new Pose2d(x, y, position.getRotation());
     }
 }

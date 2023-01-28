@@ -38,16 +38,16 @@ public class MMField {
 
     public static Pose2d getLeftDock(Supplier<Boolean> isRedAlliance) {
         if (!isRedAlliance.get()) {
-            return new Pose2d(-7.8, 1.98, new Rotation2d(Math.PI));
+            return new Pose2d(-7.4, 1.98, new Rotation2d(Math.PI));
         }
-        return new Pose2d(7.8, 3.5, new Rotation2d());
+        return new Pose2d(7.4, 3.5, new Rotation2d());
     }
 
     public static Pose2d getRightDock(Supplier<Boolean> isRedAlliance) {
         if (!isRedAlliance.get()) {
-            return new Pose2d(-7.8, 3.5, new Rotation2d(Math.PI));
+            return new Pose2d(-7.4, 3.5, new Rotation2d(Math.PI));
         }
-        return new Pose2d(7.8, 1.98, new Rotation2d());
+        return new Pose2d(7.4, 1.98, new Rotation2d());
     }
 
     public static Pose2d getLeftDockRetractPoint(Supplier<Boolean> isRedAlliance) {

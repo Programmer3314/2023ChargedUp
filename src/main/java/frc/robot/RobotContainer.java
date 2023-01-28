@@ -118,18 +118,18 @@ public class RobotContainer {
 
     private void configureBindings() {
         leftTrigger.whileTrue(new SequentialCommandGroup(
-                new TranslateAbsoluteCmd(swerveSubsystem, () -> MMField.getLeftDock(this::getIsRedAlliance), 1,
+                new TranslateAbsoluteCmd(swerveSubsystem, () -> MMField.getLeftDock(this::getIsRedAlliance), 2,
                         navigationSubsystem)
                         .until(navigationSubsystem::approachingLoadingDock),
                 // new TranslateAbsoluteCmd(swerveSubsystem,
                 // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
                 new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5),
                 new TranslateAbsoluteCmd(swerveSubsystem, () -> MMField.getLeftDockRetractPoint(this::getIsRedAlliance),
-                        1,
+                        2,
                         navigationSubsystem)));
 
         rightTrigger.whileTrue(new SequentialCommandGroup(
-                new TranslateAbsoluteCmd(swerveSubsystem, () -> MMField.getRightDock(this::getIsRedAlliance), 1,
+                new TranslateAbsoluteCmd(swerveSubsystem, () -> MMField.getRightDock(this::getIsRedAlliance), 2,
                         navigationSubsystem)
                         .until(navigationSubsystem::approachingLoadingDock),
                 // new TranslateAbsoluteCmd(swerveSubsystem,
@@ -137,7 +137,7 @@ public class RobotContainer {
                 new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5),
                 new TranslateAbsoluteCmd(swerveSubsystem,
                         () -> MMField.getRightDockRetractPoint(this::getIsRedAlliance),
-                        1,
+                        2,
                         navigationSubsystem)));
 
         new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavxB)
