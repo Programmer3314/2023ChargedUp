@@ -15,6 +15,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
@@ -25,9 +26,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.RoboRio.Analog;
 import frc.robot.commands.AutoDeliveryCmd;
 import frc.robot.commands.DriveToBumperCmd;
 import frc.robot.commands.SwerveJoystickCmd;
+import frc.robot.commands.TranslateAbsoluteCmd;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMField;
@@ -64,6 +68,8 @@ public class RobotContainer {
     private int gridGroupCell;
     private int gridCell;
     private GenericEntry gridCellEntry = tab.add("Grid Cell: ", "None").getEntry();
+    private Trigger leftTrigger;
+    private Trigger rightTrigger;
 
     public RobotContainer() {
 
@@ -84,6 +90,9 @@ public class RobotContainer {
             } catch (Exception e) {
             }
         }).start();
+
+        leftTrigger = new Trigger(this::getLeftTriggerActive);
+        rightTrigger = new Trigger(this::getRightTriggerActive);
 
         swerveSubsystem.setDefaultCommand(
                 new SequentialCommandGroup(
@@ -108,6 +117,28 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+        leftTrigger.whileTrue(new SequentialCommandGroup(
+                new TranslateAbsoluteCmd(swerveSubsystem, () -> MMField.getLeftDock(this::getIsRedAlliance), 1,
+                        navigationSubsystem)
+                        .until(navigationSubsystem::approachingLoadingDock),
+                // new TranslateAbsoluteCmd(swerveSubsystem,
+                // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
+                new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5),
+                new TranslateAbsoluteCmd(swerveSubsystem, () -> MMField.getLeftDockRetractPoint(this::getIsRedAlliance),
+                        1,
+                        navigationSubsystem)));
+
+        rightTrigger.whileTrue(new SequentialCommandGroup(
+                new TranslateAbsoluteCmd(swerveSubsystem, () -> MMField.getRightDock(this::getIsRedAlliance), 1,
+                        navigationSubsystem)
+                        .until(navigationSubsystem::approachingLoadingDock),
+                // new TranslateAbsoluteCmd(swerveSubsystem,
+                // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
+                new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5),
+                new TranslateAbsoluteCmd(swerveSubsystem,
+                        () -> MMField.getRightDockRetractPoint(this::getIsRedAlliance),
+                        1,
+                        navigationSubsystem)));
 
         new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavxB)
                 .onTrue(new SequentialCommandGroup(
@@ -216,4 +247,13 @@ public class RobotContainer {
     public void clearSelectedCell() {
         gridCell = 0;
     }
+
+    public boolean getLeftTriggerActive() {
+        return driverJoystick.getRawAxis(Constants.Driver.Axis.lt) > .5;
+    }
+
+    public boolean getRightTriggerActive() {
+        return driverJoystick.getRawAxis(Constants.Driver.Axis.rt) > .5;
+    }
+
 }

@@ -4,6 +4,8 @@
 
 package frc.robot.utility;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -32,5 +34,41 @@ public class MMField {
 
     public static boolean isCellCone(int cell) {
         return cell == 1 || cell == 3 || cell == 4 || cell == 6 || cell == 7 || cell == 9;
+    }
+
+    public static Pose2d getLeftDock(Supplier<Boolean> isRedAlliance) {
+        if (!isRedAlliance.get()) {
+            return new Pose2d(-7.8, 1.98, new Rotation2d(Math.PI));
+        }
+        return new Pose2d(7.8, 3.5, new Rotation2d());
+    }
+
+    public static Pose2d getRightDock(Supplier<Boolean> isRedAlliance) {
+        if (!isRedAlliance.get()) {
+            return new Pose2d(-7.8, 3.5, new Rotation2d(Math.PI));
+        }
+        return new Pose2d(7.8, 1.98, new Rotation2d());
+    }
+
+    public static Pose2d getLeftDockRetractPoint(Supplier<Boolean> isRedAlliance) {
+        if (!isRedAlliance.get()) {
+            return new Pose2d(-6, 1.98, new Rotation2d(0));
+        }
+        return new Pose2d(6, 3.5, new Rotation2d(Math.PI));
+    }
+
+    public static Pose2d convertAlliancePose(Supplier<Boolean> isRedAlliance, Pose2d pose) {
+        if (!isRedAlliance.get()) {
+            return new Pose2d(pose.getX() * -1, pose.getY(), new Rotation2d(pose.getRotation().getRadians() + Math.PI));
+
+        }
+        return pose;
+    }
+
+    public static Pose2d getRightDockRetractPoint(Supplier<Boolean> isRedAlliance) {
+        if (!isRedAlliance.get()) {
+            return new Pose2d(-6, 3.5, new Rotation2d(0));
+        }
+        return new Pose2d(6, 1.98, new Rotation2d(Math.PI));
     }
 }

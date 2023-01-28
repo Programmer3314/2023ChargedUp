@@ -12,11 +12,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 /** Add your docs here. */
 public class MMNavigationSubsystem extends SubsystemBase {
@@ -29,6 +31,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
     private Pose2d aprilPose = new Pose2d();
     private boolean visionInitialized = false;
     private long lastVisionHB;
+    public static AnalogInput ultraSonicSensor;
 
     public MMNavigationSubsystem(MMSwerveSubsystem swerveSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
@@ -42,6 +45,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
             } catch (Exception e) {
             }
         }).start();
+        ultraSonicSensor = new AnalogInput(Constants.RoboRio.Analog.ultraSonicSensor);
     }
 
     @Override
@@ -56,6 +60,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Navx Roll", navx.getRoll());
         SmartDashboard.putNumber("Navx Yaw", navx.getYaw());
         SmartDashboard.putNumber("NavX Pitch", getPitch());
+        SmartDashboard.putNumber("UltraSonicSensor", ultraSonicSensor.getVoltage());
     }
 
     public void zeroHeading() {
@@ -68,6 +73,14 @@ public class MMNavigationSubsystem extends SubsystemBase {
 
     public Rotation2d getRotation2d() {
         return mainPose.getRotation();
+    }
+
+    public double getUltraSonicVoltage() {
+        return ultraSonicSensor.getVoltage();
+    }
+
+    public boolean approachingLoadingDock() {
+        return getUltraSonicVoltage() < 1;
     }
 
     public Pose2d getPose() {

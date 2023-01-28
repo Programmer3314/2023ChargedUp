@@ -182,6 +182,9 @@ public class Constants {
             public static final int y = 0;
             public static final int x = 1;
             public static final int r = 4;
+            public static final int lt = 2;
+            public static final int rt= 3;
+            
         }
 
         public static class Button {
@@ -204,6 +207,11 @@ public class Constants {
             public static final int gridGroupHeightLow = 7;
             public static final int gridGroupHeightMed = 8;
             public static final int gridGroupHeightHigh = 9;
+        }
+    }
+    public static class RoboRio{
+        public static class Analog{
+            public static final int ultraSonicSensor = 0;
         }
     }
 
