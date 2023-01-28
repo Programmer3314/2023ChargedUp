@@ -4,13 +4,16 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 
 /** Add your docs here. */
 public class DeliverCubeFloorCmd extends SequentialCommandGroup {
-    public DeliverCubeFloorCmd(MMSwerveSubsystem swerveSubsystem, double maxTurnSpeed, MMNavigationSubsystem navigationSubsystem){
-        
+    public DeliverCubeFloorCmd(MMSwerveSubsystem swerveSubsystem, double maxTurnSpeed,
+            MMNavigationSubsystem navigationSubsystem, Supplier<Boolean> isRedAlliance) {
+
     }
 }

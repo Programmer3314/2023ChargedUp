@@ -4,20 +4,34 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 /** Add your docs here. */
 public class DeliverCubeHighCmd extends SequentialCommandGroup {
     public DeliverCubeHighCmd(MMSwerveSubsystem swerveSubsystem, double maxRotationSpeed,
-            MMNavigationSubsystem navigationSubsystem) {
+            MMNavigationSubsystem navigationSubsystem, Supplier<Boolean> isRedAlliance) {
         addCommands(
                 Commands.race(
                         new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem),
-                        new WaitToDeliverCmd(30)),
-                new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .5));
+                        new WaitToDeliverCmd(2)),
+                new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .5),
+                new TranslateAbsoluteCmd(swerveSubsystem,
+                        () -> new Pose2d(
+                                Constants.targetPositions.fieldXCoordinate
+                                        * (isRedAlliance.get() ? 1
+                                                : -1),
+                                navigationSubsystem.getPose().getY(),
+                                new Rotation2d(isRedAlliance.get() ? 0
+                                        : Math.PI)),
+                        1, navigationSubsystem));
 
     }
 

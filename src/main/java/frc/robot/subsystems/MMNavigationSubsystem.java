@@ -82,7 +82,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         return navx.getRoll();
     }
 
-    public double getPitch(){
+    public double getPitch() {
         return -navx.getPitch();
     }
 
@@ -101,19 +101,23 @@ public class MMNavigationSubsystem extends SubsystemBase {
                 double[] def = new double[] { 0, 0, 0, 0, 0, 0 };
                 double[] bp = limelight.getEntry("botpose").getDoubleArray(def);
                 if (bp.length == 6) {
+
                     Pose2d tempPose = new Pose2d(bp[0], bp[1], Rotation2d.fromDegrees(bp[5]));
+
                     if (!visionInitialized) {
                         visionInitialized = true;
                         odometer.resetPosition(Rotation2d.fromDegrees(navx.getYaw()),
                                 swerveSubsystem.getSwerveModulePositions(), tempPose);
                     }
-                    // SmartDashboard.putNumber("BP[5]", bp[5]);
-                    double latency = limelight.getEntry("tl").getDouble(0);
-                    latency = (latency + 11) / 1000.0;
-                    odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
-                    return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
-                            (aprilPose.getY() + tempPose.getY()) / 2.0,
-                            new Rotation2d(tempPose.getRotation().getRadians()));
+                    if (tempPose.getTranslation().getDistance(aprilPose.getTranslation()) < 1) {
+                        // SmartDashboard.putNumber("BP[5]", bp[5]);
+                        double latency = limelight.getEntry("tl").getDouble(0);
+                        latency = (latency + 11) / 1000.0;
+                        odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
+                        return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
+                                (aprilPose.getY() + tempPose.getY()) / 2.0,
+                                new Rotation2d(tempPose.getRotation().getRadians()));
+                    }
                 }
             }
         }

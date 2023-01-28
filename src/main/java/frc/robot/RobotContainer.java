@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.AutoDeliveryCmd;
 import frc.robot.commands.DeliverConeCmd;
 import frc.robot.commands.DeliverCubeFloorCmd;
 import frc.robot.commands.DeliverCubeHighCmd;
@@ -106,12 +108,6 @@ public class RobotContainer {
         configureBindings();
     }
 
-    private enum DeliveryMethod {
-        DeliverCone,
-        DeliverFloorCube,
-        DeliverHighCube
-    }
-
     private DeliveryMethod selectDeliveryMethod() {
         if (MMField.isCellCone(gridCell)) {
             return DeliveryMethod.DeliverCone;
@@ -174,50 +170,11 @@ public class RobotContainer {
                 .onTrue(
                         new DriveToPegCmd(navigationSubsystem, swerveSubsystem, .5));
 
-        // TODO: Make this run only while the button is held
-        // TODO: Make this a "constructor only command" something like AutoDelivery 
-        //       to make RobotContainer cleaner                
+        // TODO: Make this a "constructor only command" something like AutoDelivery
+        // to make RobotContainer cleaner
         new JoystickButton(driverJoystick, 6)
-                .onTrue(new SequentialCommandGroup(
-                        new InstantCommand(() -> navigationSubsystem.setPipeline(0)),
-
-                        new TranslateAbsoluteCmd(swerveSubsystem,
-                                () -> new Pose2d(
-                                        Constants.targetPositions.fieldXCoordinate
-                                                * (isRedAlliance ? 1
-                                                        : -1),
-                                        navigationSubsystem.getPose().getY(),
-                                        new Rotation2d(isRedAlliance ? 0
-                                                : Math.PI)),
-                                1, navigationSubsystem),
-                        new DriveToCell(swerveSubsystem,
-                                () -> gridCell,
-                                navigationSubsystem,
-                                () -> isRedAlliance,
-                                1),
-                        // new LockedInCmd(swerveSubsystem)),
-                        // new ParallelRaceGroup(
-                        // new TargetPegCmd(swerveSubsystem, 2,
-                        // navigationSubsystem),
-                        // new WaitToDeliverCmd(30)
-                        Commands.select(
-                                Map.ofEntries(
-                                        Map.entry(DeliveryMethod.DeliverCone,
-                                                new DeliverConeCmd(
-                                                        navigationSubsystem,
-                                                        2,
-                                                        swerveSubsystem)),
-                                        Map.entry(DeliveryMethod.DeliverFloorCube,
-                                                new DeliverCubeFloorCmd(
-                                                        swerveSubsystem,
-                                                        2,
-                                                        navigationSubsystem)),
-                                        Map.entry(DeliveryMethod.DeliverHighCube,
-                                                new DeliverCubeHighCmd(
-                                                        swerveSubsystem,
-                                                        2,
-                                                        navigationSubsystem))),
-                                this::selectDeliveryMethod)));
+                .whileTrue(new AutoDeliveryCmd(swerveSubsystem, navigationSubsystem, () -> isRedAlliance,
+                        () -> gridCell, this::selectDeliveryMethod));
         // new TargetPegCmd(swerveSubsystem, 2, navigationSubsystem, 1)));
         // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.changePipeline)
         // .whileTrue(new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem));
@@ -312,6 +269,10 @@ public class RobotContainer {
         this.gridHeight = gridHeight;
         gridCellEntry.setString("Grid Group: " + gridGroup + "Grid GroupCell: " + gridGroupCell
                 + " Grid Height: " + gridHeight + " Grid Cell: " + gridCell);
+    }
+
+    public boolean getIsRedAlliance() {
+        return isRedAlliance;
     }
 
 }

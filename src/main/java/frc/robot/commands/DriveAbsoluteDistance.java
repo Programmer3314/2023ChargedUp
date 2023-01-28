@@ -25,7 +25,6 @@ public class DriveAbsoluteDistance extends CommandBase {
     private MMNavigationSubsystem navigationSubsystem;
 
     // TODO: Try using MMTurnPIDController
-    
 
     // TODO: low priority implement full vectored driving
     // (forward/backward,left/right (no
@@ -48,12 +47,13 @@ public class DriveAbsoluteDistance extends CommandBase {
         initialPositions = swerveSubsystem.getSwerveModulePositions();
         initialYaw = navigationSubsystem.getYaw();
         turnPidController.setSetpoint(initialYaw.getRadians());
+        SmartDashboard.putString("Robot Starting Pos: ", navigationSubsystem.getPose().getTranslation().toString());
     }
 
     public void execute() {
-        swerveSubsystem.drive(maxSpeed, 0, 
-            turnPidController.calculate(navigationSubsystem.getYaw().getRadians()),
-            false, new Rotation2d());
+        swerveSubsystem.drive(maxSpeed, 0,
+                turnPidController.calculate(navigationSubsystem.getYaw().getRadians()),
+                false, new Rotation2d());
     }
 
     @Override
@@ -66,7 +66,7 @@ public class DriveAbsoluteDistance extends CommandBase {
         SwerveModulePosition[] currentPositions = swerveSubsystem.getSwerveModulePositions();
         SmartDashboard.putNumber("driveAbsoluteDistance:",
                 currentPositions[3].distanceMeters - initialPositions[3].distanceMeters);
-        return Math.abs(initialPositions[3].distanceMeters - currentPositions[3].distanceMeters) 
-                    > Math.abs(desiredTranslation.getX());
+        return Math.abs(initialPositions[3].distanceMeters - currentPositions[3].distanceMeters) > Math
+                .abs(desiredTranslation.getX());
     }
 }

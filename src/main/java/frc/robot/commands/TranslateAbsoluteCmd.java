@@ -47,6 +47,7 @@ public class TranslateAbsoluteCmd extends CommandBase {
 
     @Override
     public void execute() {
+        
         Translation2d currentPosition = navigationSubsystem.getPose().getTranslation();
         Translation2d trip = targetPosition.minus(currentPosition);
         double tripLength = trip.getNorm();

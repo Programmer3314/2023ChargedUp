@@ -47,7 +47,7 @@ public class TargetPegCmd extends CommandBase {
         Rotation2d targetAngle = new Rotation2d(Math.toRadians(limelight.getEntry("tx").getDouble(0)));
         double correction = turnPidController.execute(targetAngle.getRadians());
         swerveSubsystem.drive(0, 0, correction, true, navigationSubsystem.getRotation2d());
-        if (Math.abs(limelight.getEntry("tx").getDouble(0)) < 5) {
+        if (Math.abs(limelight.getEntry("tx").getDouble(0)) < 3) {
             cyclesOnTarget++;
         } else {
             cyclesOnTarget = 0;
@@ -63,6 +63,6 @@ public class TargetPegCmd extends CommandBase {
     @Override
     public boolean isFinished() {
         // return Math.abs(limelight.getEntry("tx").getDouble(0)) < margin;
-        return cyclesOnTarget >= 100;
+        return cyclesOnTarget >= 75;
     }
 }
