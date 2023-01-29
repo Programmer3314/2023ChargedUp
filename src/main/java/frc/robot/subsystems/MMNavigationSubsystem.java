@@ -15,15 +15,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 
 /** Add your docs here. */
 public class MMNavigationSubsystem extends SubsystemBase {
@@ -74,7 +69,6 @@ public class MMNavigationSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Navx Yaw", navx.getYaw());
         SmartDashboard.putNumber("NavX Pitch", getPitch());
         SmartDashboard.putNumber("UltraSonicSensor", ultraSonicSensor.getVoltage());
-
     }
 
     public void zeroHeading() {
