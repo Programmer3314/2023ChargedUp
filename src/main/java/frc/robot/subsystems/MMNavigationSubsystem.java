@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -33,6 +34,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
     private long lastVisionHB;
     public static AnalogInput ultraSonicSensor;
     private final Field2d m_field = new Field2d();
+    private final DigitalInput magneticSensor;
     // private final SendableChooser fieldWidget;
 
     public MMNavigationSubsystem(MMSwerveSubsystem swerveSubsystem) {
@@ -52,6 +54,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         // Shuffleboard.getTab("In Match").addString("Robo Pose", () ->
         // getPose().toString())
         // .withWidget(BuiltInWidgets.kField);
+        magneticSensor=new DigitalInput(Constants.RoboRio.Dio.magneticSensor);
     }
 
     @Override
@@ -69,6 +72,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Navx Yaw", navx.getYaw());
         SmartDashboard.putNumber("NavX Pitch", getPitch());
         SmartDashboard.putNumber("UltraSonicSensor", ultraSonicSensor.getVoltage());
+        SmartDashboard.putBoolean("Magnetic Sensor", magneticSensor.get());
     }
 
     public void zeroHeading() {

@@ -183,14 +183,16 @@ public class Constants {
             public static final int x = 1;
             public static final int r = 4;
             public static final int lt = 2;
-            public static final int rt= 3;
-            
+            public static final int rt = 3;
+
         }
 
         public static class Button {
             public static final int overrideFieldCentricA = 1;
             public static final int resetNavxB = 2;
             public static final int testPeg = 3;
+            public static final int runIntake=6;
+            public static final int runOutTake=5;
         }
     }
 
@@ -209,9 +211,33 @@ public class Constants {
             public static final int gridGroupHeightHigh = 9;
         }
     }
-    public static class RoboRio{
-        public static class Analog{
+    public static class Pneumatic{
+        public static final int pneumaticHubModule=3;
+        public static final int intakeReverseChannel=0;
+        public static final int intakeForwardChannel=1;
+    }
+
+    public static class RoboRio {
+        public static class Analog {
             public static final int ultraSonicSensor = 0;
+
+            public static class IntakeSensors {
+                public static final int ultraSonicSensor = 9;
+            }
+        }
+
+        public static class Dio {
+            public static final int magneticSensor = 9;
+
+            public static class IntakeSensors {
+                public static final int beamBreakSensor = 8;
+            }
+        }
+    }
+
+    public static class DeliveryMotor {
+        public static class IntakeMotor {
+            public static final int intakeMotorCanId = 10;
         }
     }
 

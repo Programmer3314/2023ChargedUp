@@ -30,6 +30,7 @@ import frc.robot.commands.AutoDeliveryCmd;
 import frc.robot.commands.DriveToBumperCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
+import frc.robot.subsystems.MMIntakeSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMField;
@@ -68,6 +69,7 @@ public class RobotContainer {
     private GenericEntry gridCellEntry = tab.add("Grid Cell: ", "None").getEntry();
     private Trigger leftTrigger;
     private Trigger rightTrigger;
+    private final MMIntakeSubsystem intakeSubsystem;
 
     public RobotContainer() {
 
@@ -88,6 +90,7 @@ public class RobotContainer {
             } catch (Exception e) {
             }
         }).start();
+        intakeSubsystem=new MMIntakeSubsystem();
 
         leftTrigger = new Trigger(this::getLeftTriggerActive);
         rightTrigger = new Trigger(this::getRightTriggerActive);
@@ -151,12 +154,14 @@ public class RobotContainer {
                 .onTrue(
                         new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5));
 
-        new JoystickButton(driverJoystick, 6)
-                .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
+        // new JoystickButton(driverJoystick, 6)
+        //         .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
         // swerveSubsystem, navigationSubsystem,
         // this::getIsRedAlliance,
         // this::getGridCell,
         // this::selectDeliveryMethod
+        new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
+        .whileTrue(new InstantCommand(()-> intakeSubsystem.runIntake()));
 
         new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup1)
                 .onTrue(new InstantCommand(() -> selectCell(gridHeight, 1, gridGroupCell)));
