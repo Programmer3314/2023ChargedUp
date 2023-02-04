@@ -23,11 +23,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoDeliveryCmd;
+import frc.robot.commands.DeliverCubeCmd;
 import frc.robot.commands.DriveToBumperCmd;
+import frc.robot.commands.PickUpCubeCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
 import frc.robot.subsystems.MMIntakeSubsystem;
@@ -90,7 +93,7 @@ public class RobotContainer {
             } catch (Exception e) {
             }
         }).start();
-        intakeSubsystem=new MMIntakeSubsystem();
+        intakeSubsystem = new MMIntakeSubsystem();
 
         leftTrigger = new Trigger(this::getLeftTriggerActive);
         rightTrigger = new Trigger(this::getRightTriggerActive);
@@ -119,18 +122,21 @@ public class RobotContainer {
 
     private void configureBindings() {
         leftTrigger.whileTrue(new SequentialCommandGroup(
-                new TranslateAbsoluteCmd(swerveSubsystem, () -> MMField.getLeftDock(this::getIsRedAlliance), 2,
+                new TranslateAbsoluteCmd(swerveSubsystem,
+                        () -> MMField.getLeftDock(this::getIsRedAlliance), 2,
                         navigationSubsystem)
                         .until(navigationSubsystem::approachingLoadingDock),
                 // new TranslateAbsoluteCmd(swerveSubsystem,
                 // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
                 new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5),
-                new TranslateAbsoluteCmd(swerveSubsystem, () -> MMField.getLeftDockRetractPoint(this::getIsRedAlliance),
+                new TranslateAbsoluteCmd(swerveSubsystem,
+                        () -> MMField.getLeftDockRetractPoint(this::getIsRedAlliance),
                         2,
                         navigationSubsystem)));
 
         rightTrigger.whileTrue(new SequentialCommandGroup(
-                new TranslateAbsoluteCmd(swerveSubsystem, () -> MMField.getRightDock(this::getIsRedAlliance), 2,
+                new TranslateAbsoluteCmd(swerveSubsystem,
+                        () -> MMField.getRightDock(this::getIsRedAlliance), 2,
                         navigationSubsystem)
                         .until(navigationSubsystem::approachingLoadingDock),
                 // new TranslateAbsoluteCmd(swerveSubsystem,
@@ -150,18 +156,38 @@ public class RobotContainer {
                                 // new Pose2d(3.3, -4, new Rotation2d())
                                 ))));
 
-        new JoystickButton(driverJoystick, Constants.Driver.Button.testPeg)
-                .onTrue(
-                        new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5));
+        // new JoystickButton(driverJoystick, Constants.Driver.Button.testPeg)
+        // .onTrue(
+        // new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5));
 
-        // new JoystickButton(driverJoystick, 6)
-        //         .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
+        new JoystickButton(driverJoystick, 6)
+                .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
         // swerveSubsystem, navigationSubsystem,
         // this::getIsRedAlliance,
         // this::getGridCell,
-        // this::selectDeliveryMethod
+        // // this::selectDeliveryMethod
         new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
-        .whileTrue(new InstantCommand(()-> intakeSubsystem.runIntake()));
+                // .whileTrue(
+                //         new StartEndCommand(
+                //                 () -> intakeSubsystem.runIntake(),
+                //                 // Stop driving at the end of the command
+                //                 () -> intakeSubsystem.stopIntake(),
+                //                 // Requires the drive subsystem
+                //                 intakeSubsystem));
+                .onTrue(
+                    new  PickUpCubeCmd(intakeSubsystem)
+                );
+        new JoystickButton(driverJoystick, Constants.Driver.Button.runOutTake)
+                // .whileTrue(
+                //         new StartEndCommand(
+                //                 () -> intakeSubsystem.runOutTake(),
+                //                 // Stop driving at the end of the command
+                //                 () -> intakeSubsystem.stopIntake(),
+                //                 // Requires the drive subsystem
+                //                 intakeSubsystem));
+                .onTrue(
+                    new DeliverCubeCmd(intakeSubsystem)
+                );
 
         new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup1)
                 .onTrue(new InstantCommand(() -> selectCell(gridHeight, 1, gridGroupCell)));

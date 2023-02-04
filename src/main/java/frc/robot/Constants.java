@@ -190,9 +190,10 @@ public class Constants {
         public static class Button {
             public static final int overrideFieldCentricA = 1;
             public static final int resetNavxB = 2;
-            public static final int testPeg = 3;
-            public static final int runIntake=6;
-            public static final int runOutTake=5;
+            // public static final int testPeg = 3;
+
+            public static final int runIntake = 4;
+            public static final int runOutTake = 3;
         }
     }
 
@@ -209,12 +210,22 @@ public class Constants {
             public static final int gridGroupHeightLow = 7;
             public static final int gridGroupHeightMed = 8;
             public static final int gridGroupHeightHigh = 9;
+
         }
     }
-    public static class Pneumatic{
-        public static final int pneumaticHubModule=3;
-        public static final int intakeReverseChannel=0;
-        public static final int intakeForwardChannel=1;
+
+    public static class Pneumatic {
+        public static final int pneumaticHubModule = 1;
+
+        public class LowerIntake {
+            public static final int reverseChannel = 0;
+            public static final int forwardChannel = 1;
+        }
+
+        public class UpperIntake {
+            public static final int reverseChannel = 2;
+            public static final int forwardChannel = 3;
+        }
     }
 
     public static class RoboRio {
@@ -222,7 +233,7 @@ public class Constants {
             public static final int ultraSonicSensor = 0;
 
             public static class IntakeSensors {
-                public static final int ultraSonicSensor = 9;
+                public static final int ultraSonicSensor = 1;
             }
         }
 
@@ -230,7 +241,7 @@ public class Constants {
             public static final int magneticSensor = 9;
 
             public static class IntakeSensors {
-                public static final int beamBreakSensor = 8;
+                public static final int beamBreakSensor = 1;
             }
         }
     }
