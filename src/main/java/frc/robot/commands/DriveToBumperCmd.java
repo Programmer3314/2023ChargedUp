@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMTurnPIDController;
@@ -18,47 +19,52 @@ import frc.robot.utility.MMTurnPIDController;
 // gyro lock angle
 // stop when our speed is near 0
 public class DriveToBumperCmd extends CommandBase {
-    private MMNavigationSubsystem navigationSubsystem;
-    private MMSwerveSubsystem swerveSubsystem;
     private double maxSpeed;
     // private PIDController tripPidController;
     private MMTurnPIDController turnPidController;
     private Rotation2d gyroLockAngle;
     private boolean pastStartUpFlag;
+    private RobotContainer rc;
+    private double tempMaxSpeed;
 
-    public DriveToBumperCmd(MMNavigationSubsystem navigationSubsystem, MMSwerveSubsystem swerveSubsystem,
+    public DriveToBumperCmd(RobotContainer rc,
             double maxSpeed) {
-        this.navigationSubsystem = navigationSubsystem;
-        this.swerveSubsystem = swerveSubsystem;
+        this.rc = rc;
         this.maxSpeed = maxSpeed;
         // tripPidController = new PIDController(4, 0, 0);
         turnPidController = new MMTurnPIDController();
 
-        addRequirements(swerveSubsystem);
+        addRequirements(rc.swerveSubsystem);
     }
 
     @Override
     public void initialize() {
-        gyroLockAngle = navigationSubsystem.getRotation2d();
+        gyroLockAngle = rc.navigationSubsystem.getRotation2d();
 
         turnPidController.initialize(gyroLockAngle);
         pastStartUpFlag = false;
+        if (rc.intakeSubsystem.getBeamBreak()) {
+            tempMaxSpeed = -maxSpeed;
+        }
+        else{
+            tempMaxSpeed=maxSpeed;
+        }
     }
 
     @Override
     public void execute() {
         if (!pastStartUpFlag) {
-            pastStartUpFlag = swerveSubsystem.getAverageDriveVelocity() > .25;
+            pastStartUpFlag = rc.swerveSubsystem.getAverageDriveVelocity() > .25;
         }
 
         SwerveModuleState[] desiredStates = new SwerveModuleState[] {
-                new SwerveModuleState(maxSpeed, new Rotation2d()),
-                new SwerveModuleState(maxSpeed, new Rotation2d()),
-                new SwerveModuleState(maxSpeed, new Rotation2d()),
-                new SwerveModuleState(maxSpeed, new Rotation2d())
+                new SwerveModuleState(tempMaxSpeed, new Rotation2d()),
+                new SwerveModuleState(tempMaxSpeed, new Rotation2d()),
+                new SwerveModuleState(tempMaxSpeed, new Rotation2d()),
+                new SwerveModuleState(tempMaxSpeed, new Rotation2d())
         };
-        swerveSubsystem.setModuleStatesRaw(desiredStates, true);
-        SmartDashboard.putNumber("Velocity", swerveSubsystem.getAverageDriveVelocity());
+        rc.swerveSubsystem.setModuleStatesRaw(desiredStates, true);
+        SmartDashboard.putNumber("Velocity", rc.swerveSubsystem.getAverageDriveVelocity());
         // double desiredTurn =
         // turnPidController.execute(navigationSubsystem.getHeadingRad());
         // double desiredX = Math.cos(gyroLockAngle.getRadians() * maxSpeed);
@@ -70,12 +76,12 @@ public class DriveToBumperCmd extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        rc.swerveSubsystem.stopModules();
     }
 
     @Override
     public boolean isFinished() {
-        boolean droveToPeg = swerveSubsystem.getAverageDriveVelocity() <= .22 && pastStartUpFlag;
+        boolean droveToPeg = rc.swerveSubsystem.getAverageDriveVelocity() <= .22 && pastStartUpFlag;
         SmartDashboard.putBoolean("Drove To Peg", droveToPeg);
         return droveToPeg;
     }

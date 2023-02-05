@@ -4,6 +4,9 @@
 
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -12,14 +15,15 @@ import frc.robot.subsystems.MMIntakeSubsystem;
 
 /** Add your docs here. */
 public class DeliverCubeCmd extends SequentialCommandGroup {
-    public DeliverCubeCmd(MMIntakeSubsystem intakeSubsystem) {
+    public DeliverCubeCmd(MMIntakeSubsystem intakeSubsystem, BooleanSupplier isLow) {
         addCommands(
                 new ParallelCommandGroup(
                         new InstantCommand(intakeSubsystem::setIntakeTravel),
-                        new InstantCommand(intakeSubsystem::setIntakeDeliverLower),
-                        Commands.waitSeconds(2)),
+                        new InstantCommand(intakeSubsystem::setIntakeDeliverLower)),
                 Commands.parallel(
-                        new InstantCommand(intakeSubsystem::runOutTake),
+                        Commands.either(
+                                new InstantCommand(intakeSubsystem::runOutTakeSlow),
+                                new InstantCommand(intakeSubsystem::runOutTake), isLow),
                         Commands.waitSeconds(1)),
                 new InstantCommand(intakeSubsystem::stopIntake));
     }

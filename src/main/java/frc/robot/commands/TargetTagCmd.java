@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -19,30 +21,43 @@ public class TargetTagCmd extends CommandBase {
     double maxRotationSpeed;
     MMNavigationSubsystem navigationSubsystem;
     MMTurnPIDController turnPidController;
-    private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    private final NetworkTable limelight = inst.getTable(Constants.Limelight.fLimelight);
+    Supplier<Boolean> cubeInIntake;
+    int cyclesOnTarget;
 
     public TargetTagCmd(MMSwerveSubsystem swerveSubsystem, double maxRotationSpeed,
-            MMNavigationSubsystem navigationSubsystem) {
+            MMNavigationSubsystem navigationSubsystem, Supplier<Boolean> cubeInIntake) {
         this.swerveSubsystem = swerveSubsystem;
         this.maxRotationSpeed = maxRotationSpeed;
         this.navigationSubsystem = navigationSubsystem;
         turnPidController = new MMTurnPIDController();
+        this.cubeInIntake=cubeInIntake;
 
         addRequirements(swerveSubsystem);
     }
 
     @Override
     public void initialize() {
-        navigationSubsystem.setPipeline(0);
+        navigationSubsystem.setFrontPipeline(0);
         turnPidController.initialize(new Rotation2d());
+        cyclesOnTarget=0;
     }
 
     @Override
     public void execute() {
-        Rotation2d targetAngle = new Rotation2d(Math.toRadians(limelight.getEntry("tx").getDouble(0)));
+        double rawTarget;
+        if (cubeInIntake.get()) {
+            rawTarget = navigationSubsystem.getBackTargetX();
+        } else {
+            rawTarget = navigationSubsystem.getFrontTargetX();
+        }
+        Rotation2d targetAngle = new Rotation2d(Math.toRadians(rawTarget));
         double correction = turnPidController.execute(targetAngle.getRadians());
         swerveSubsystem.drive(0, 0, correction, true, navigationSubsystem.getRotation2d());
+        if (Math.abs(rawTarget) < 3) {
+            cyclesOnTarget++;
+        } else {
+            cyclesOnTarget = 0;
+        }
     }
 
     @Override
@@ -53,6 +68,6 @@ public class TargetTagCmd extends CommandBase {
     @Override
     public boolean isFinished() {
         // return Math.abs(limelight.getEntry("tx").getDouble(0)) < margin;
-        return false;
+        return cyclesOnTarget>=75;
     }
 }

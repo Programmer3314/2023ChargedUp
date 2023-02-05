@@ -9,6 +9,8 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.MMIntakeSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,22 +18,31 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 /** Add your docs here. */
 public class DeliverCubeHighCmd extends SequentialCommandGroup {
-    public DeliverCubeHighCmd(MMSwerveSubsystem swerveSubsystem, double maxRotationSpeed,
-            MMNavigationSubsystem navigationSubsystem, Supplier<Boolean> isRedAlliance) {
+    public DeliverCubeHighCmd(double maxRotationSpeed, RobotContainer rc) {
         addCommands(
-                Commands.race(
-                        new TargetTagCmd(swerveSubsystem, 2, navigationSubsystem),
-                        new WaitToDeliverCmd(2)),
-                new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5),
-                new TranslateAbsoluteCmd(swerveSubsystem,
+                new TranslateAbsoluteCmd(rc.swerveSubsystem,
                         () -> new Pose2d(
                                 Constants.targetPositions.fieldXCoordinate
-                                        * (isRedAlliance.get() ? 1
+                                        * (rc.getIsRedAlliance() ? 1
                                                 : -1),
-                                navigationSubsystem.getPose().getY(),
-                                new Rotation2d(isRedAlliance.get() ? 0
+                                rc.navigationSubsystem.getPose().getY(),
+                                new Rotation2d(rc.getIsRedAlliance() ? Math.PI
+                                        : 0)),
+                        1, rc.navigationSubsystem),
+                Commands.race(
+                        new TargetTagCmd(rc.swerveSubsystem, 2, rc.navigationSubsystem,
+                                rc.intakeSubsystem::getBeamBreak),
+                        new WaitToDeliverCmd(2)),
+                new DriveToBumperCmd(rc, .5),
+                new TranslateAbsoluteCmd(rc.swerveSubsystem,
+                        () -> new Pose2d(
+                                Constants.targetPositions.fieldXCoordinate
+                                        * (rc.getIsRedAlliance() ? 1
+                                                : -1),
+                                rc.navigationSubsystem.getPose().getY(),
+                                new Rotation2d(rc.getIsRedAlliance() ? 0
                                         : Math.PI)),
-                        1, navigationSubsystem));
+                        1, rc.navigationSubsystem));
 
     }
 

@@ -5,12 +5,15 @@
 package frc.robot.commands;
 
 import java.util.Map;
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.DeliveryMethod;
 import frc.robot.RobotContainer;
+import frc.robot.utility.MMField;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -22,8 +25,7 @@ public class AutoDeliveryCmd extends SequentialCommandGroup {
         // Supplier<Boolean> isRedAlliance, Supplier<Integer> gridCell,
         // Supplier<Object> selectDeliveryMethod
         addCommands(
-                new InstantCommand(() -> rc.navigationSubsystem.setPipeline(0)),
-
+                new InstantCommand(() -> rc.navigationSubsystem.setFrontPipeline(0)),
                 new TranslateAbsoluteCmd(rc.swerveSubsystem,
                         () -> new Pose2d(
                                 Constants.targetPositions.fieldXCoordinate
@@ -38,26 +40,20 @@ public class AutoDeliveryCmd extends SequentialCommandGroup {
                         rc.navigationSubsystem,
                         rc::getIsRedAlliance,
                         1),
+
                 Commands.select(
                         Map.ofEntries(
                                 Map.entry(DeliveryMethod.DeliverCone,
                                         new DeliverConeCmd(
-                                                rc.navigationSubsystem,
-                                                2,
-                                                rc.swerveSubsystem,
-                                                rc::getIsRedAlliance)),
+                                                2, rc)),
                                 Map.entry(DeliveryMethod.DeliverFloorCube,
                                         new DeliverCubeFloorCmd(
-                                                rc.swerveSubsystem,
                                                 2,
-                                                rc.navigationSubsystem,
-                                                rc::getIsRedAlliance)),
+                                                () -> MMField.isCellCone(rc.getGridCell()), rc)),
                                 Map.entry(DeliveryMethod.DeliverHighCube,
                                         new DeliverCubeHighCmd(
-                                                rc.swerveSubsystem,
                                                 2,
-                                                rc.navigationSubsystem,
-                                                rc::getIsRedAlliance))),
+                                                rc))),
                         rc::selectDeliveryMethod),
                 new InstantCommand(rc::clearSelectedCell));
     }

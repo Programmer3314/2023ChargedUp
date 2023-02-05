@@ -25,7 +25,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
     private final TalonFX intakeMotor;
     private final AnalogInput intakeUltraSonic;
     private final DigitalInput intakeBeamBreak;
-    private final PneumaticHub pneumaticHub;
+    // private final PneumaticHub pneumaticHub;
     private final DoubleSolenoid intakePosition;
     private final DoubleSolenoid intakeUpperPosition;
 
@@ -33,7 +33,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
         intakeMotor = new TalonFX(Constants.DeliveryMotor.IntakeMotor.intakeMotorCanId);
         intakeUltraSonic = new AnalogInput(Constants.RoboRio.Analog.IntakeSensors.ultraSonicSensor);
         intakeBeamBreak = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.beamBreakSensor);
-        pneumaticHub = new PneumaticHub(Constants.Pneumatic.pneumaticHubModule);
+        // pneumaticHub = new PneumaticHub(Constants.Pneumatic.pneumaticHubModule);
         intakePosition = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,
                 Constants.Pneumatic.LowerIntake.forwardChannel,
                 Constants.Pneumatic.LowerIntake.reverseChannel);
@@ -56,6 +56,10 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     public void runIntake() {
         intakeMotor.set(TalonFXControlMode.PercentOutput, -.2);
+    }
+
+    public void runOutTakeSlow() {
+        intakeMotor.set(TalonFXControlMode.PercentOutput, .2);
     }
 
     public void runOutTake() {
@@ -86,8 +90,8 @@ public class MMIntakeSubsystem extends SubsystemBase {
         intakeUpperPosition.set(Value.kReverse);
     }
 
-    public void enableCompressor() {
-        pneumaticHub.enableCompressorDigital();
-    }
+    // public void enableCompressor() {
+    //     pneumaticHub.enableCompressorDigital();
+    // }
 
 }
