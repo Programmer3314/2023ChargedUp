@@ -213,7 +213,27 @@ public class Constants {
             public static final int gridGroupHeightHigh = 9;
             public static final int testTurnPeg = 10;
             // 11+12 don't work
+
         }
+    }
+    public static class ButtonBox2{
+        public static final int button = 0;
+        
+        public static class Button{
+            public static final int col1 = 1;
+            public static final int col2 = 2;
+            public static final int col3 = 3;
+            public static final int col4 = 4;
+            public static final int col5 = 5;
+            public static final int col6 = 6;
+            public static final int col7 = 7;
+            public static final int col8 = 8;
+            public static final int col9 = 9;
+            public static final int row1 = 10;
+            public static final int row2 = 11;
+            public static final int row3 = 12;
+        }
+
     }
 
     public static class Pneumatic {

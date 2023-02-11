@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ButtonBox2;
 import frc.robot.commands.AutoDeliveryCmd;
 import frc.robot.commands.DeliverCubeCmd;
 import frc.robot.commands.DriveToBumperCmd;
@@ -54,6 +55,7 @@ public class RobotContainer {
 
     private final Joystick driverJoystick = new Joystick(Constants.Driver.Controller);
     private final Joystick buttonBox1 = new Joystick(Constants.ButtonBox1.button);
+    private final Joystick buttonBox2 = new Joystick(0);
     private final MMJoystickAxis driveXAxis = new MMJoystickAxis(Constants.Driver.Controller,
             Constants.Driver.Axis.x,
             0.01,
@@ -195,24 +197,54 @@ public class RobotContainer {
                 .onTrue(
                         new DeliverCubeCmd(intakeSubsystem, () -> false));
 
-        new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup1)
-                .onTrue(new InstantCommand(() -> selectCell(gridHeight, 1, gridGroupCell)));
-        new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup2)
-                .onTrue(new InstantCommand(() -> selectCell(gridHeight, 2, gridGroupCell)));
-        new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup3)
-                .onTrue(new InstantCommand(() -> selectCell(gridHeight, 3, gridGroupCell)));
-        new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell1)
-                .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 1)));
-        new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell2)
-                .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 2)));
-        new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell3)
-                .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 3)));
-        new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupHeightLow)
-                .onTrue(new InstantCommand(() -> selectCell(1, gridGroup, gridGroupCell)));
-        new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupHeightMed)
-                .onTrue(new InstantCommand(() -> selectCell(2, gridGroup, gridGroupCell)));
-        new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupHeightHigh)
-                .onTrue(new InstantCommand(() -> selectCell(3, gridGroup, gridGroupCell)));
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row1)
+                .onTrue(new InstantCommand(() -> selectCell(gridCell, 1)));
+
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row2)
+                .onTrue(new InstantCommand(() -> selectCell(gridCell, 2)));
+
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row3)
+                .onTrue(new InstantCommand(() -> selectCell(gridCell, 3)));
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col1)
+                .onTrue(new InstantCommand(() -> selectCell(1, gridHeight)));
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col2)
+                .onTrue(new InstantCommand(() -> selectCell(2, gridHeight)));
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col3)
+                .onTrue(new InstantCommand(() -> selectCell(3, gridHeight)));
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col4)
+                .onTrue(new InstantCommand(() -> selectCell(4, gridHeight)));
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col5)
+                .onTrue(new InstantCommand(() -> selectCell(5, gridHeight)));
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col6)
+                .onTrue(new InstantCommand(() -> selectCell(6, gridHeight)));
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col7)
+                .onTrue(new InstantCommand(() -> selectCell(7, gridHeight)));
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col8)
+                .onTrue(new InstantCommand(() -> selectCell(8, gridHeight)));
+        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col9)
+                .onTrue(new InstantCommand(() -> selectCell(9, gridHeight)));
+
+        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup1)
+        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, 1, gridGroupCell)));
+        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup2)
+        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, 2, gridGroupCell)));
+        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup3)
+        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, 3, gridGroupCell)));
+        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell1)
+        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 1)));
+        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell2)
+        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 2)));
+        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell3)
+        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 3)));
+        // new JoystickButton(buttonBox1,
+        // Constants.ButtonBox1.Button.gridGroupHeightLow)
+        // .onTrue(new InstantCommand(() -> selectCell(1, gridGroup, gridGroupCell)));
+        // new JoystickButton(buttonBox1,
+        // Constants.ButtonBox1.Button.gridGroupHeightMed)
+        // .onTrue(new InstantCommand(() -> selectCell(2, gridGroup, gridGroupCell)));
+        // new JoystickButton(buttonBox1,
+        // Constants.ButtonBox1.Button.gridGroupHeightHigh)
+        // .onTrue(new InstantCommand(() -> selectCell(3, gridGroup, gridGroupCell)));
     }
 
     public Command getAutonomousCommand() {
@@ -261,6 +293,12 @@ public class RobotContainer {
         this.gridHeight = gridHeight;
         gridCellEntry.setString("Grid Group: " + gridGroup + "Grid GroupCell: " + gridGroupCell
                 + " Grid Height: " + gridHeight + " Grid Cell: " + gridCell);
+    }
+
+    public void selectCell(int column, int row) {
+        gridCell = column;
+        gridHeight = row;
+        gridCellEntry.setString("Grid Cell: " + gridCell + "Grid Height: " + gridHeight);
     }
 
     public boolean getIsRedAlliance() {
