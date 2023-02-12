@@ -9,6 +9,11 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
+// TODO: Do Normal stuff if isHomed();
+// otherwise do state machine 
+// Add conditions to each method. 
+
+
 /** Add your docs here. */
 public class IntakeHome extends CommandBase {
     private final RobotContainer rc;
