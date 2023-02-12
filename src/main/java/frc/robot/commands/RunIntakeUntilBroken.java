@@ -5,26 +5,29 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.MMIntakeSubsystem;
 
 /** Add your docs here. */
-public class RunIntakeUntilBroken extends CommandBase{
-    MMIntakeSubsystem intakeSubsystem;
-    public RunIntakeUntilBroken(MMIntakeSubsystem intakeSubsystem){
-        this.intakeSubsystem=intakeSubsystem;
+public class RunIntakeUntilBroken extends CommandBase {
+    RobotContainer rc;
+
+    public RunIntakeUntilBroken(RobotContainer rc) {
+        this.rc = rc;
     }
+
     @Override
     public void initialize() {
-        intakeSubsystem.runIntake();
+        rc.intakeSubsystem.runIntake();
     }
 
     @Override
     public void end(boolean interrupted) {
-        intakeSubsystem.stopIntake();
+        rc.intakeSubsystem.stopIntake();
     }
 
     @Override
     public boolean isFinished() {
-       return intakeSubsystem.getBeamBreak();
+        return rc.intakeSubsystem.getBeamBreak();
     }
 }

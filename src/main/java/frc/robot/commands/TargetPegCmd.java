@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMTurnPIDController;
@@ -15,30 +16,27 @@ import frc.robot.utility.MMTurnPIDController;
 /** Add your docs here. */
 public class TargetPegCmd extends CommandBase {
 
-    MMSwerveSubsystem swerveSubsystem;
     double maxRotationSpeed;
-    MMNavigationSubsystem navigationSubsystem;
     // MMTurnPIDController turnPidController;
     MMTurnPIDController turnPidController;
     private int cyclesOnTarget;
     Supplier<Boolean> cubeInIntake;
     private boolean isBackCam;
+    private RobotContainer rc;
 
-    public TargetPegCmd(MMSwerveSubsystem swerveSubsystem, double maxRotationSpeed,
-            MMNavigationSubsystem navigationSubsystem, Supplier<Boolean> cubeInIntake) {
-        this.swerveSubsystem = swerveSubsystem;
+    public TargetPegCmd(RobotContainer rc, double maxRotationSpeed, Supplier<Boolean> cubeInIntake) {
         this.maxRotationSpeed = maxRotationSpeed;
-        this.navigationSubsystem = navigationSubsystem;
         turnPidController = new MMTurnPIDController();
         this.cubeInIntake = cubeInIntake;
+        this.rc = rc;
 
-        addRequirements(swerveSubsystem);
+        addRequirements(rc.swerveSubsystem);
     }
 
     @Override
     public void initialize() {
         // navigationSubsystem.setFrontPipeline(1);
-        
+
         turnPidController.initialize(new Rotation2d());
         cyclesOnTarget = 0;
         isBackCam = cubeInIntake.get();
@@ -48,16 +46,16 @@ public class TargetPegCmd extends CommandBase {
     public void execute() {
         double rawTarget;
         if (isBackCam) {
-            rawTarget = navigationSubsystem.getBackTargetX();
-            navigationSubsystem.setBackPipeline(1);
+            rawTarget = rc.navigationSubsystem.getBackTargetX();
+            rc.navigationSubsystem.setBackPipeline(1);
         } else {
-            rawTarget = navigationSubsystem.getFrontTargetX();
-            navigationSubsystem.setFrontPipeline(1);
+            rawTarget = rc.navigationSubsystem.getFrontTargetX();
+            rc.navigationSubsystem.setFrontPipeline(1);
         }
 
         Rotation2d targetAngle = new Rotation2d(Math.toRadians(rawTarget));
         double correction = turnPidController.execute(targetAngle.getRadians());
-        swerveSubsystem.drive(0, 0, correction, true, navigationSubsystem.getRotation2d());
+        rc.swerveSubsystem.drive(0, 0, correction, true, rc.navigationSubsystem.getRotation2d());
         if (Math.abs(rawTarget) < 3) {
             cyclesOnTarget++;
         } else {
@@ -67,17 +65,17 @@ public class TargetPegCmd extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        rc.swerveSubsystem.stopModules();
         if (isBackCam) {
-            navigationSubsystem.setBackPipeline(0);
+            rc.navigationSubsystem.setBackPipeline(0);
         } else {
-            navigationSubsystem.setFrontPipeline(0);
+            rc.navigationSubsystem.setFrontPipeline(0);
         }
 
     }
 
     @Override
     public boolean isFinished() {
-        return cyclesOnTarget>=75;
+        return cyclesOnTarget >= 75;
     }
 }

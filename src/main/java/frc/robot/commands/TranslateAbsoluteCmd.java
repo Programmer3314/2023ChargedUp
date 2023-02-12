@@ -11,31 +11,29 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMTurnPIDController;
 
 /** Add your docs here. */
 public class TranslateAbsoluteCmd extends CommandBase {
-    private final MMSwerveSubsystem swerveSubsystem;
     private final Supplier<Pose2d> desiredPosition;
     private final double maxSpeed;
     private Translation2d targetPosition;
     // private final TrapezoidProfile.Constraints constraints;
     private final PIDController tripPidController;
-    private final MMNavigationSubsystem navigationSubsystem;
     private final MMTurnPIDController turnPidController;
+    private final RobotContainer rc;
 
-    public TranslateAbsoluteCmd(MMSwerveSubsystem swerveSubsystem, Supplier<Pose2d> desiredTranslation, double maxSpeed,
-            MMNavigationSubsystem navigationSubsystem) {
-        this.swerveSubsystem = swerveSubsystem;
+    public TranslateAbsoluteCmd(RobotContainer rc, Supplier<Pose2d> desiredTranslation, double maxSpeed) {
         this.desiredPosition = desiredTranslation;
         this.maxSpeed = maxSpeed;
-        this.navigationSubsystem = navigationSubsystem;
         tripPidController = new PIDController(4, 0, 0);
         turnPidController = new MMTurnPIDController();
+        this.rc=rc;
 
-        addRequirements(swerveSubsystem);
+        addRequirements(rc.swerveSubsystem);
     }
 
     @Override
@@ -49,7 +47,7 @@ public class TranslateAbsoluteCmd extends CommandBase {
     @Override
     public void execute() {
 
-        Translation2d currentPosition = navigationSubsystem.getPose().getTranslation();
+        Translation2d currentPosition = rc.navigationSubsystem.getPose().getTranslation();
         Translation2d trip = targetPosition.minus(currentPosition);
         double tripLength = trip.getNorm();
 
@@ -64,21 +62,21 @@ public class TranslateAbsoluteCmd extends CommandBase {
             correction = -maxSpeed;
         }
 
-        double desiredTurn = turnPidController.execute(navigationSubsystem.getHeadingRad());
+        double desiredTurn = turnPidController.execute(rc.navigationSubsystem.getHeadingRad());
 
-        swerveSubsystem.drive(trip.getX() * correction, trip.getY() * correction, desiredTurn, true,
-                navigationSubsystem.getRotation2d());
+        rc.swerveSubsystem.drive(trip.getX() * correction, trip.getY() * correction, desiredTurn, true,
+                rc.navigationSubsystem.getRotation2d());
     }
 
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        rc.swerveSubsystem.stopModules();
     }
 
     @Override
     public boolean isFinished() {
 
-        double tripLength = targetPosition.getDistance(navigationSubsystem.getPose().getTranslation());
+        double tripLength = targetPosition.getDistance(rc.navigationSubsystem.getPose().getTranslation());
         boolean finishedTranslate = tripLength < .05;
         SmartDashboard.putNumber("Trip Length:", tripLength);
         SmartDashboard.putBoolean("Finished Translate", finishedTranslate);

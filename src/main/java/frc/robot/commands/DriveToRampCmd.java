@@ -6,46 +6,43 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 
-
 /** Add your docs here. */
 public class DriveToRampCmd extends CommandBase {
-    private MMSwerveSubsystem swerveSubsystem;
-    private MMNavigationSubsystem navigationSubsystem;
     private double maxSpeed;
     private double maxAngle;
     private double robotPitch;
+    private RobotContainer rc;
 
-    public DriveToRampCmd(MMSwerveSubsystem swerveSubsystem, MMNavigationSubsystem navigationSubsystem,
+    public DriveToRampCmd(RobotContainer rc,
             double maxSpeed) {
-        this.swerveSubsystem = swerveSubsystem;
-        this.navigationSubsystem = navigationSubsystem;
         this.maxSpeed = maxSpeed;
-        addRequirements(swerveSubsystem);
-        robotPitch = navigationSubsystem.getPitch();
+        addRequirements(rc.swerveSubsystem);
+        robotPitch = rc.navigationSubsystem.getPitch();
     }
 
     @Override
     public void initialize() {
-        maxAngle = navigationSubsystem.getPitch();
+        maxAngle = rc.navigationSubsystem.getPitch();
     }
 
     @Override
     public void execute() {
-        robotPitch = navigationSubsystem.getPitch();
+        robotPitch = rc.navigationSubsystem.getPitch();
         if (maxAngle < robotPitch) {
             maxAngle = robotPitch;
         }
         SmartDashboard.putNumber("maxAngle", maxAngle);
         SmartDashboard.putNumber("currentPitch", robotPitch);
-        swerveSubsystem.drive(maxSpeed, 0, 0, true, navigationSubsystem.getRotation2d());
+        rc.swerveSubsystem.drive(maxSpeed, 0, 0, true, rc.navigationSubsystem.getRotation2d());
     }
 
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        rc.swerveSubsystem.stopModules();
     }
 
     @Override

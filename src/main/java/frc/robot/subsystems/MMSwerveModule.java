@@ -64,9 +64,9 @@ public class MMSwerveModule {
         turnMotorController.configFactoryDefault(Constants.Robot.canBusTimeoutMs);
 
         TalonFXConfiguration turnConfigs = new TalonFXConfiguration();
-        turnMotorController.getAllConfigs(driveConfigs, Constants.Robot.canBusTimeoutMs);
+        turnMotorController.getAllConfigs(turnConfigs, Constants.Robot.canBusTimeoutMs);
         turnConfigs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        turnMotorController.configAllSettings(driveConfigs, Constants.Robot.canBusTimeoutMs);
+        turnMotorController.configAllSettings(turnConfigs, Constants.Robot.canBusTimeoutMs);
         turnMotorController.setNeutralMode(NeutralMode.Brake);
         turnMotorController.setInverted(turnMotorReversed);
 

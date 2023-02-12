@@ -15,34 +15,34 @@ import frc.robot.RobotContainer;
 
 /** Add your docs here. */
 public class DeliverCubeFloorCmd extends SequentialCommandGroup {
-    public DeliverCubeFloorCmd(double maxTurnSpeed,
-            BooleanSupplier isTargetCone, RobotContainer rc) {
-        addCommands(
-                new TranslateAbsoluteCmd(rc.swerveSubsystem,
-                        () -> new Pose2d(
-                                Constants.targetPositions.fieldXCoordinate
-                                        * (rc.getIsRedAlliance() ? 1
-                                                : -1),
-                                rc.navigationSubsystem.getPose().getY(),
-                                new Rotation2d(rc.getIsRedAlliance() ? Math.PI
-                                        : 0)),
-                        1, rc.navigationSubsystem),
-                Commands.either(
-                        new TargetPegCmd(rc.swerveSubsystem, 2, rc.navigationSubsystem,
-                                rc.intakeSubsystem::getBeamBreak),
-                        new TargetTagCmd(rc.swerveSubsystem, 2, rc.navigationSubsystem,
-                                rc.intakeSubsystem::getBeamBreak),
-                        isTargetCone),
-                new DriveToBumperCmd(rc, .5),
-                new DeliverCubeCmd(rc.intakeSubsystem, () -> true),
-                new TranslateAbsoluteCmd(rc.swerveSubsystem,
-                        () -> new Pose2d(
-                                Constants.targetPositions.fieldXCoordinate
-                                        * (rc.getIsRedAlliance() ? 1
-                                                : -1),
-                                rc.navigationSubsystem.getPose().getY(),
-                                new Rotation2d(rc.getIsRedAlliance() ? 0
-                                        : Math.PI)),
-                        1, rc.navigationSubsystem));
-    }
+        public DeliverCubeFloorCmd(double maxTurnSpeed,
+                        BooleanSupplier isTargetCone, RobotContainer rc) {
+                addCommands(
+                                new TranslateAbsoluteCmd(rc,
+                                                () -> new Pose2d(
+                                                                Constants.targetPositions.fieldXCoordinate
+                                                                                * (rc.getIsRedAlliance() ? 1
+                                                                                                : -1),
+                                                                rc.navigationSubsystem.getPose().getY(),
+                                                                new Rotation2d(rc.getIsRedAlliance() ? Math.PI
+                                                                                : 0)),
+                                                1),
+                                Commands.either(
+                                                new TargetPegCmd(rc, 2,
+                                                                rc.intakeSubsystem::getBeamBreak),
+                                                new TargetTagCmd(rc, 2,
+                                                                rc.intakeSubsystem::getBeamBreak),
+                                                isTargetCone),
+                                new DriveToBumperCmd(rc, .5),
+                                new DeliverCubeCmd(rc, () -> true),
+                                new TranslateAbsoluteCmd(rc,
+                                                () -> new Pose2d(
+                                                                Constants.targetPositions.fieldXCoordinate
+                                                                                * (rc.getIsRedAlliance() ? 1
+                                                                                                : -1),
+                                                                rc.navigationSubsystem.getPose().getY(),
+                                                                new Rotation2d(rc.getIsRedAlliance() ? 0
+                                                                                : Math.PI)),
+                                                1));
+        }
 }

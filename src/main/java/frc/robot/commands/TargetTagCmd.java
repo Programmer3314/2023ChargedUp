@@ -8,33 +8,30 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMTurnPIDController;
 
 /** Add your docs here. */
 public class TargetTagCmd extends CommandBase {
-    MMSwerveSubsystem swerveSubsystem;
     double maxRotationSpeed;
-    MMNavigationSubsystem navigationSubsystem;
     MMTurnPIDController turnPidController;
     Supplier<Boolean> cubeInIntake;
     int cyclesOnTarget;
+    private  RobotContainer rc;
 
-    public TargetTagCmd(MMSwerveSubsystem swerveSubsystem, double maxRotationSpeed,
-            MMNavigationSubsystem navigationSubsystem, Supplier<Boolean> cubeInIntake) {
-        this.swerveSubsystem = swerveSubsystem;
+    public TargetTagCmd(RobotContainer rc, double maxRotationSpeed, Supplier<Boolean> cubeInIntake) {
         this.maxRotationSpeed = maxRotationSpeed;
-        this.navigationSubsystem = navigationSubsystem;
         turnPidController = new MMTurnPIDController();
         this.cubeInIntake=cubeInIntake;
 
-        addRequirements(swerveSubsystem);
+        addRequirements(rc.swerveSubsystem);
     }
 
     @Override
     public void initialize() {
-        navigationSubsystem.setFrontPipeline(0);
+        rc.navigationSubsystem.setFrontPipeline(0);
         turnPidController.initialize(new Rotation2d());
         cyclesOnTarget=0;
     }
@@ -43,13 +40,13 @@ public class TargetTagCmd extends CommandBase {
     public void execute() {
         double rawTarget;
         if (cubeInIntake.get()) {
-            rawTarget = navigationSubsystem.getBackTargetX();
+            rawTarget = rc.navigationSubsystem.getBackTargetX();
         } else {
-            rawTarget = navigationSubsystem.getFrontTargetX();
+            rawTarget = rc.navigationSubsystem.getFrontTargetX();
         }
         Rotation2d targetAngle = new Rotation2d(Math.toRadians(rawTarget));
         double correction = turnPidController.execute(targetAngle.getRadians());
-        swerveSubsystem.drive(0, 0, correction, true, navigationSubsystem.getRotation2d());
+        rc.swerveSubsystem.drive(0, 0, correction, true, rc.navigationSubsystem.getRotation2d());
         if (Math.abs(rawTarget) < 3) {
             cyclesOnTarget++;
         } else {
@@ -59,7 +56,7 @@ public class TargetTagCmd extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        rc.swerveSubsystem.stopModules();
     }
 
     @Override

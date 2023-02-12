@@ -35,6 +35,7 @@ import frc.robot.commands.PickUpCubeCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TargetPegCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
+import frc.robot.subsystems.HomeExtentionStateMachine;
 import frc.robot.subsystems.MMIntakeSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
@@ -42,291 +43,286 @@ import frc.robot.utility.MMField;
 import frc.robot.utility.MMJoystickAxis;
 
 public class RobotContainer {
-    private ShuffleboardTab tab = Shuffleboard.getTab("In Match");
+        private ShuffleboardTab tab = Shuffleboard.getTab("In Match");
 
-    // private final SendableChooser<Integer> getDesiredCell = new
-    // SendableChooser<>();
+        // private final SendableChooser<Integer> getDesiredCell = new
+        // SendableChooser<>();
 
-    private static Alliance alliance;
-    private static boolean isRedAlliance = true;
+        private static Alliance alliance;
+        private static boolean isRedAlliance = true;
 
-    public final MMSwerveSubsystem swerveSubsystem = new MMSwerveSubsystem();
-    public final MMNavigationSubsystem navigationSubsystem = new MMNavigationSubsystem(swerveSubsystem);
+        public final MMSwerveSubsystem swerveSubsystem = new MMSwerveSubsystem();
+        public final MMNavigationSubsystem navigationSubsystem = new MMNavigationSubsystem(swerveSubsystem);
 
-    private final Joystick driverJoystick = new Joystick(Constants.Driver.Controller);
-    private final Joystick buttonBox1 = new Joystick(Constants.ButtonBox1.button);
-    private final Joystick buttonBox2 = new Joystick(0);
-    private final MMJoystickAxis driveXAxis = new MMJoystickAxis(Constants.Driver.Controller,
-            Constants.Driver.Axis.x,
-            0.01,
-            -1.3);
-    private final MMJoystickAxis driveYAxis = new MMJoystickAxis(Constants.Driver.Controller,
-            Constants.Driver.Axis.y,
-            0.01,
-            -1.3);
-    private final MMJoystickAxis driveRAxis = new MMJoystickAxis(Constants.Driver.Controller,
-            Constants.Driver.Axis.r,
-            0.05,
-            -(Math.PI / 2.0));
-    private int gridHeight;
-    private int gridGroup;
-    private int gridGroupCell;
-    private int gridCell;
-    private GenericEntry gridCellEntry = tab.add("Grid Cell: ", "None").getEntry();
-    private Trigger leftTrigger;
-    private Trigger rightTrigger;
-    public final MMIntakeSubsystem intakeSubsystem;
+        private final Joystick driverJoystick = new Joystick(Constants.Driver.Controller);
+        private final Joystick buttonBox1 = new Joystick(Constants.ButtonBox1.button);
+        private final Joystick buttonBox2 = new Joystick(0);
+        private final MMJoystickAxis driveXAxis = new MMJoystickAxis(Constants.Driver.Controller,
+                        Constants.Driver.Axis.x,
+                        0.01,
+                        -1.3);
+        private final MMJoystickAxis driveYAxis = new MMJoystickAxis(Constants.Driver.Controller,
+                        Constants.Driver.Axis.y,
+                        0.01,
+                        -1.3);
+        private final MMJoystickAxis driveRAxis = new MMJoystickAxis(Constants.Driver.Controller,
+                        Constants.Driver.Axis.r,
+                        0.05,
+                        -(Math.PI / 2.0));
+        private int gridHeight;
+        private int gridGroup;
+        private int gridGroupCell;
+        private int gridCell;
+        private GenericEntry gridCellEntry = tab.add("Grid Cell: ", "None").getEntry();
+        private Trigger leftTrigger;
+        private Trigger rightTrigger;
+        public final MMIntakeSubsystem intakeSubsystem;
 
-    public RobotContainer() {
+        public RobotContainer() {
 
-        // getDesiredCell.setDefaultOption("None Selected", 0);
-        // for (int i = 1; i < 10; i++) {
-        // getDesiredCell.addOption("Cell: " + i, i);
-        // }
+                // getDesiredCell.setDefaultOption("None Selected", 0);
+                // for (int i = 1; i < 10; i++) {
+                // getDesiredCell.addOption("Cell: " + i, i);
+                // }
 
-        // Shuffleboard.getTab("In
-        // Match").add(getDesiredCell).withWidget(BuiltInWidgets.kComboBoxChooser);
+                // Shuffleboard.getTab("In
+                // Match").add(getDesiredCell).withWidget(BuiltInWidgets.kComboBoxChooser);
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                alliance = DriverStation.getAlliance();
-                isRedAlliance = Alliance.Red == alliance && Alliance.Blue != alliance;
-                ;
-            } catch (Exception e) {
-            }
-        }).start();
-        intakeSubsystem = new MMIntakeSubsystem();
+                new Thread(() -> {
+                        try {
+                                Thread.sleep(1000);
+                                alliance = DriverStation.getAlliance();
+                                isRedAlliance = Alliance.Red == alliance && Alliance.Blue != alliance;
+                                ;
+                        } catch (Exception e) {
+                        }
+                }).start();
+                intakeSubsystem = new MMIntakeSubsystem(this);
 
-        leftTrigger = new Trigger(this::getLeftTriggerActive);
-        rightTrigger = new Trigger(this::getRightTriggerActive);
+                leftTrigger = new Trigger(this::getLeftTriggerActive);
+                rightTrigger = new Trigger(this::getRightTriggerActive);
 
-        swerveSubsystem.setDefaultCommand(
-                new SequentialCommandGroup(
-                        new InstantCommand(() -> navigationSubsystem.setFrontPipeline(0)),
-                        new SwerveJoystickCmd(swerveSubsystem,
-                                () -> driveXAxis.getSquared(),
-                                () -> driveYAxis.getSquared(),
-                                () -> driveRAxis.getSquared(),
-                                () -> driverJoystick.getRawButton(
-                                        Constants.Driver.Button.overrideFieldCentricA),
-                                navigationSubsystem))
+                swerveSubsystem.setDefaultCommand(
+                                new SequentialCommandGroup(
+                                                new InstantCommand(() -> navigationSubsystem.setFrontPipeline(0)),
+                                                new SwerveJoystickCmd(this,
+                                                                () -> driveXAxis.getSquared(),
+                                                                () -> driveYAxis.getSquared(),
+                                                                () -> driveRAxis.getSquared(),
+                                                                () -> driverJoystick.getRawButton(
+                                                                                Constants.Driver.Button.overrideFieldCentricA)))
 
-        );
-        configureBindings();
-    }
-
-    public DeliveryMethod selectDeliveryMethod() {
-        if (intakeSubsystem.getBeamBreak()) {
-            return DeliveryMethod.DeliverFloorCube;
+                );
+                configureBindings();
         }
-        if (MMField.isCellCone(gridCell)) {
-            return DeliveryMethod.DeliverCone;
+
+        public DeliveryMethod selectDeliveryMethod() {
+                if (intakeSubsystem.getBeamBreak()) {
+                        return DeliveryMethod.DeliverFloorCube;
+                }
+                if (MMField.isCellCone(gridCell)) {
+                        return DeliveryMethod.DeliverCone;
+                }
+                return DeliveryMethod.DeliverHighCube;
         }
-        return DeliveryMethod.DeliverHighCube;
-    }
 
-    private void configureBindings() {
-        leftTrigger.whileTrue(new SequentialCommandGroup(
-                new TranslateAbsoluteCmd(swerveSubsystem,
-                        () -> MMField.getLeftDock(this::getIsRedAlliance), 2,
-                        navigationSubsystem)
-                        .until(navigationSubsystem::approachingLoadingDock),
-                // new TranslateAbsoluteCmd(swerveSubsystem,
-                // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
-                new DriveToBumperCmd(this, .5),
-                new TranslateAbsoluteCmd(swerveSubsystem,
-                        () -> MMField.getLeftDockRetractPoint(this::getIsRedAlliance),
-                        2,
-                        navigationSubsystem)));
+        private void configureBindings() {
+                leftTrigger.whileTrue(new SequentialCommandGroup(
+                                new TranslateAbsoluteCmd(this,
+                                                () -> MMField.getLeftDock(this::getIsRedAlliance), 2)
+                                                .until(navigationSubsystem::approachingLoadingDock),
+                                // new TranslateAbsoluteCmd(swerveSubsystem,
+                                // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
+                                new DriveToBumperCmd(this, .5),
+                                new TranslateAbsoluteCmd(this,
+                                                () -> MMField.getLeftDockRetractPoint(this::getIsRedAlliance),
+                                                2)));
 
-        rightTrigger.whileTrue(new SequentialCommandGroup(
-                new TranslateAbsoluteCmd(swerveSubsystem,
-                        () -> MMField.getRightDock(this::getIsRedAlliance), 2,
-                        navigationSubsystem)
-                        .until(navigationSubsystem::approachingLoadingDock),
-                // new TranslateAbsoluteCmd(swerveSubsystem,
-                // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
-                new DriveToBumperCmd(this, .5),
-                new TranslateAbsoluteCmd(swerveSubsystem,
-                        () -> MMField.getRightDockRetractPoint(this::getIsRedAlliance),
-                        2,
-                        navigationSubsystem)));
+                rightTrigger.whileTrue(new SequentialCommandGroup(
+                                new TranslateAbsoluteCmd(this,
+                                                () -> MMField.getRightDock(this::getIsRedAlliance), 2)
+                                                .until(navigationSubsystem::approachingLoadingDock),
+                                // new TranslateAbsoluteCmd(swerveSubsystem,
+                                // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
+                                new DriveToBumperCmd(this, .5),
+                                new TranslateAbsoluteCmd(this,
+                                                () -> MMField.getRightDockRetractPoint(this::getIsRedAlliance),
+                                                2)));
 
-        new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavxB)
-                .onTrue(new SequentialCommandGroup(
-                        new InstantCommand(() -> navigationSubsystem.zeroHeading()),
-                        new InstantCommand(() -> navigationSubsystem
-                                .resetOdometry(
-                                        navigationSubsystem.getLimelightPose()
-                                // new Pose2d(3.3, -4, new Rotation2d())
-                                ))));
+                new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavxB)
+                                .onTrue(new SequentialCommandGroup(
+                                                new InstantCommand(() -> navigationSubsystem.zeroHeading()),
+                                                new InstantCommand(() -> navigationSubsystem
+                                                                .resetOdometry(
+                                                                                navigationSubsystem.getLimelightPose()
+                                                                // new Pose2d(3.3, -4, new Rotation2d())
+                                                                ))));
 
-        // new JoystickButton(driverJoystick, Constants.Driver.Button.testPeg)
-        // .onTrue(
-        // new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5));
+                // new JoystickButton(driverJoystick, Constants.Driver.Button.testPeg)
+                // .onTrue(
+                // new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5));
 
-        new JoystickButton(driverJoystick, 6)
-                .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
-        // swerveSubsystem, navigationSubsystem,
-        // this::getIsRedAlliance,
-        // this::getGridCell,
-        // // this::selectDeliveryMethod
-        new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.testTurnPeg)
-                .whileTrue(
-                        new TargetPegCmd(swerveSubsystem, gridCell, navigationSubsystem,
-                                intakeSubsystem::getBeamBreak));
-        new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
-                // .whileTrue(
-                // new StartEndCommand(
-                // () -> intakeSubsystem.runIntake(),
-                // // Stop driving at the end of the command
-                // () -> intakeSubsystem.stopIntake(),
-                // // Requires the drive subsystem
-                // intakeSubsystem));
-                .onTrue(
-                        new PickUpCubeCmd(intakeSubsystem));
-        new JoystickButton(driverJoystick, Constants.Driver.Button.runOutTake)
-                // .whileTrue(
-                // new StartEndCommand(
-                // () -> intakeSubsystem.runOutTake(),
-                // // Stop driving at the end of the command
-                // () -> intakeSubsystem.stopIntake(),
-                // // Requires the drive subsystem
-                // intakeSubsystem));
-                .onTrue(
-                        new DeliverCubeCmd(intakeSubsystem, () -> false));
+                new JoystickButton(driverJoystick, 6)
+                                .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
+                // swerveSubsystem, navigationSubsystem,
+                // this::getIsRedAlliance,
+                // this::getGridCell,
+                // // this::selectDeliveryMethod
+                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.testTurnPeg)
+                                .whileTrue(
+                                                new TargetPegCmd(this, gridCell,
+                                                                intakeSubsystem::getBeamBreak));
+                new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
+                                // .whileTrue(
+                                // new StartEndCommand(
+                                // () -> intakeSubsystem.runIntake(),
+                                // // Stop driving at the end of the command
+                                // () -> intakeSubsystem.stopIntake(),
+                                // // Requires the drive subsystem
+                                // intakeSubsystem));
+                                .onTrue(
+                                                new PickUpCubeCmd(this));
+                new JoystickButton(driverJoystick, Constants.Driver.Button.runOutTake)
+                                // .whileTrue(
+                                // new StartEndCommand(
+                                // () -> intakeSubsystem.runOutTake(),
+                                // // Stop driving at the end of the command
+                                // () -> intakeSubsystem.stopIntake(),
+                                // // Requires the drive subsystem
+                                // intakeSubsystem));
+                                .onTrue(
+                                                new DeliverCubeCmd(this, () -> false));
 
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row1)
-                .onTrue(new InstantCommand(() -> selectCell(gridCell, 1)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row1)
+                                .onTrue(new InstantCommand(() -> selectCell(gridCell, 1)));
 
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row2)
-                .onTrue(new InstantCommand(() -> selectCell(gridCell, 2)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row2)
+                                .onTrue(new InstantCommand(() -> selectCell(gridCell, 2)));
 
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row3)
-                .onTrue(new InstantCommand(() -> selectCell(gridCell, 3)));
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col1)
-                .onTrue(new InstantCommand(() -> selectCell(1, gridHeight)));
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col2)
-                .onTrue(new InstantCommand(() -> selectCell(2, gridHeight)));
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col3)
-                .onTrue(new InstantCommand(() -> selectCell(3, gridHeight)));
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col4)
-                .onTrue(new InstantCommand(() -> selectCell(4, gridHeight)));
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col5)
-                .onTrue(new InstantCommand(() -> selectCell(5, gridHeight)));
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col6)
-                .onTrue(new InstantCommand(() -> selectCell(6, gridHeight)));
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col7)
-                .onTrue(new InstantCommand(() -> selectCell(7, gridHeight)));
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col8)
-                .onTrue(new InstantCommand(() -> selectCell(8, gridHeight)));
-        new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col9)
-                .onTrue(new InstantCommand(() -> selectCell(9, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row3)
+                                .onTrue(new InstantCommand(() -> selectCell(gridCell, 3)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col1)
+                                .onTrue(new InstantCommand(() -> selectCell(1, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col2)
+                                .onTrue(new InstantCommand(() -> selectCell(2, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col3)
+                                .onTrue(new InstantCommand(() -> selectCell(3, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col4)
+                                .onTrue(new InstantCommand(() -> selectCell(4, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col5)
+                                .onTrue(new InstantCommand(() -> selectCell(5, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col6)
+                                .onTrue(new InstantCommand(() -> selectCell(6, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col7)
+                                .onTrue(new InstantCommand(() -> selectCell(7, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col8)
+                                .onTrue(new InstantCommand(() -> selectCell(8, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col9)
+                                .onTrue(new InstantCommand(() -> selectCell(9, gridHeight)));
 
-        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup1)
-        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, 1, gridGroupCell)));
-        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup2)
-        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, 2, gridGroupCell)));
-        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup3)
-        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, 3, gridGroupCell)));
-        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell1)
-        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 1)));
-        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell2)
-        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 2)));
-        // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell3)
-        // .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 3)));
-        // new JoystickButton(buttonBox1,
-        // Constants.ButtonBox1.Button.gridGroupHeightLow)
-        // .onTrue(new InstantCommand(() -> selectCell(1, gridGroup, gridGroupCell)));
-        // new JoystickButton(buttonBox1,
-        // Constants.ButtonBox1.Button.gridGroupHeightMed)
-        // .onTrue(new InstantCommand(() -> selectCell(2, gridGroup, gridGroupCell)));
-        // new JoystickButton(buttonBox1,
-        // Constants.ButtonBox1.Button.gridGroupHeightHigh)
-        // .onTrue(new InstantCommand(() -> selectCell(3, gridGroup, gridGroupCell)));
-    }
+                // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup1)
+                // .onTrue(new InstantCommand(() -> selectCell(gridHeight, 1, gridGroupCell)));
+                // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup2)
+                // .onTrue(new InstantCommand(() -> selectCell(gridHeight, 2, gridGroupCell)));
+                // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup3)
+                // .onTrue(new InstantCommand(() -> selectCell(gridHeight, 3, gridGroupCell)));
+                // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell1)
+                // .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 1)));
+                // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell2)
+                // .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 2)));
+                // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroupCell3)
+                // .onTrue(new InstantCommand(() -> selectCell(gridHeight, gridGroup, 3)));
+                // new JoystickButton(buttonBox1,
+                // Constants.ButtonBox1.Button.gridGroupHeightLow)
+                // .onTrue(new InstantCommand(() -> selectCell(1, gridGroup, gridGroupCell)));
+                // new JoystickButton(buttonBox1,
+                // Constants.ButtonBox1.Button.gridGroupHeightMed)
+                // .onTrue(new InstantCommand(() -> selectCell(2, gridGroup, gridGroupCell)));
+                // new JoystickButton(buttonBox1,
+                // Constants.ButtonBox1.Button.gridGroupHeightHigh)
+                // .onTrue(new InstantCommand(() -> selectCell(3, gridGroup, gridGroupCell)));
+        }
 
-    public Command getAutonomousCommand() {
-        TrajectoryConfig trajectoryConfig = new TrajectoryConfig(2, 1.7)
-                .setKinematics(Constants.Chassis.kinematics);
-        // return Commands.print("No autonomous command configured");
-        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d()),
-                List.of(
-                        new Translation2d(1, 0),
-                        new Translation2d(1, -1),
-                        new Translation2d(2.4, -1),
-                        new Translation2d(2.4, 0.8),
-                        new Translation2d(1, 0.8),
-                        new Translation2d(1, 0)),
-                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-                trajectoryConfig);
+        public Command getAutonomousCommand() {
+                TrajectoryConfig trajectoryConfig = new TrajectoryConfig(2, 1.7)
+                                .setKinematics(Constants.Chassis.kinematics);
+                // return Commands.print("No autonomous command configured");
+                Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+                                new Pose2d(0, 0, new Rotation2d()),
+                                List.of(
+                                                new Translation2d(1, 0),
+                                                new Translation2d(1, -1),
+                                                new Translation2d(2.4, -1),
+                                                new Translation2d(2.4, 0.8),
+                                                new Translation2d(1, 0.8),
+                                                new Translation2d(1, 0)),
+                                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                                trajectoryConfig);
 
-        PIDController xController = new PIDController(10.0, 0, 0);
-        PIDController yController = new PIDController(10.0, 0, 0);
-        ProfiledPIDController thetaController = new ProfiledPIDController(10.0, 0, 0,
-                Constants.thetaControllerConstraints);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+                PIDController xController = new PIDController(10.0, 0, 0);
+                PIDController yController = new PIDController(10.0, 0, 0);
+                ProfiledPIDController thetaController = new ProfiledPIDController(10.0, 0, 0,
+                                Constants.thetaControllerConstraints);
+                thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-                trajectory,
-                navigationSubsystem::getPose,
-                Constants.Chassis.kinematics,
-                xController,
-                yController,
-                thetaController,
-                swerveSubsystem::setModuleStates,
-                swerveSubsystem);
+                SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+                                trajectory,
+                                navigationSubsystem::getPose,
+                                Constants.Chassis.kinematics,
+                                xController,
+                                yController,
+                                thetaController,
+                                swerveSubsystem::setModuleStates,
+                                swerveSubsystem);
 
-        return new SequentialCommandGroup(
-                new InstantCommand(
-                        () -> navigationSubsystem.resetOdometry(trajectory.getInitialPose())),
-                swerveControllerCommand,
-                new InstantCommand(() -> swerveSubsystem.stopModules()));
-    }
+                return new SequentialCommandGroup(
+                                new InstantCommand(
+                                                () -> navigationSubsystem.resetOdometry(trajectory.getInitialPose())),
+                                swerveControllerCommand,
+                                new InstantCommand(() -> swerveSubsystem.stopModules()));
+        }
 
-    public void selectCell(int gridHeight, int gridGroup, int gridGroupCell) {
-        gridCell = gridGroup * 3 - 3 + gridGroupCell;
-        this.gridGroup = gridGroup;
-        this.gridGroupCell = gridGroupCell;
-        this.gridHeight = gridHeight;
-        gridCellEntry.setString("Grid Group: " + gridGroup + "Grid GroupCell: " + gridGroupCell
-                + " Grid Height: " + gridHeight + " Grid Cell: " + gridCell);
-    }
+        public void selectCell(int gridHeight, int gridGroup, int gridGroupCell) {
+                gridCell = gridGroup * 3 - 3 + gridGroupCell;
+                this.gridGroup = gridGroup;
+                this.gridGroupCell = gridGroupCell;
+                this.gridHeight = gridHeight;
+                gridCellEntry.setString("Grid Group: " + gridGroup + "Grid GroupCell: " + gridGroupCell
+                                + " Grid Height: " + gridHeight + " Grid Cell: " + gridCell);
+        }
 
-    public void selectCell(int column, int row) {
-        gridCell = column;
-        gridHeight = row;
-        gridCellEntry.setString("Grid Cell: " + gridCell + "Grid Height: " + gridHeight);
-    }
+        public void selectCell(int column, int row) {
+                gridCell = column;
+                gridHeight = row;
+                gridCellEntry.setString("Grid Cell: " + gridCell + "Grid Height: " + gridHeight);
+        }
 
-    public boolean getIsRedAlliance() {
-        return isRedAlliance;
-    }
+        public boolean getIsRedAlliance() {
+                return isRedAlliance;
+        }
 
-    public int getGridCell() {
-        return gridCell;
-    }
+        public int getGridCell() {
+                return gridCell;
+        }
 
-    public boolean isGridCellSelected() {
-        return gridCell >= 1 && gridCell <= 9;
-    }
+        public boolean isGridCellSelected() {
+                return gridCell >= 1 && gridCell <= 9;
+        }
 
-    public boolean isNotGridCellSelected() {
-        return !(isGridCellSelected());
-    }
+        public boolean isNotGridCellSelected() {
+                return !(isGridCellSelected());
+        }
 
-    public void clearSelectedCell() {
-        gridCell = 0;
-    }
+        public void clearSelectedCell() {
+                gridCell = 0;
+        }
 
-    public boolean getLeftTriggerActive() {
-        return driverJoystick.getRawAxis(Constants.Driver.Axis.lt) > .5;
-    }
+        public boolean getLeftTriggerActive() {
+                return driverJoystick.getRawAxis(Constants.Driver.Axis.lt) > .5;
+        }
 
-    public boolean getRightTriggerActive() {
-        return driverJoystick.getRawAxis(Constants.Driver.Axis.rt) > .5;
-    }
+        public boolean getRightTriggerActive() {
+                return driverJoystick.getRawAxis(Constants.Driver.Axis.rt) > .5;
+        }
 
 }

@@ -43,9 +43,8 @@ public class DriveToBumperCmd extends CommandBase {
         pastStartUpFlag = false;
         if (rc.intakeSubsystem.getBeamBreak()) {
             tempMaxSpeed = -maxSpeed;
-        }
-        else{
-            tempMaxSpeed=maxSpeed;
+        } else {
+            tempMaxSpeed = maxSpeed;
         }
     }
 

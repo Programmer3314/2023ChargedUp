@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMField;
@@ -18,9 +19,8 @@ import frc.robot.utility.MMTurnPIDController;
 
 /** Add your docs here. */
 public class DriveToCell extends CommandBase {
-    private MMSwerveSubsystem swerveSubsystem;
     private Supplier<Integer> desiredCell;
-    private MMNavigationSubsystem navigationSubsystem;
+    private RobotContainer rc;
     private double maxSpeed;
     private Translation2d targetPosition;
     private final PIDController tripPidController;
@@ -28,17 +28,15 @@ public class DriveToCell extends CommandBase {
     private Pose2d targetPose2d;
     private Supplier<Boolean> isRedAlliance;
 
-    public DriveToCell(MMSwerveSubsystem swerveSubsystem, Supplier<Integer> desiredCell,
-            MMNavigationSubsystem navigationSubsystem, Supplier<Boolean> isRedAlliance, double maxSpeed) {
+    public DriveToCell(RobotContainer rc, Supplier<Integer> desiredCell, Supplier<Boolean> isRedAlliance,
+            double maxSpeed) {
         this.desiredCell = desiredCell;
-        this.swerveSubsystem = swerveSubsystem;
-        this.navigationSubsystem = navigationSubsystem;
         this.isRedAlliance = isRedAlliance;
         this.maxSpeed = maxSpeed;
 
         tripPidController = new PIDController(4, 0, 0);
         turnPidController = new MMTurnPIDController();
-        addRequirements(swerveSubsystem);
+        addRequirements(rc.swerveSubsystem);
     }
 
     @Override
@@ -51,7 +49,7 @@ public class DriveToCell extends CommandBase {
     @Override
     public void execute() {
         SmartDashboard.putBoolean("isRedAlliance: ", isRedAlliance.get());
-        Translation2d currentPosition = navigationSubsystem.getPose().getTranslation();
+        Translation2d currentPosition = rc.navigationSubsystem.getPose().getTranslation();
         Translation2d trip = targetPosition.minus(currentPosition);
         double tripLength = trip.getNorm();
 
@@ -66,15 +64,15 @@ public class DriveToCell extends CommandBase {
             correction = -maxSpeed;
         }
 
-        double desiredTurn = turnPidController.execute(navigationSubsystem.getHeadingRad());
+        double desiredTurn = turnPidController.execute(rc.navigationSubsystem.getHeadingRad());
 
-        swerveSubsystem.drive(trip.getX() * correction, trip.getY() * correction, desiredTurn, true,
-                navigationSubsystem.getRotation2d());
+        rc.swerveSubsystem.drive(trip.getX() * correction, trip.getY() * correction, desiredTurn, true,
+                rc.navigationSubsystem.getRotation2d());
     }
 
     @Override
     public boolean isFinished() {
-        double tripLength = targetPosition.getDistance(navigationSubsystem.getPose().getTranslation());
+        double tripLength = targetPosition.getDistance(rc.navigationSubsystem.getPose().getTranslation());
         boolean finishedTrip = tripLength < .05;
         SmartDashboard.putNumber("Trip Length Cell:", tripLength);
         SmartDashboard.putBoolean("Finished CellTranslate", finishedTrip);
@@ -84,6 +82,6 @@ public class DriveToCell extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        rc.swerveSubsystem.stopModules();
     }
 }

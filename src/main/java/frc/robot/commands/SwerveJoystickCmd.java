@@ -7,28 +7,25 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.MMNavigationSubsystem;
-import frc.robot.subsystems.MMSwerveSubsystem;
 
 /** Add your docs here. */
 public class SwerveJoystickCmd extends CommandBase {
-
-    private final MMSwerveSubsystem swerveSubsystem;
-    private final MMNavigationSubsystem navigationSubsystem;
+    private final RobotContainer rc;
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction;
     private final Supplier<Boolean> overrideFieldOriented;
 
-    public SwerveJoystickCmd(MMSwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction,
+    public SwerveJoystickCmd(RobotContainer rc, Supplier<Double> xSpdFunction,
             Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction,
-            Supplier<Boolean> fieldOrientedFunction, MMNavigationSubsystem navigationSubsystem) {
-        this.swerveSubsystem = swerveSubsystem;
+            Supplier<Boolean> fieldOrientedFunction) {
+        this.rc = rc;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
         this.turningSpdFunction = turningSpdFunction;
         this.overrideFieldOriented = fieldOrientedFunction;
-        this.navigationSubsystem = navigationSubsystem;
 
-        addRequirements(swerveSubsystem);
+        addRequirements(rc.swerveSubsystem);
     }
 
     @Override
@@ -42,12 +39,13 @@ public class SwerveJoystickCmd extends CommandBase {
         double ySpeed = ySpdFunction.get();
         double turningSpeed = turningSpdFunction.get();
 
-       swerveSubsystem.drive(xSpeed, ySpeed, turningSpeed,!overrideFieldOriented.get() , navigationSubsystem.getRotation2d());
+        rc.swerveSubsystem.drive(xSpeed, ySpeed, turningSpeed, !overrideFieldOriented.get(),
+                rc.navigationSubsystem.getRotation2d());
     }
 
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        rc.swerveSubsystem.stopModules();
     }
 
     @Override

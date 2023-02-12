@@ -19,40 +19,39 @@ import frc.robot.utility.MMField;
 // TODO: consider passing in robotContainer instead of everything else? Maybe?
 /** Add your docs here. */
 public class AutoDeliveryCmd extends SequentialCommandGroup {
-    public AutoDeliveryCmd(RobotContainer rc) {
-        addCommands(
-                new InstantCommand(() -> rc.navigationSubsystem.setFrontPipeline(0)),
-                new TranslateAbsoluteCmd(rc.swerveSubsystem,
-                        () -> new Pose2d(
-                                Constants.targetPositions.fieldXCoordinate
-                                        * (rc.getIsRedAlliance() ? 1
-                                                : -1),
-                                rc.navigationSubsystem.getPose().getY(),
-                                new Rotation2d(rc.getIsRedAlliance() ? 0
-                                        : Math.PI)),
-                        1, rc.navigationSubsystem),
-                new DriveToCell(rc.swerveSubsystem,
-                        rc::getGridCell,
-                        rc.navigationSubsystem,
-                        rc::getIsRedAlliance,
-                        1),
+        public AutoDeliveryCmd(RobotContainer rc) {
+                addCommands(
+                                new InstantCommand(() -> rc.navigationSubsystem.setFrontPipeline(0)),
+                                new TranslateAbsoluteCmd(rc,
+                                                () -> new Pose2d(
+                                                                Constants.targetPositions.fieldXCoordinate
+                                                                                * (rc.getIsRedAlliance() ? 1
+                                                                                                : -1),
+                                                                rc.navigationSubsystem.getPose().getY(),
+                                                                new Rotation2d(rc.getIsRedAlliance() ? 0
+                                                                                : Math.PI)),
+                                                1),
+                                new DriveToCell(rc,
+                                                rc::getGridCell,
+                                                rc::getIsRedAlliance,
+                                                1),
 
-                Commands.select(
-                        Map.ofEntries(
-                                Map.entry(DeliveryMethod.DeliverCone,
-                                        new DeliverConeCmd(
-                                                2, rc)),
-                                Map.entry(DeliveryMethod.DeliverFloorCube,
-                                        new DeliverCubeFloorCmd(
-                                                2,
-                                                () -> MMField.isCellCone(
-                                                        rc.getGridCell()),
-                                                rc)),
-                                Map.entry(DeliveryMethod.DeliverHighCube,
-                                        new DeliverCubeHighCmd(
-                                                2,
-                                                rc))),
-                        rc::selectDeliveryMethod),
-                new InstantCommand(rc::clearSelectedCell));
-    }
+                                Commands.select(
+                                                Map.ofEntries(
+                                                                Map.entry(DeliveryMethod.DeliverCone,
+                                                                                new DeliverConeCmd(
+                                                                                                2, rc)),
+                                                                Map.entry(DeliveryMethod.DeliverFloorCube,
+                                                                                new DeliverCubeFloorCmd(
+                                                                                                2,
+                                                                                                () -> MMField.isCellCone(
+                                                                                                                rc.getGridCell()),
+                                                                                                rc)),
+                                                                Map.entry(DeliveryMethod.DeliverHighCube,
+                                                                                new DeliverCubeHighCmd(
+                                                                                                2,
+                                                                                                rc))),
+                                                rc::selectDeliveryMethod),
+                                new InstantCommand(rc::clearSelectedCell));
+        }
 }

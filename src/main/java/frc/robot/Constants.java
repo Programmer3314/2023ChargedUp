@@ -216,10 +216,11 @@ public class Constants {
 
         }
     }
-    public static class ButtonBox2{
+
+    public static class ButtonBox2 {
         public static final int button = 0;
-        
-        public static class Button{
+
+        public static class Button {
             public static final int col1 = 1;
             public static final int col2 = 2;
             public static final int col3 = 3;
@@ -260,10 +261,16 @@ public class Constants {
         }
 
         public static class Dio {
-            public static final int magneticSensor = 9;
+            // public static final int magneticSensor = 9;
 
             public static class IntakeSensors {
                 public static final int beamBreakSensor = 1;
+                public static final int breakBeamLeft = 5;
+                public static final int breakBeamRight = 6;
+
+                public static final int armHome = 7;
+                public static final int armCloseToHome = 8;
+                public static final int armFarFromHome = 9;
             }
         }
     }
@@ -271,6 +278,71 @@ public class Constants {
     public static class DeliveryMotor {
         public static class IntakeMotor {
             public static final int intakeMotorCanId = 10;
+        }
+    }
+
+    public static class Arm {
+        public class Extend {
+            public class CanID {
+                public static final int Id = 11;
+            }
+
+            public class SpeedControl {
+                public static final double safety = 0.01;
+                public static final double speed = 0.05;
+            }
+
+            public class PositionControl {
+                public static final double loading = 0.3;
+                public static final double highPeg = 0.7;
+                public static final double lowPeg = 0.35;
+                public static final double ground = 0.4;
+            }
+
+            public class PIDValue {
+                public static final double I = 0.000000;
+                public static final double D = 0.00025;
+                public static final double P = 0.002500;// 5e-5;
+                public static final double Iz = 0;
+                public static final double FF = 0.050000;
+                public static final double maxOutput = 0.869990;
+                public static final double minOutput = -0.869990;
+            }
+
+        }
+
+        public class Rotation {
+            public class CanID {
+                public static final int Id = 12;
+            }
+
+            public class PositionControl {
+                public static final double loading = 0.5;
+                public static final double highPeg = 0.8;
+                public static final double lowPeg = 0.8;
+                public static final double ground = 1.2;
+            }
+
+            public class PIDValue {
+                public static final double I = 0.000000;
+                public static final double D = 0.00025;
+                public static final double P = 0.002500;// 5e-5;
+                public static final double Iz = 0;
+                public static final double FF = 0.050000;
+                public static final double MaxOutput = 0.869990;
+                public static final double MinOutput = -0.869990;
+            }
+
+        }
+
+        public class Encoder {
+            public static final int Id = 5;
+            public static final double Offset = 0;
+        }
+
+        public class ConversionFactors {
+            public static final double extensionTicksPerMeter = 39.37 * 3 * 2048;
+            public static final double rotationTicksPerRadians = 2048 / 48 * 15 / 60 / 2 / Math.PI;
         }
     }
 
