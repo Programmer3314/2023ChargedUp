@@ -25,8 +25,13 @@ public class IntakeHome extends CommandBase {
 
     @Override
     public void initialize() {
-        rc.intakeSubsystem.setHome();
-        rc.intakeSubsystem.resetHomeStateMachine();
+        if (rc.intakeSubsystem.robotHomed()){
+            rc.intakeSubsystem.setHome();
+
+        }else{
+            rc.intakeSubsystem.resetHomeStateMachine();
+            rc.intakeSubsystem.setHomeNoExtend();
+        }
 
     }
 
@@ -38,7 +43,8 @@ public class IntakeHome extends CommandBase {
     @Override
     public boolean isFinished() {
         return Math.abs(rc.intakeSubsystem.getArmExtend() - 0) < .01
-                && Math.abs(rc.intakeSubsystem.getArmRotate() - 0) < .01;
+                && Math.abs(rc.intakeSubsystem.getArmRotate() - 0) < .01
+                && rc.intakeSubsystem.robotHomed();
     }
 
     @Override

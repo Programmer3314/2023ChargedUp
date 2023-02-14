@@ -61,6 +61,9 @@ public class MMIntakeSubsystem extends SubsystemBase {
     private final CANCoder armAbsoluteRotation;
     private HomeExtentionStateMachine homeStateMachine;
     private RobotContainer rc;
+    private boolean robotHomed = false;
+    private DoubleSolenoid gripper;
+    private DigitalInput spideySense;
 
     public MMIntakeSubsystem(RobotContainer rc) {
         this.rc=rc;
@@ -86,6 +89,11 @@ public class MMIntakeSubsystem extends SubsystemBase {
         armFarFromHome = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.armFarFromHome);
         armAbsoluteRotation = new CANCoder(Constants.Arm.Encoder.Id);
         armExtend.configFactoryDefault(Constants.Robot.canBusTimeoutMs);
+
+        gripper = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.Arm.Gripper.forwardChannel, Constants.Arm.Gripper.reverseChannel);
+        spideySense = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.spideySense);
+
+
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
 
@@ -136,6 +144,13 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     public void stopIntake() {
         intakeMotor.set(TalonFXControlMode.PercentOutput, 0);
+    }
+    public boolean robotHomed(){
+        return robotHomed;
+        
+    }
+    public void homeRobot(){
+        robotHomed=true;
     }
 
     public void runIntake() {
@@ -202,6 +217,10 @@ public class MMIntakeSubsystem extends SubsystemBase {
         setArmRotation(0);
         setIntakeTravel();
 
+    }
+    public void setHomeNoExtend(){
+        setArmRotation(0);
+        setIntakeTravel();
     }
 
     public void setLoading() {
@@ -288,4 +307,16 @@ public class MMIntakeSubsystem extends SubsystemBase {
     public boolean extendIsHomed(){
         return homeStateMachine.isHomed();
     }
+    public void setGrip(){
+        gripper.set(Value.kForward);
+
+    }
+    public void setRetract(){
+        gripper.set(Value.kReverse);
+
+    }
+    public boolean getSpideySense(){
+        return spideySense.get();
+    }
+    
 }

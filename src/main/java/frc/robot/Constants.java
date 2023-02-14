@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Solenoid;
 
 /** Add your docs here. */
 public class Constants {
@@ -271,6 +272,8 @@ public class Constants {
                 public static final int armHome = 7;
                 public static final int armCloseToHome = 8;
                 public static final int armFarFromHome = 9;
+
+                public static final int spideySense = 4;
             }
         }
     }
@@ -282,20 +285,27 @@ public class Constants {
     }
 
     public static class Arm {
+        public class Gripper{
+            public static final int solenoid = 1;
+            public static final int forwardChannel = 4;
+            public static final int reverseChannel = 5;
+
+            
+        }
         public class Extend {
             public class CanID {
                 public static final int Id = 11;
             }
 
             public class SpeedControl {
-                public static final double safety = 0.01;
-                public static final double speed = 0.05;
+                public static final double safety = -0.01;
+                public static final double speed = -0.05;
             }
 
             public class PositionControl {
-                public static final double loading = 0.3;
-                public static final double highPeg = 0.7;
-                public static final double lowPeg = 0.35;
+                public static final double loading = 0.2;
+                public static final double highPeg = 0.4;
+                public static final double lowPeg = 0.19;
                 public static final double ground = 0.4;
             }
 
