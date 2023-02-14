@@ -11,20 +11,19 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.MMIntakeSubsystem;
 
 /** Add your docs here. */
 public class DeliverCubeCmd extends SequentialCommandGroup {
-        public DeliverCubeCmd(RobotContainer rc, BooleanSupplier isLow) {
-                addCommands(
-                                new ParallelCommandGroup(
-                                                new InstantCommand(rc.intakeSubsystem::setIntakeTravel),
-                                                new InstantCommand(rc.intakeSubsystem::setIntakeDeliverLower)),
-                                Commands.parallel(
-                                                Commands.either(
-                                                                new InstantCommand(rc.intakeSubsystem::runOutTakeSlow),
-                                                                new InstantCommand(rc.intakeSubsystem::runOutTake), isLow),
-                                                Commands.waitSeconds(1)),
-                                new InstantCommand(rc.intakeSubsystem::stopIntake));
-        }
+    public DeliverCubeCmd(RobotContainer rc, BooleanSupplier isLow) {
+        addCommands(
+                new ParallelCommandGroup(
+                        new InstantCommand(rc.intakeSubsystem::setIntakeTravel),
+                        new InstantCommand(rc.intakeSubsystem::setIntakeDeliverLower)),
+                Commands.parallel(
+                        Commands.either(
+                                new InstantCommand(rc.intakeSubsystem::runOutTakeSlow),
+                                new InstantCommand(rc.intakeSubsystem::runOutTake), isLow),
+                        Commands.waitSeconds(1)),
+                new InstantCommand(rc.intakeSubsystem::stopIntake));
+    }
 }
