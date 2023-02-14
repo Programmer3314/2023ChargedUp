@@ -18,7 +18,8 @@ import frc.robot.utility.MMField;
 
 // TODO: create a simple "drive to grid alley" (or whatever you want to call it)
 // to execute the TranslateAbsoluteCmd and replace the one below (and elsewhere)
-// you will probably need a 'forward/backward' parameter 
+// you will probably need a 'forward/backward' parameter. 
+// Please search for "java bitwise xor" just saying...
 /** Add your docs here. */
 public class AutoDeliveryCmd extends SequentialCommandGroup {
     public AutoDeliveryCmd(RobotContainer rc) {
