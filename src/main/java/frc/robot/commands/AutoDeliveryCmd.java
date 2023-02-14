@@ -16,7 +16,9 @@ import frc.robot.DeliveryMethod;
 import frc.robot.RobotContainer;
 import frc.robot.utility.MMField;
 
-// TODO: consider passing in robotContainer instead of everything else? Maybe?
+// TODO: create a simple "drive to grid alley" (or whatever you want to call it)
+// to execute the TranslateAbsoluteCmd and replace the one below (and elsewhere)
+// you will probably need a 'forward/backward' parameter 
 /** Add your docs here. */
 public class AutoDeliveryCmd extends SequentialCommandGroup {
     public AutoDeliveryCmd(RobotContainer rc) {

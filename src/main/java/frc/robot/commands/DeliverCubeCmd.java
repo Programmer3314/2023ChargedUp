@@ -12,17 +12,23 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 
+// TODO: resolve 3 Deliver Cube commands - I suspect this one isn't used
+// TODO: Update commands to use new positioning commands 
+// and first parallel command looks odd???
+
 /** Add your docs here. */
 public class DeliverCubeCmd extends SequentialCommandGroup {
     public DeliverCubeCmd(RobotContainer rc, BooleanSupplier isLow) {
         addCommands(
                 new ParallelCommandGroup(
                         new InstantCommand(rc.intakeSubsystem::setIntakeTravel),
-                        new InstantCommand(rc.intakeSubsystem::setIntakeDeliverLower)),
+                        new InstantCommand(rc.intakeSubsystem::setIntakeDeliverLower)
+                        ),
                 Commands.parallel(
                         Commands.either(
                                 new InstantCommand(rc.intakeSubsystem::runOutTakeSlow),
-                                new InstantCommand(rc.intakeSubsystem::runOutTake), isLow),
+                                new InstantCommand(rc.intakeSubsystem::runOutTake), 
+                                isLow),
                         Commands.waitSeconds(1)),
                 new InstantCommand(rc.intakeSubsystem::stopIntake));
     }
