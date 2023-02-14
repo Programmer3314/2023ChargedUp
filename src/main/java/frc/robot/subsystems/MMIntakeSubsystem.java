@@ -20,9 +20,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
-import frc.robot.utility.MMStateMachine;
 
 // TODO: Get rid of intake ultrasonic - in the future we'll have a total of 3 break beams
 // The first across the entire intake and the others, left and right, back to front.
