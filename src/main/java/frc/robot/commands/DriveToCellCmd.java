@@ -12,39 +12,41 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.utility.MMField;
 import frc.robot.utility.MMTurnPIDController;
 
 /** Add your docs here. */
-public class TranslateAbsoluteCmd extends CommandBase {
-    private final Supplier<Pose2d> desiredPosition;
-    private final double maxSpeed;
+public class DriveToCellCmd extends CommandBase {
+    private Supplier<Integer> desiredCell;
+    private RobotContainer rc;
+    private double maxSpeed;
     private Translation2d targetPosition;
-    // private final TrapezoidProfile.Constraints constraints;
     private final PIDController tripPidController;
     private final MMTurnPIDController turnPidController;
-    private final RobotContainer rc;
+    private Pose2d targetPose2d;
+    private Supplier<Boolean> isRedAlliance;
 
-    public TranslateAbsoluteCmd(RobotContainer rc, Supplier<Pose2d> desiredTranslation, double maxSpeed) {
-        this.desiredPosition = desiredTranslation;
+    public DriveToCellCmd(RobotContainer rc, Supplier<Integer> desiredCell, Supplier<Boolean> isRedAlliance,
+            double maxSpeed) {
+        this.desiredCell = desiredCell;
+        this.isRedAlliance = isRedAlliance;
         this.maxSpeed = maxSpeed;
+
         tripPidController = new PIDController(4, 0, 0);
         turnPidController = new MMTurnPIDController();
-        this.rc=rc;
-
         addRequirements(rc.swerveSubsystem);
     }
 
     @Override
     public void initialize() {
-        targetPosition = desiredPosition.get().getTranslation();
-        SmartDashboard.putString("Target Position", targetPosition.toString());
-        SmartDashboard.putString("In LockedIn", "false");
-        turnPidController.initialize(desiredPosition.get().getRotation().getRadians());
+        targetPose2d = MMField.getCellPose(desiredCell.get(), isRedAlliance.get());
+        targetPosition = targetPose2d.getTranslation();
+        turnPidController.initialize(targetPose2d.getRotation());
     }
 
     @Override
     public void execute() {
-
+        SmartDashboard.putBoolean("isRedAlliance: ", isRedAlliance.get());
         Translation2d currentPosition = rc.navigationSubsystem.getPose().getTranslation();
         Translation2d trip = targetPosition.minus(currentPosition);
         double tripLength = trip.getNorm();
@@ -67,18 +69,17 @@ public class TranslateAbsoluteCmd extends CommandBase {
     }
 
     @Override
-    public void end(boolean interrupted) {
-        rc.swerveSubsystem.stopModules();
+    public boolean isFinished() {
+        double tripLength = targetPosition.getDistance(rc.navigationSubsystem.getPose().getTranslation());
+        boolean finishedTrip = tripLength < .05;
+        SmartDashboard.putNumber("Trip Length Cell:", tripLength);
+        SmartDashboard.putBoolean("Finished CellTranslate", finishedTrip);
+        SmartDashboard.putString("Cell Position", targetPose2d.getTranslation().toString());
+        return finishedTrip && turnPidController.isFinished();
     }
 
     @Override
-    public boolean isFinished() {
-
-        double tripLength = targetPosition.getDistance(rc.navigationSubsystem.getPose().getTranslation());
-        boolean finishedTranslate = tripLength < .05;
-        SmartDashboard.putNumber("Trip Length:", tripLength);
-        SmartDashboard.putBoolean("Finished Translate", finishedTranslate);
-        return finishedTranslate && turnPidController.isFinished();
+    public void end(boolean interrupted) {
+        rc.swerveSubsystem.stopModules();
     }
-
 }

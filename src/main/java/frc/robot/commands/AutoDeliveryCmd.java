@@ -31,7 +31,7 @@ public class AutoDeliveryCmd extends SequentialCommandGroup {
                                 new Rotation2d(rc.getIsRedAlliance() ? 0
                                         : Math.PI)),
                         1),
-                new DriveToCell(rc,
+                new DriveToCellCmd(rc,
                         rc::getGridCell,
                         rc::getIsRedAlliance,
                         1),

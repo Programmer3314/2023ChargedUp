@@ -7,8 +7,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.MMNavigationSubsystem;
-import frc.robot.subsystems.MMSwerveSubsystem;
 
 /** Add your docs here. */
 public class DriveToRampCmd extends CommandBase {
