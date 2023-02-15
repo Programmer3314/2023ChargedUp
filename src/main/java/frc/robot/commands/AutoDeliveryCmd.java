@@ -25,15 +25,7 @@ public class AutoDeliveryCmd extends SequentialCommandGroup {
     public AutoDeliveryCmd(RobotContainer rc) {
         addCommands(
                 new InstantCommand(() -> rc.navigationSubsystem.setFrontPipeline(0)),
-                new TranslateAbsoluteCmd(rc,
-                        () -> new Pose2d(
-                                Constants.targetPositions.fieldXCoordinate
-                                        * (rc.getIsRedAlliance() ? 1
-                                                : -1),
-                                rc.navigationSubsystem.getPose().getY(),
-                                new Rotation2d(rc.getIsRedAlliance() ? 0
-                                        : Math.PI)),
-                        1),
+                new DriveToGridAlleyCmd(rc, ()-> true),
                 new DriveToCellCmd(rc,
                         rc::getGridCell,
                         rc::getIsRedAlliance,
@@ -50,8 +42,8 @@ public class AutoDeliveryCmd extends SequentialCommandGroup {
                                                 () -> MMField.isCellCone(
                                                         rc.getGridCell()),
                                                 rc)),
-                                Map.entry(DeliveryMethod.DeliverHighCube,
-                                        new DeliverCubeHighCmd(
+                                Map.entry(DeliveryMethod.DeliverMiddleCube,
+                                        new DeliverCubeMiddleCmd(
                                                 2,
                                                 rc))),
                         rc::selectDeliveryMethod),

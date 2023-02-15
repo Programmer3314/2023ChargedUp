@@ -20,9 +20,7 @@ public class DeliverCubeCmd extends SequentialCommandGroup {
     public DeliverCubeCmd(RobotContainer rc, BooleanSupplier isLow) {
         addCommands(
                 new ParallelCommandGroup(
-                        new InstantCommand(rc.intakeSubsystem::setIntakeTravel),
-                        // TODO: huh?
-                        new InstantCommand(rc.intakeSubsystem::setIntakeDeliverLower)
+                      new SetIntakeTravelCmd(rc)
                         ),
                 Commands.parallel(
                         Commands.either(

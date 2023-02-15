@@ -25,6 +25,7 @@ public abstract class MMStateMachine<T> {
     }
 
     public void update() {
+        secondsInState = Timer.getFPGATimestamp() - startCurrentStateTime;
         if (!firstTimeRun) {
             nextState = currentState;
             CalcNextState();
@@ -35,8 +36,8 @@ public abstract class MMStateMachine<T> {
                 startCurrentStateTime = Timer.getFPGATimestamp();
             }
         }
-        // TODO should this be the first line of the update method?
-        secondsInState = Timer.getFPGATimestamp() - startCurrentStateTime;
+     
+      
         doCurrentState();
         cyclesInStates++;
         firstTimeRun = false;

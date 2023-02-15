@@ -4,17 +4,21 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 
 /** Add your docs here. */
-public class PickUpCubeCmd extends SequentialCommandGroup {
-    public PickUpCubeCmd(RobotContainer rc) {
-        addCommands(
-                new CubePickUpPositionCmd(rc),
-                new RunIntakeUntilBrokenCmd(rc),
-                new SetIntakeTravelCmd(rc)        
-
-        );
+public class SetIntakeTravelCmd extends SequentialCommandGroup{
+    public  SetIntakeTravelCmd(RobotContainer rc){
+     addCommands(
+        new InstantCommand(rc.intakeSubsystem::setIntakeTravel)
+        
+        
+     );   
     }
+    
+
+    
 }
+

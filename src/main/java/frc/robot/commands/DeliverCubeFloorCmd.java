@@ -18,15 +18,8 @@ public class DeliverCubeFloorCmd extends SequentialCommandGroup {
     public DeliverCubeFloorCmd(double maxTurnSpeed,
             BooleanSupplier isTargetCone, RobotContainer rc) {
         addCommands(
-                new TranslateAbsoluteCmd(rc,
-                        () -> new Pose2d(
-                                Constants.targetPositions.fieldXCoordinate
-                                        * (rc.getIsRedAlliance() ? 1
-                                                : -1),
-                                rc.navigationSubsystem.getPose().getY(),
-                                new Rotation2d(rc.getIsRedAlliance() ? Math.PI
-                                        : 0)),
-                        1),
+                new DriveToGridAlleyCmd(rc, ()-> false),
+               
                 Commands.either(
                         new TargetPegCmd(rc, 2,
                                 rc.intakeSubsystem::getBeamBreak),
@@ -35,14 +28,7 @@ public class DeliverCubeFloorCmd extends SequentialCommandGroup {
                         isTargetCone),
                 new DriveToBumperCmd(rc, .5),
                 new DeliverCubeCmd(rc, () -> true),
-                new TranslateAbsoluteCmd(rc,
-                        () -> new Pose2d(
-                                Constants.targetPositions.fieldXCoordinate
-                                        * (rc.getIsRedAlliance() ? 1
-                                                : -1),
-                                rc.navigationSubsystem.getPose().getY(),
-                                new Rotation2d(rc.getIsRedAlliance() ? 0
-                                        : Math.PI)),
-                        1));
+                new DriveToGridAlleyCmd(rc, ()-> true)
+               );
     }
 }

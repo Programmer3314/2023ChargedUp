@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 
-// TODO: the constructor should not have a return type
+
 
 /** Add your docs here. */
 public class GripGrabCmd extends SequentialCommandGroup{
-    public void GripGrabCmd(RobotContainer rc){
+    public  GripGrabCmd(RobotContainer rc){
      addCommands(
         new InstantCommand(rc.intakeSubsystem::setGrip)
         

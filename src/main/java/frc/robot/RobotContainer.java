@@ -113,15 +113,18 @@ public class RobotContainer {
                 configureBindings();
         }
 
-        // TODO: Fix this... 
+        
         public DeliveryMethod selectDeliveryMethod() {
                 if (intakeSubsystem.getBeamBreak()) {
-                        return DeliveryMethod.DeliverFloorCube;
+                        if (gridHeight == 1) {
+                                return DeliveryMethod.DeliverFloorCube;
+                        }
+                        return DeliveryMethod.DeliverMiddleCube;
                 }
                 if (MMField.isCellCone(gridCell)) {
                         return DeliveryMethod.DeliverCone;
                 }
-                return DeliveryMethod.DeliverHighCube;
+                return DeliveryMethod.DeliverMiddleCube;
         }
 
         private void configureBindings() {

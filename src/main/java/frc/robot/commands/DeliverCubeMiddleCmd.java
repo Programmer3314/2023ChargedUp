@@ -11,20 +11,20 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
-// TODO: Add arm movements
-
 /** Add your docs here. */
-public class DeliverConeCmd extends SequentialCommandGroup {
-
-    public DeliverConeCmd(double maxRotationSpeed,
-            RobotContainer rc) {
+public class DeliverCubeMiddleCmd extends SequentialCommandGroup {
+    public DeliverCubeMiddleCmd(double maxRotationSpeed, RobotContainer rc) {
         addCommands(
+                
+                        new DriveToGridAlleyCmd(rc, ()-> false),
                 Commands.race(
-                        new TargetPegCmd(rc, 2,
+                        new TargetTagCmd(rc, 2,
                                 rc.intakeSubsystem::getBeamBreak),
                         new WaitToDeliverCmd(2)),
                 new DriveToBumperCmd(rc, .5),
                 new DriveToGridAlleyCmd(rc, ()-> true)
-                );
+               );
+
     }
+
 }

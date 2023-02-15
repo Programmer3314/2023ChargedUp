@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
-// TODO: Get rid of intake ultrasonic - in the future we'll have a total of 3 break beams
 // The first across the entire intake and the others, left and right, back to front.
 
 // TODO: The manipulators need to be controlled together (for example the box needs to be in if the
@@ -43,7 +42,7 @@ import frc.robot.RobotContainer;
 /** Add your docs here. */
 public class MMIntakeSubsystem extends SubsystemBase {
     private final TalonFX intakeMotor;
-    private final AnalogInput intakeUltraSonic;
+    //private final AnalogInput intakeUltraSonic;
     private final DigitalInput intakeBeamBreak;
     private final DigitalInput intakeRightBreak;
     private final DigitalInput intakeLeftBreak;
@@ -67,7 +66,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
         this.rc=rc;
         homeStateMachine=new HomeExtentionStateMachine(rc);
         intakeMotor = new TalonFX(Constants.DeliveryMotor.IntakeMotor.intakeMotorCanId);
-        intakeUltraSonic = new AnalogInput(Constants.RoboRio.Analog.IntakeSensors.ultraSonicSensor);
+       // intakeUltraSonic = new AnalogInput(Constants.RoboRio.Analog.IntakeSensors.ultraSonicSensor);
         intakeBeamBreak = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.beamBreakSensor);
         intakeLeftBreak = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.breakBeamLeft);
         intakeRightBreak = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.breakBeamRight);
@@ -136,7 +135,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Intake Beam Break: ", intakeBeamBreak.get());
-        SmartDashboard.putNumber("Intake UltraSonic: ", intakeUltraSonic.getVoltage());
+       // SmartDashboard.putNumber("Intake UltraSonic: ", intakeUltraSonic.getVoltage());
 
     }
 
@@ -167,9 +166,9 @@ public class MMIntakeSubsystem extends SubsystemBase {
         return !intakeBeamBreak.get();
     }
 
-    public double getUltraSonicVoltage() {
-        return intakeUltraSonic.getVoltage();
-    }
+    // public double getUltraSonicVoltage() {
+    //     return intakeUltraSonic.getVoltage();
+    // }
 
     public void setIntakeFloor() {
         intakePosition.set(Value.kForward);
