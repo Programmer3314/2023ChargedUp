@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 
+// TODO: I think this needs to go away. Use IntakeHomeCmd instead.  
+
+
 /** Add your docs here. */
 public class SetIntakeTravelCmd extends SequentialCommandGroup{
     public  SetIntakeTravelCmd(RobotContainer rc){

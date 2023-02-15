@@ -7,6 +7,9 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
+// TODO: Rename to be more like the other Position commands
+// TODO: Maybe rename all position commands to have Position... at the beginning
+// like the Deliver... commands start with Deliver...
 /** Add your docs here. */
 public class IntakeHomeCmd extends CommandBase {
     private final RobotContainer rc;

@@ -12,8 +12,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 
-// TODO: Update commands to use new positioning commands 
-// and first parallel command looks odd???
+// TODO: Is the first parallel command group needed?
 
 /** Add your docs here. */
 public class DeliverCubeCmd extends SequentialCommandGroup {

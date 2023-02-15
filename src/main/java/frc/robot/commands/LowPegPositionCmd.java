@@ -14,7 +14,6 @@ public class LowPegPositionCmd extends CommandBase {
 
     public LowPegPositionCmd(RobotContainer rc) {
         this.rc = rc;
-
     }
 
     @Override
@@ -36,6 +35,5 @@ public class LowPegPositionCmd extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         rc.intakeSubsystem.stopArm();
-
     }
 }

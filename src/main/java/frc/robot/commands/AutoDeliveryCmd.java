@@ -6,31 +6,25 @@ package frc.robot.commands;
 
 import java.util.Map;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
 import frc.robot.DeliveryMethod;
 import frc.robot.RobotContainer;
 import frc.robot.utility.MMField;
 
-// TODO: create a simple "drive to grid alley" (or whatever you want to call it)
-// to execute the TranslateAbsoluteCmd and replace the one below (and elsewhere)
-// you will probably need a 'forward/backward' parameter. 
-// Please search for "java bitwise xor" just saying...
+// TODO: Add DeliverCubeHigh
+
 /** Add your docs here. */
 public class AutoDeliveryCmd extends SequentialCommandGroup {
     public AutoDeliveryCmd(RobotContainer rc) {
         addCommands(
                 new InstantCommand(() -> rc.navigationSubsystem.setFrontPipeline(0)),
-                new DriveToGridAlleyCmd(rc, ()-> true),
+                new DriveToGridAlleyCmd(rc, () -> true),
                 new DriveToCellCmd(rc,
                         rc::getGridCell,
                         rc::getIsRedAlliance,
                         1),
-
                 Commands.select(
                         Map.ofEntries(
                                 Map.entry(DeliveryMethod.DeliverCone,

@@ -14,7 +14,6 @@ public class PickUpCubeCmd extends SequentialCommandGroup {
                 new CubePickUpPositionCmd(rc),
                 new RunIntakeUntilBrokenCmd(rc),
                 new SetIntakeTravelCmd(rc)        
-
         );
     }
 }
