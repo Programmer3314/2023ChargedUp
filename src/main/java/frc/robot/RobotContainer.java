@@ -348,8 +348,8 @@ public class RobotContainer {
                 if(row==0||column==0){
                         return 0;
                 }
-                row-=9;
-                return ((row-1)*9)+column;
+                row-=10;
+                return (row*9)+column;
         }
 
 }// create  a mega command to select choose whether we are delivering or if we are using the cell selection to do semi-automatic;
