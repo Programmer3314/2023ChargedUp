@@ -9,34 +9,27 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 /** Add your docs here. */
-public class LoadingPositionCmd extends CommandBase {
+public class PositionHighPegCmd extends CommandBase{
     private final RobotContainer rc;
-
-    public LoadingPositionCmd(RobotContainer rc) {
+    public PositionHighPegCmd(RobotContainer rc){
         this.rc = rc;
         addRequirements(rc.intakeSubsystem);
     }
-
     @Override
-    public void initialize() {
-        rc.intakeSubsystem.setLoading();
+    public void initialize(){
+        rc.intakeSubsystem.setHighPeg();
 
     }
-
     @Override
-    public void execute() {
+    public void execute(){
 
     }
-
     @Override
-    public boolean isFinished() {
-        return (Math.abs(rc.intakeSubsystem.getArmRotate() - Constants.Arm.Rotation.PositionControl.loading) < .01)
-                && (Math.abs(rc.intakeSubsystem.getArmExtend() - Constants.Arm.Extend.PositionControl.loading) < .01);
+    public boolean isFinished(){
+        return Math.abs(rc.intakeSubsystem.getArmExtend()-Constants.Arm.Extend.PositionControl.highPeg)<.01 && Math.abs(rc.intakeSubsystem.getArmRotate()-Constants.Arm.Rotation.PositionControl.highPeg) < .01;
     }
-
     @Override
-    public void end(boolean interrupted) {
+    public void end(boolean interrupted){
         rc.intakeSubsystem.stopArm();
-
     }
 }

@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 
-// TODO: Explain the waitSeconds command
-
 /** Add your docs here. */
 public class DeliverCubeHighCmd extends SequentialCommandGroup {
 
@@ -19,12 +17,10 @@ public class DeliverCubeHighCmd extends SequentialCommandGroup {
                 rc.intakeSubsystem::getBeamBreak),
                 new ParallelCommandGroup(
                         new DriveToBumperCmd(rc, 1),
-                        new HighPegPositionCmd(rc)
-
+                        new PositionHighPegCmd(rc)
                 ),
-                Commands.waitSeconds(2),
                 new GripReleaseCmd(rc),
-                new DriveToGridAlleyCmd(rc, ()-> true));
+                new DriveToGridAlleyCmd(rc, () -> true));
 
     }
 }

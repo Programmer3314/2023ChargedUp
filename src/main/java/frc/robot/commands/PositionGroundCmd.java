@@ -9,10 +9,10 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 /** Add your docs here. */
-public class GroundPositionCmd extends CommandBase {
+public class PositionGroundCmd extends CommandBase {
     private final RobotContainer rc;
 
-    public GroundPositionCmd(RobotContainer rc) {
+    public PositionGroundCmd(RobotContainer rc) {
         this.rc = rc;
         addRequirements(rc.intakeSubsystem);
     }

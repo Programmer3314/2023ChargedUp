@@ -5,22 +5,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 /** Add your docs here. */
-public class CubePickUpPositionCmd extends CommandBase {
-    RobotContainer rc;
+public class PositionLoadingCmd extends CommandBase {
+    private final RobotContainer rc;
 
-    public CubePickUpPositionCmd(RobotContainer rc) {
+    public PositionLoadingCmd(RobotContainer rc) {
         this.rc = rc;
         addRequirements(rc.intakeSubsystem);
     }
 
     @Override
     public void initialize() {
-        rc.intakeSubsystem.setArmExtend(0);
-        rc.intakeSubsystem.setArmRotation(0);
-        rc.intakeSubsystem.setIntakeFloor();
+        rc.intakeSubsystem.setLoading();
+
     }
 
     @Override
@@ -30,11 +30,13 @@ public class CubePickUpPositionCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(rc.intakeSubsystem.getArmExtend()) < 0.01 && Math.abs(rc.intakeSubsystem.getArmRotate()) < 0.01;
+        return (Math.abs(rc.intakeSubsystem.getArmRotate() - Constants.Arm.Rotation.PositionControl.loading) < .01)
+                && (Math.abs(rc.intakeSubsystem.getArmExtend() - Constants.Arm.Extend.PositionControl.loading) < .01);
     }
 
     @Override
     public void end(boolean interrupted) {
         rc.intakeSubsystem.stopArm();
+
     }
 }

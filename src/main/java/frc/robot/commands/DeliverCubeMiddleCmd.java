@@ -4,25 +4,20 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 
-// TODO: do we need a DeliverCubeCmd in here somewhere?
 
 /** Add your docs here. */
 public class DeliverCubeMiddleCmd extends SequentialCommandGroup {
     public DeliverCubeMiddleCmd(double maxRotationSpeed, RobotContainer rc) {
         addCommands(
-                
-                        new DriveToGridAlleyCmd(rc, ()-> false),
-                Commands.race(
-                        new TargetTagCmd(rc, 2,
-                                rc.intakeSubsystem::getBeamBreak),
-                        new WaitToDeliverCmd(2)),
+                new DriveToGridAlleyCmd(rc, () -> false),
+                new TargetTagCmd(rc, 2,
+                        rc.intakeSubsystem::getBeamBreak),
                 new DriveToBumperCmd(rc, .5),
-                new DriveToGridAlleyCmd(rc, ()-> true)
-               );
+                new DeliverCubeCmd(rc, () -> false),
+                new DriveToGridAlleyCmd(rc, () -> true));
 
     }
 

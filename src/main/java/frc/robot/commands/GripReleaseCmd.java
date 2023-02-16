@@ -4,18 +4,18 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 
-
-
 /** Add your docs here. */
-public class GripReleaseCmd extends SequentialCommandGroup{
-    public  GripReleaseCmd(RobotContainer rc){
-     addCommands(
-        new InstantCommand(rc.intakeSubsystem::setRetract)
-        
-     );   
+public class GripReleaseCmd extends SequentialCommandGroup {
+    public GripReleaseCmd(RobotContainer rc) {
+        addCommands(
+                new InstantCommand(rc.intakeSubsystem::setRetract),
+                Commands.waitSeconds(.5)
+
+        );
     }
 }

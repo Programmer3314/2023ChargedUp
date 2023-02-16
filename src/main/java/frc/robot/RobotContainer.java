@@ -113,7 +113,6 @@ public class RobotContainer {
                 configureBindings();
         }
 
-        
         public DeliveryMethod selectDeliveryMethod() {
                 if (intakeSubsystem.getBeamBreak()) {
                         if (gridHeight == 1) {
@@ -304,6 +303,10 @@ public class RobotContainer {
 
         public int getGridCell() {
                 return gridCell;
+        }
+
+        public int getGridHeight() {
+                return gridHeight;
         }
 
         public boolean isGridCellSelected() {

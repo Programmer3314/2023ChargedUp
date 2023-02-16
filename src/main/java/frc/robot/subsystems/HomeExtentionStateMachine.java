@@ -22,7 +22,6 @@ public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
 
     @Override
     public void CalcNextState() {
-        // TODO Auto-generated method stub
         switch (currentState) {
             case Start:
                 nextState = HomeStates.Safety;

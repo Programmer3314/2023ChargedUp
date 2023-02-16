@@ -7,24 +7,21 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-// TODO: Rename to be more like the other Position commands
-// TODO: Maybe rename all position commands to have Position... at the beginning
-// like the Deliver... commands start with Deliver...
 /** Add your docs here. */
-public class IntakeHomeCmd extends CommandBase {
+public class PositionHomeCmd extends CommandBase {
     private final RobotContainer rc;
 
-    public IntakeHomeCmd(RobotContainer rc) {
+    public PositionHomeCmd(RobotContainer rc) {
         this.rc = rc;
         addRequirements(rc.intakeSubsystem);
     }
 
     @Override
     public void initialize() {
-        if (rc.intakeSubsystem.robotHomed()){
+        if (rc.intakeSubsystem.robotHomed()) {
             rc.intakeSubsystem.setHome();
 
-        }else{
+        } else {
             rc.intakeSubsystem.resetHomeStateMachine();
             rc.intakeSubsystem.setHomeNoExtend();
         }

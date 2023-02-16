@@ -11,9 +11,8 @@ import frc.robot.RobotContainer;
 public class PickUpCubeCmd extends SequentialCommandGroup {
     public PickUpCubeCmd(RobotContainer rc) {
         addCommands(
-                new CubePickUpPositionCmd(rc),
+                new PositionCubePickUpCmd(rc),
                 new RunIntakeUntilBrokenCmd(rc),
-                new SetIntakeTravelCmd(rc)        
-        );
+                new PositionHomeCmd(rc));
     }
 }

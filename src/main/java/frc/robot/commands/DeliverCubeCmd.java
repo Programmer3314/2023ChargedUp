@@ -8,26 +8,20 @@ import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
-
-// TODO: Is the first parallel command group needed?
 
 /** Add your docs here. */
 public class DeliverCubeCmd extends SequentialCommandGroup {
     public DeliverCubeCmd(RobotContainer rc, BooleanSupplier isLow) {
         addCommands(
-                new ParallelCommandGroup(
-                      new SetIntakeTravelCmd(rc)
-                        ),
+                new PositionHomeCmd(rc),
                 Commands.parallel(
                         Commands.either(
                                 new InstantCommand(rc.intakeSubsystem::runOutTakeSlow),
-                                new InstantCommand(rc.intakeSubsystem::runOutTake), 
+                                new InstantCommand(rc.intakeSubsystem::runOutTake),
                                 isLow),
-                        Commands.waitSeconds(1)
-                        ),
+                        Commands.waitSeconds(1)),
                 new InstantCommand(rc.intakeSubsystem::stopIntake));
     }
 }

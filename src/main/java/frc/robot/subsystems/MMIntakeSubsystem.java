@@ -12,7 +12,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -22,22 +21,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
-// The first across the entire intake and the others, left and right, back to front.
-
-// TODO: The manipulators need to be controlled together (for example the box needs to be in if the
-// arm is getting extending). So start roughing out the arm hardware in this subsystem. 
-// It is expected that there will be: 
-// - one motor to rotate the arm
-// - one motoro to extend/retract the arm
-// - a cancoder absolute encoder for initial arm rotation
-// - two magnetic switches to control "homing the extension" (one warning, one homed)
-// - a pneumatic to control the grabber 
-// - and hopefully a sensor to detect a game piece in the jaws
-// Just like with the swerve modules, we'll use the absolute encoder to initiallize the falcon encoder
-// for the rotation.
-// We'll home the rotation of the arm to point it straight up.
-// We'll home the extension to retracted. 
-// Homing the arm will do both.
 
 /** Add your docs here. */
 public class MMIntakeSubsystem extends SubsystemBase {

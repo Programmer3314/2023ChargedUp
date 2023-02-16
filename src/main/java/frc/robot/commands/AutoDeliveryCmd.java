@@ -13,34 +13,36 @@ import frc.robot.DeliveryMethod;
 import frc.robot.RobotContainer;
 import frc.robot.utility.MMField;
 
-// TODO: Add DeliverCubeHigh
+
 
 /** Add your docs here. */
 public class AutoDeliveryCmd extends SequentialCommandGroup {
-    public AutoDeliveryCmd(RobotContainer rc) {
-        addCommands(
-                new InstantCommand(() -> rc.navigationSubsystem.setFrontPipeline(0)),
-                new DriveToGridAlleyCmd(rc, () -> true),
-                new DriveToCellCmd(rc,
-                        rc::getGridCell,
-                        rc::getIsRedAlliance,
-                        1),
-                Commands.select(
-                        Map.ofEntries(
-                                Map.entry(DeliveryMethod.DeliverCone,
-                                        new DeliverConeCmd(
-                                                2, rc)),
-                                Map.entry(DeliveryMethod.DeliverFloorCube,
-                                        new DeliverCubeFloorCmd(
-                                                2,
-                                                () -> MMField.isCellCone(
-                                                        rc.getGridCell()),
-                                                rc)),
-                                Map.entry(DeliveryMethod.DeliverMiddleCube,
-                                        new DeliverCubeMiddleCmd(
-                                                2,
-                                                rc))),
-                        rc::selectDeliveryMethod),
-                new InstantCommand(rc::clearSelectedCell));
-    }
+        public AutoDeliveryCmd(RobotContainer rc) {
+                addCommands(
+                                new InstantCommand(() -> rc.navigationSubsystem.setFrontPipeline(0)),
+                                new DriveToGridAlleyCmd(rc, () -> true),
+                                new DriveToCellCmd(rc,
+                                                rc::getGridCell,
+                                                rc::getIsRedAlliance,
+                                                1),
+                                Commands.select(
+                                                Map.ofEntries(
+                                                                Map.entry(DeliveryMethod.DeliverCone,
+                                                                                new DeliverConeCmd(
+                                                                                                2, rc)),
+                                                                Map.entry(DeliveryMethod.DeliverFloorCube,
+                                                                                new DeliverCubeFloorCmd(
+                                                                                                2,
+                                                                                                () -> MMField.isCellCone(
+                                                                                                                rc.getGridCell()),
+                                                                                                rc)),
+                                                                Map.entry(DeliveryMethod.DeliverMiddleCube,
+                                                                                new DeliverCubeMiddleCmd(
+                                                                                                2,
+                                                                                                rc)),
+                                                                Map.entry(DeliveryMethod.DeliverHighCube,
+                                                                                new DeliverCubeHighCmd(rc))),
+                                                rc::selectDeliveryMethod),
+                                new InstantCommand(rc::clearSelectedCell));
+        }
 }

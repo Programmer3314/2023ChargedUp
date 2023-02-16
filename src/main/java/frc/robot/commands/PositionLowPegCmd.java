@@ -9,10 +9,10 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 /** Add your docs here. */
-public class LowPegPositionCmd extends CommandBase {
+public class PositionLowPegCmd extends CommandBase {
     private final RobotContainer rc;
 
-    public LowPegPositionCmd(RobotContainer rc) {
+    public PositionLowPegCmd(RobotContainer rc) {
         this.rc = rc;
     }
 

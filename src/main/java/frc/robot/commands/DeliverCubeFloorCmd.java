@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 
@@ -15,8 +16,7 @@ public class DeliverCubeFloorCmd extends SequentialCommandGroup {
     public DeliverCubeFloorCmd(double maxTurnSpeed,
             BooleanSupplier isTargetCone, RobotContainer rc) {
         addCommands(
-                new DriveToGridAlleyCmd(rc, ()-> false),
-               
+                new DriveToGridAlleyCmd(rc, () -> false),
                 Commands.either(
                         new TargetPegCmd(rc, 2,
                                 rc.intakeSubsystem::getBeamBreak),
@@ -25,7 +25,6 @@ public class DeliverCubeFloorCmd extends SequentialCommandGroup {
                         isTargetCone),
                 new DriveToBumperCmd(rc, .5),
                 new DeliverCubeCmd(rc, () -> true),
-                new DriveToGridAlleyCmd(rc, ()-> true)
-               );
+                new DriveToGridAlleyCmd(rc, () -> true));
     }
 }
