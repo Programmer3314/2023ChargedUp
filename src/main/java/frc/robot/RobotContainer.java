@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ButtonBox2;
 import frc.robot.commands.AutoDeliveryCmd;
 import frc.robot.commands.DeliverCubeCmd;
 import frc.robot.commands.DriveToBumperCmd;
@@ -38,6 +39,8 @@ import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
 import frc.robot.utility.MMField;
 import frc.robot.utility.MMJoystickAxis;
+
+//TODO: 
 
 public class RobotContainer {
         private ShuffleboardTab tab = Shuffleboard.getTab("In Match");
@@ -162,7 +165,7 @@ public class RobotContainer {
                 // .onTrue(
                 // new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5));
 
-                new JoystickButton(driverJoystick, 6)
+                new JoystickButton(driverJoystick, Constants.Driver.Button.autoDelivery)
                                 .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
                 // swerveSubsystem, navigationSubsystem,
                 // this::getIsRedAlliance,
@@ -329,4 +332,24 @@ public class RobotContainer {
                 return driverJoystick.getRawAxis(Constants.Driver.Axis.rt) > .5;
         }
 
-}
+        public int buttonCellSelect(){
+                int column=0;
+                int row=0;
+                for(int col=1;col<10;col++){
+                        if(buttonBox2.getRawButtonPressed(col)){
+                                column=col;
+                        }
+                }
+                for(int r=10;r<13;r++){
+                        if(buttonBox2.getRawButtonPressed(r)){
+                                row=r;
+                        }
+                }
+                if(row==0||column==0){
+                        return 0;
+                }
+                row-=9;
+                return ((row-1)*9)+column;
+        }
+
+}// create  a mega command to select choose whether we are delivering or if we are using the cell selection to do semi-automatic;

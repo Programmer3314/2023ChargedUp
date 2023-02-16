@@ -11,4 +11,24 @@ interferance).
 One key element will be initializing the odometry with it's initial position. If we can see a tag, 
 that should solve the problem, but if we can't, we might need a "standard" starting position.
 
-
+2/15/23
+-Game Piece Signal light to let the Human Player know whether we are picking up a cube or a cone.
+-Method able to convert a position in one alliance to another alliance.
+-Loading Dock Drive Commands need to be button-bound.
+Implement Semi-Automatic Mode:
+    -If there is a problem with our positioning in the robot, toggle the semi-auto Mode
+    -The cell delivery positions  in the button box are now positions for the robot delivery
+        +home/travel
+        +loading
+        +high Peg
+        +low peg
+        +floor
+        +pick Up Cube
+        +Middle Cube
+        +release the grabber
+        +activate the grabber
+        +run out take slow
+        +run out take fast
+        +full deliver to peg(extend, release, retract)
+-Add GrabSensor to the InMatch Screen
+-Add toggle switch to the Teensy to assign whether vision is up/not
