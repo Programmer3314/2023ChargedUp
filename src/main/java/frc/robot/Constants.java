@@ -114,14 +114,14 @@ public class Constants {
             public static final int driveMotor = 2;
             public static final int steerMotor = 1;
             public static final int absoluteEncoderId = 1;
-            public static final double absoluteEncoderOffset = -Math.toRadians(103);// 28
+            public static final double absoluteEncoderOffset = -Math.toRadians(-73);// 28
         }
 
         public static class frontRightModule {
             public static final int driveMotor = 4;
             public static final int steerMotor = 3;
             public static final int absoluteEncoderId = 2;
-            public static final double absoluteEncoderOffset = -Math.toRadians(-24);// -87
+            public static final double absoluteEncoderOffset = -Math.toRadians(188);// -87
         }
 
         public static class backRightModule {
@@ -192,10 +192,10 @@ public class Constants {
             public static final int overrideFieldCentricA = 1;
             public static final int resetNavxB = 2;
             // public static final int testPeg = 3;
-            public static final int autoDelivery=1;
+            // public static final int autoDelivery=1;
 
-            public static final int runIntake = 4;
-            public static final int runOutTake = 3;
+            // public static final int runIntake = 4;
+            // public static final int runOutTake = 3;
         }
     }
 
@@ -322,6 +322,7 @@ public class Constants {
         }
 
         public class Rotation {
+
             public class CanID {
                 public static final int Id = 12;
             }

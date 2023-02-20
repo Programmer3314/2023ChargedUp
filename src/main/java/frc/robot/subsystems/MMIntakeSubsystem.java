@@ -106,7 +106,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                resetArmEncoder();
+                // resetArmEncoder();
                 // SmartDashboard.putString("Reset Running: ", "Yes");
             } catch (Exception e) {
                 // SmartDashboard.putString("Reset Running: ", "Error");

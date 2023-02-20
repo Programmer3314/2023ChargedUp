@@ -99,8 +99,8 @@ public class RobotContainer {
                 }).start();
                 intakeSubsystem = new MMIntakeSubsystem(this);
 
-                leftTrigger = new Trigger(this::getLeftTriggerActive);
-                rightTrigger = new Trigger(this::getRightTriggerActive);
+                // leftTrigger = new Trigger(this::getLeftTriggerActive);
+                // rightTrigger = new Trigger(this::getRightTriggerActive);
 
                 swerveSubsystem.setDefaultCommand(
                                 new SequentialCommandGroup(
@@ -130,27 +130,27 @@ public class RobotContainer {
         }
 
         private void configureBindings() {
-                leftTrigger.whileTrue(new SequentialCommandGroup(
-                                new TranslateAbsoluteCmd(this,
-                                                () -> MMField.getLeftDock(this::getIsRedAlliance), 2)
-                                                .until(navigationSubsystem::approachingLoadingDock),
-                                // new TranslateAbsoluteCmd(swerveSubsystem,
-                                // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
-                                new DriveToBumperCmd(this, .5),
-                                new TranslateAbsoluteCmd(this,
-                                                () -> MMField.getLeftDockRetractPoint(this::getIsRedAlliance),
-                                                2)));
+                // leftTrigger.whileTrue(new SequentialCommandGroup(
+                //                 new TranslateAbsoluteCmd(this,
+                //                                 () -> MMField.getLeftDock(this::getIsRedAlliance), 2)
+                //                                 .until(navigationSubsystem::approachingLoadingDock),
+                //                 // new TranslateAbsoluteCmd(swerveSubsystem,
+                //                 // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
+                //                 new DriveToBumperCmd(this, .5),
+                //                 new TranslateAbsoluteCmd(this,
+                //                                 () -> MMField.getLeftDockRetractPoint(this::getIsRedAlliance),
+                //                                 2)));
 
-                rightTrigger.whileTrue(new SequentialCommandGroup(
-                                new TranslateAbsoluteCmd(this,
-                                                () -> MMField.getRightDock(this::getIsRedAlliance), 2)
-                                                .until(navigationSubsystem::approachingLoadingDock),
-                                // new TranslateAbsoluteCmd(swerveSubsystem,
-                                // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
-                                new DriveToBumperCmd(this, .5),
-                                new TranslateAbsoluteCmd(this,
-                                                () -> MMField.getRightDockRetractPoint(this::getIsRedAlliance),
-                                                2)));
+                // rightTrigger.whileTrue(new SequentialCommandGroup(
+                //                 new TranslateAbsoluteCmd(this,
+                //                                 () -> MMField.getRightDock(this::getIsRedAlliance), 2)
+                //                                 .until(navigationSubsystem::approachingLoadingDock),
+                //                 // new TranslateAbsoluteCmd(swerveSubsystem,
+                //                 // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
+                //                 new DriveToBumperCmd(this, .5),
+                //                 new TranslateAbsoluteCmd(this,
+                //                                 () -> MMField.getRightDockRetractPoint(this::getIsRedAlliance),
+                //                                 2)));
 
                 new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavxB)
                                 .onTrue(new SequentialCommandGroup(
@@ -165,27 +165,27 @@ public class RobotContainer {
                 // .onTrue(
                 // new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5));
 
-                new JoystickButton(driverJoystick, Constants.Driver.Button.autoDelivery)
-                                .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
+                // new JoystickButton(driverJoystick, Constants.Driver.Button.autoDelivery)
+                //                 .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
                 // swerveSubsystem, navigationSubsystem,
                 // this::getIsRedAlliance,
                 // this::getGridCell,
                 // // this::selectDeliveryMethod
-                new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.testTurnPeg)
-                                .whileTrue(
-                                                new TargetPegCmd(this, gridCell,
-                                                                intakeSubsystem::getBeamBreak));
-                new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
-                                // .whileTrue(
-                                // new StartEndCommand(
-                                // () -> intakeSubsystem.runIntake(),
-                                // // Stop driving at the end of the command
-                                // () -> intakeSubsystem.stopIntake(),
-                                // // Requires the drive subsystem
-                                // intakeSubsystem));
-                                .onTrue(
-                                                new PickUpCubeCmd(this));
-                new JoystickButton(driverJoystick, Constants.Driver.Button.runOutTake)
+                // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.testTurnPeg)
+                //                 .whileTrue(
+                //                                 new TargetPegCmd(this, gridCell,
+                //                                                 intakeSubsystem::getBeamBreak));
+                // new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
+                //                 // .whileTrue(
+                //                 // new StartEndCommand(
+                //                 // () -> intakeSubsystem.runIntake(),
+                //                 // // Stop driving at the end of the command
+                //                 // () -> intakeSubsystem.stopIntake(),
+                //                 // // Requires the drive subsystem
+                //                 // intakeSubsystem));
+                //                 .onTrue(
+                //                                 new PickUpCubeCmd(this));
+                // new JoystickButton(driverJoystick, Constants.Driver.Button.runOutTake)
                                 // .whileTrue(
                                 // new StartEndCommand(
                                 // () -> intakeSubsystem.runOutTake(),
@@ -193,8 +193,8 @@ public class RobotContainer {
                                 // () -> intakeSubsystem.stopIntake(),
                                 // // Requires the drive subsystem
                                 // intakeSubsystem));
-                                .onTrue(
-                                                new DeliverCubeCmd(this, () -> false));
+                                // .onTrue(
+                                //                 new DeliverCubeCmd(this, () -> false));
 
                 new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row1)
                                 .onTrue(new InstantCommand(() -> selectCell(gridCell, 1)));
