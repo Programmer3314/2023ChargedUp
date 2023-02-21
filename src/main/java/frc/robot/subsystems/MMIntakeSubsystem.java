@@ -14,6 +14,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,15 +22,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
-
 /** Add your docs here. */
 public class MMIntakeSubsystem extends SubsystemBase {
     private final TalonFX intakeMotor;
-    //private final AnalogInput intakeUltraSonic;
+    // private final AnalogInput intakeUltraSonic;
     private final DigitalInput intakeBeamBreak;
     private final DigitalInput intakeRightBreak;
     private final DigitalInput intakeLeftBreak;
-    // private final PneumaticHub pneumaticHub;
+    private final PneumaticsControlModule pneumaticsControlModule;
     private final DoubleSolenoid intakePosition;
     private final DoubleSolenoid intakeUpperPosition;
 
@@ -46,20 +46,22 @@ public class MMIntakeSubsystem extends SubsystemBase {
     private DigitalInput spideySense;
 
     public MMIntakeSubsystem(RobotContainer rc) {
-        this.rc=rc;
-        homeStateMachine=new HomeExtentionStateMachine(rc);
+        this.rc = rc;
+        homeStateMachine = new HomeExtentionStateMachine(rc);
         intakeMotor = new TalonFX(Constants.DeliveryMotor.IntakeMotor.intakeMotorCanId);
-       // intakeUltraSonic = new AnalogInput(Constants.RoboRio.Analog.IntakeSensors.ultraSonicSensor);
+        // intakeUltraSonic = new
+        // AnalogInput(Constants.RoboRio.Analog.IntakeSensors.ultraSonicSensor);
         intakeBeamBreak = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.beamBreakSensor);
         intakeLeftBreak = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.breakBeamLeft);
         intakeRightBreak = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.breakBeamRight);
 
-        // pneumaticHub = new PneumaticHub(Constants.Pneumatic.pneumaticHubModule);
-        intakePosition = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,
+        pneumaticsControlModule = new PneumaticsControlModule(Constants.Pneumatic.pneumaticHubModule);
+        intakePosition = pneumaticsControlModule.makeDoubleSolenoid( // large pneumatics that can set the intake to
+                                                                     // floor or travel for the claw thing
                 Constants.Pneumatic.LowerIntake.forwardChannel,
                 Constants.Pneumatic.LowerIntake.reverseChannel);
 
-        intakeUpperPosition = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,
+        intakeUpperPosition = pneumaticsControlModule.makeDoubleSolenoid(
                 Constants.Pneumatic.UpperIntake.forwardChannel, Constants.Pneumatic.UpperIntake.reverseChannel);
 
         armExtend = new TalonFX(Constants.Arm.Extend.CanID.Id);
@@ -70,10 +72,9 @@ public class MMIntakeSubsystem extends SubsystemBase {
         armAbsoluteRotation = new CANCoder(Constants.Arm.Encoder.Id);
         armExtend.configFactoryDefault(Constants.Robot.canBusTimeoutMs);
 
-        gripper = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.Arm.Gripper.forwardChannel, Constants.Arm.Gripper.reverseChannel);
+        gripper = pneumaticsControlModule.makeDoubleSolenoid(Constants.Arm.Gripper.forwardChannel,
+                Constants.Arm.Gripper.reverseChannel);
         spideySense = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.spideySense);
-
-
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
 
@@ -106,7 +107,8 @@ public class MMIntakeSubsystem extends SubsystemBase {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                // resetArmEncoder();
+                enableCompressor();
+                resetArmEncoder();
                 // SmartDashboard.putString("Reset Running: ", "Yes");
             } catch (Exception e) {
                 // SmartDashboard.putString("Reset Running: ", "Error");
@@ -118,19 +120,32 @@ public class MMIntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Intake Beam Break: ", intakeBeamBreak.get());
-       // SmartDashboard.putNumber("Intake UltraSonic: ", intakeUltraSonic.getVoltage());
+        // SmartDashboard.putNumber("Intake UltraSonic: ",
+        // intakeUltraSonic.getVoltage());
+        SmartDashboard.putBoolean("Main Intake Beam", intakeBeamBreak.get());
+        SmartDashboard.putBoolean("Left Beam Break", intakeLeftBreak.get());
+        SmartDashboard.putBoolean("Right Beam Break", intakeRightBreak.get());
+        SmartDashboard.putBoolean("Close to Home", getCloseToHomeSensor());
+        SmartDashboard.putBoolean("Arm Homed", getHomeSensor());
+        SmartDashboard.putBoolean("Far From Home", getFarFromHomeSensor());
+        SmartDashboard.putNumber("Rotation CanCoder", getCancoders());
+        SmartDashboard.putNumber("Extend Encoder", getArmExtend());
+        SmartDashboard.putNumber("Arm Rotation", getArmRotate());
+        SmartDashboard.putNumber("raw Rotation CanCoder", armAbsoluteRotation.getAbsolutePosition());
 
     }
 
     public void stopIntake() {
         intakeMotor.set(TalonFXControlMode.PercentOutput, 0);
     }
-    public boolean robotHomed(){
+
+    public boolean robotHomed() {
         return robotHomed;
-        
+
     }
-    public void homeRobot(){
-        robotHomed=true;
+
+    public void homeRobot() {
+        robotHomed = true;
     }
 
     public void runIntake() {
@@ -150,28 +165,28 @@ public class MMIntakeSubsystem extends SubsystemBase {
     }
 
     // public double getUltraSonicVoltage() {
-    //     return intakeUltraSonic.getVoltage();
+    // return intakeUltraSonic.getVoltage();
     // }
 
     public void setIntakeFloor() {
         intakePosition.set(Value.kForward);
-        intakeUpperPosition.set(Value.kForward);
+        // intakeUpperPosition.set(Value.kForward);
     }
 
     public void setIntakeTravel() {
         intakePosition.set(Value.kReverse);
-        intakeUpperPosition.set(Value.kForward);
+        // intakeUpperPosition.set(Value.kForward);
     }
 
     public void setIntakeDeliverUpper() {
-        intakeUpperPosition.set(Value.kReverse);
+        intakeUpperPosition.set(Value.kForward);
         intakePosition.set(Value.kReverse);
 
     }
 
     public void setIntakeDeliverLower() {
         intakeUpperPosition.set(Value.kReverse);
-        intakePosition.set(Value.kReverse);
+        intakePosition.set(Value.kForward);
     }
 
     public void setArmExtend(double armPositionInMeters) {
@@ -180,7 +195,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
     }
 
     public double getArmExtend() {
-        return (armExtend.getSelectedSensorPosition() / Constants.Arm.ConversionFactors.rotationTicksPerRadians);
+        return (-armExtend.getSelectedSensorPosition() / Constants.Arm.ConversionFactors.extensionTicksPerMeter);
 
     }
 
@@ -198,7 +213,8 @@ public class MMIntakeSubsystem extends SubsystemBase {
         setIntakeTravel();
 
     }
-    public void setHomeNoExtend(){
+
+    public void setHomeNoExtend() {
         setArmRotation(0);
         setIntakeTravel();
     }
@@ -236,11 +252,12 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     }
 
-    // public void enableCompressor() {
-    // pneumaticHub.enableCompressorDigital();
-    // }
+    public void enableCompressor() {
+        pneumaticsControlModule.enableCompressorDigital();
+    }
+
     public double getCancoders() {
-        return Math.toRadians(armAbsoluteRotation.getAbsolutePosition() - Constants.Arm.Encoder.Offset);
+        return Math.toRadians(armAbsoluteRotation.getAbsolutePosition() - Constants.Arm.Encoder.OffsetDegrees);
 
     }
 
@@ -249,15 +266,15 @@ public class MMIntakeSubsystem extends SubsystemBase {
     }
 
     public boolean getHomeSensor() {
-        return armHome.get();
+        return !armHome.get();
     }
 
     public boolean getFarFromHomeSensor() {
-        return armFarFromHome.get();
+        return !armFarFromHome.get();
     }
 
     public boolean getCloseToHomeSensor() {
-        return armCloseToHome.get();
+        return !armCloseToHome.get();
     }
 
     public void setHomeSlow() {
@@ -276,27 +293,34 @@ public class MMIntakeSubsystem extends SubsystemBase {
         homeStateMachine.resetState();
     }
 
-    public void updateHomeStateMachine(){
+    public String getCurrentState() {
+        return homeStateMachine.getState().toString();
+    }
+
+    public void updateHomeStateMachine() {
         homeStateMachine.update();
     }
 
-    public void resetExtendMotorEncoder(){
+    public void resetExtendMotorEncoder() {
         armExtend.setSelectedSensorPosition(0);
     }
 
-    public boolean extendIsHomed(){
+    public boolean extendIsHomed() {
         return homeStateMachine.isHomed();
     }
-    public void setGrip(){
+
+    public void setGrip() {
         gripper.set(Value.kForward);
 
     }
-    public void setRetract(){
+
+    public void setRetract() {
         gripper.set(Value.kReverse);
 
     }
-    public boolean getSpideySense(){
+
+    public boolean getSpideySense() {
         return spideySense.get();
     }
-    
+
 }

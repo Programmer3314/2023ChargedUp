@@ -48,7 +48,8 @@ public class Constants {
             public static final double steerReduction = (14.0 / 50.0) * (10.0 / 60.0);
             public static final double driveMetersPerTick = (wheelCircumference / Falcon.ticksPerRev) * driveReduction;
             public static final double turnRadiansPerTick = (2.0 * Math.PI / Falcon.ticksPerRev) * steerReduction;
-            public static final double maxVelocityMetersPerSecond = 13.5 * Constants.Conv.metersPerFeet;
+            public static final double maxVelocityMetersPerSecond = 13.5 * Constants.Conv.metersPerFeet;// 13.5 max
+                                                                                                        // changed
             public static final double maxAngularVelocityRadiansPerSecond = maxVelocityMetersPerSecond
                     / Constants.Chassis.wheelDiagnal;
         }
@@ -203,16 +204,16 @@ public class Constants {
         public static final int button = 1;
 
         public static class Button {
-            public static final int gridGroup1 = 1;
-            public static final int gridGroup2 = 2;
-            public static final int gridGroup3 = 3;
-            public static final int gridGroupCell1 = 4;
-            public static final int gridGroupCell2 = 5;
-            public static final int gridGroupCell3 = 6;
-            public static final int gridGroupHeightLow = 7;
-            public static final int gridGroupHeightMed = 8;
-            public static final int gridGroupHeightHigh = 9;
-            public static final int testTurnPeg = 10;
+            // public static final int gridGroup1 = 1;
+            // public static final int gridGroup2 = 2;
+            // public static final int gridGroup3 = 3;
+            // public static final int gridGroupCell1 = 4;
+            // public static final int gridGroupCell2 = 5;
+            // public static final int gridGroupCell3 = 6;
+            // public static final int gridGroupHeightLow = 7;
+            // public static final int gridGroupHeightMed = 8;
+            // public static final int gridGroupHeightHigh = 9;
+            // public static final int testTurnPeg = 10;
             // 11+12 don't work
 
         }
@@ -285,21 +286,21 @@ public class Constants {
     }
 
     public static class Arm {
-        public class Gripper{
+        public class Gripper {
             public static final int solenoid = 1;
             public static final int forwardChannel = 4;
             public static final int reverseChannel = 5;
 
-            
         }
+
         public class Extend {
             public class CanID {
                 public static final int Id = 11;
             }
 
             public class SpeedControl {
-                public static final double safety = -0.01;
-                public static final double speed = -0.05;
+                public static final double safety = -0.01*2;
+                public static final double speed = -0.05*2;
             }
 
             public class PositionControl {
@@ -337,7 +338,7 @@ public class Constants {
             public class PIDValue {
                 public static final double I = 0.000000;
                 public static final double D = 0.00025;
-                public static final double P = 0.002500;// 5e-5;
+                public static final double P = 0.002500*4;// 5e-5;
                 public static final double Iz = 0;
                 public static final double FF = 0.050000;
                 public static final double MaxOutput = 0.869990;
@@ -346,9 +347,9 @@ public class Constants {
 
         }
 
-        public class Encoder {
+        public static class Encoder {
             public static final int Id = 5;
-            public static final double Offset = 0;
+            public static final double OffsetDegrees = 102;
         }
 
         public class ConversionFactors {

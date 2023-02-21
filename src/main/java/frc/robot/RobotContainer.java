@@ -30,10 +30,16 @@ import frc.robot.Constants.ButtonBox2;
 import frc.robot.commands.AutoDeliveryCmd;
 import frc.robot.commands.DeliverCubeCmd;
 import frc.robot.commands.DriveToBumperCmd;
+import frc.robot.commands.GripGrabCmd;
+import frc.robot.commands.GripReleaseCmd;
 import frc.robot.commands.PickUpCubeCmd;
+import frc.robot.commands.PositionHighPegCmd;
+import frc.robot.commands.PositionHomeCmd;
+import frc.robot.commands.PositionLowPegCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TargetPegCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
+import frc.robot.commands.gripGrabRaw;
 import frc.robot.subsystems.MMIntakeSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
@@ -60,15 +66,15 @@ public class RobotContainer {
         private final MMJoystickAxis driveXAxis = new MMJoystickAxis(Constants.Driver.Controller,
                         Constants.Driver.Axis.x,
                         0.01,
-                        -1.3);
+                        -3.3);// -1.3
         private final MMJoystickAxis driveYAxis = new MMJoystickAxis(Constants.Driver.Controller,
                         Constants.Driver.Axis.y,
                         0.01,
-                        -1.3);
+                        -3.3);// -1.3
         private final MMJoystickAxis driveRAxis = new MMJoystickAxis(Constants.Driver.Controller,
                         Constants.Driver.Axis.r,
                         0.05,
-                        -(Math.PI / 2.0));
+                        -(Math.PI));/// 2
         private int gridHeight;
         private int gridGroup;
         private int gridGroupCell;
@@ -131,27 +137,46 @@ public class RobotContainer {
 
         private void configureBindings() {
                 // leftTrigger.whileTrue(new SequentialCommandGroup(
-                //                 new TranslateAbsoluteCmd(this,
-                //                                 () -> MMField.getLeftDock(this::getIsRedAlliance), 2)
-                //                                 .until(navigationSubsystem::approachingLoadingDock),
-                //                 // new TranslateAbsoluteCmd(swerveSubsystem,
-                //                 // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
-                //                 new DriveToBumperCmd(this, .5),
-                //                 new TranslateAbsoluteCmd(this,
-                //                                 () -> MMField.getLeftDockRetractPoint(this::getIsRedAlliance),
-                //                                 2)));
+                // new TranslateAbsoluteCmd(this,
+                // () -> MMField.getLeftDock(this::getIsRedAlliance), 2)
+                // .until(navigationSubsystem::approachingLoadingDock),
+                // // new TranslateAbsoluteCmd(swerveSubsystem,
+                // // () -> MMField.getLeftDock(this::getIsRedAlliance), .25,
+                // navigationSubsystem))
+                // new DriveToBumperCmd(this, .5),
+                // new TranslateAbsoluteCmd(this,
+                // () -> MMField.getLeftDockRetractPoint(this::getIsRedAlliance),
+                // 2)));
 
                 // rightTrigger.whileTrue(new SequentialCommandGroup(
-                //                 new TranslateAbsoluteCmd(this,
-                //                                 () -> MMField.getRightDock(this::getIsRedAlliance), 2)
-                //                                 .until(navigationSubsystem::approachingLoadingDock),
-                //                 // new TranslateAbsoluteCmd(swerveSubsystem,
-                //                 // () -> MMField.getLeftDock(this::getIsRedAlliance), .25, navigationSubsystem))
-                //                 new DriveToBumperCmd(this, .5),
-                //                 new TranslateAbsoluteCmd(this,
-                //                                 () -> MMField.getRightDockRetractPoint(this::getIsRedAlliance),
-                //                                 2)));
-
+                // new TranslateAbsoluteCmd(this,
+                // () -> MMField.getRightDock(this::getIsRedAlliance), 2)
+                // .until(navigationSubsystem::approachingLoadingDock),
+                // // new TranslateAbsoluteCmd(swerveSubsystem,
+                // // () -> MMField.getLeftDock(this::getIsRedAlliance), .25,
+                // navigationSubsystem))
+                // new DriveToBumperCmd(this, .5),
+                // new TranslateAbsoluteCmd(this,
+                // () -> MMField.getRightDockRetractPoint(this::getIsRedAlliance),
+                // 2)));
+                // new JoystickButton(buttonBox1, 7)
+                //                 .onTrue(new PositionHighPegCmd(this));
+                new JoystickButton(buttonBox1, 8)
+                                .whileTrue(new PositionHomeCmd(this));
+                // new JoystickButton(buttonBox1, 9)
+                //                 .whileTrue(new PositionLowPegCmd(this));
+                new JoystickButton(buttonBox1, 3)
+                                .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverLower()));
+                new JoystickButton(buttonBox1, 4)
+                                .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverUpper()));
+                new JoystickButton(buttonBox1, 5)
+                                .onTrue(new GripReleaseCmd(this));
+                new JoystickButton(buttonBox1, 6)
+                                .onTrue(new GripGrabCmd(this));
+                new JoystickButton(buttonBox1, 2)
+                                .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeFloor()));
+                new JoystickButton(buttonBox1, 1)
+                                .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeTravel()));
                 new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavxB)
                                 .onTrue(new SequentialCommandGroup(
                                                 new InstantCommand(() -> navigationSubsystem.zeroHeading()),
@@ -160,68 +185,70 @@ public class RobotContainer {
                                                                                 navigationSubsystem.getLimelightPose()
                                                                 // new Pose2d(3.3, -4, new Rotation2d())
                                                                 ))));
+                // new JoystickButton(buttonBox1, 2)
+                // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeFloor()));
 
                 // new JoystickButton(driverJoystick, Constants.Driver.Button.testPeg)
                 // .onTrue(
                 // new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5));
 
                 // new JoystickButton(driverJoystick, Constants.Driver.Button.autoDelivery)
-                //                 .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
+                // .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
                 // swerveSubsystem, navigationSubsystem,
                 // this::getIsRedAlliance,
                 // this::getGridCell,
                 // // this::selectDeliveryMethod
                 // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.testTurnPeg)
-                //                 .whileTrue(
-                //                                 new TargetPegCmd(this, gridCell,
-                //                                                 intakeSubsystem::getBeamBreak));
+                // .whileTrue(
+                // new TargetPegCmd(this, gridCell,
+                // intakeSubsystem::getBeamBreak));
                 // new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
-                //                 // .whileTrue(
-                //                 // new StartEndCommand(
-                //                 // () -> intakeSubsystem.runIntake(),
-                //                 // // Stop driving at the end of the command
-                //                 // () -> intakeSubsystem.stopIntake(),
-                //                 // // Requires the drive subsystem
-                //                 // intakeSubsystem));
-                //                 .onTrue(
-                //                                 new PickUpCubeCmd(this));
+                // // .whileTrue(
+                // // new StartEndCommand(
+                // // () -> intakeSubsystem.runIntake(),
+                // // // Stop driving at the end of the command
+                // // () -> intakeSubsystem.stopIntake(),
+                // // // Requires the drive subsystem
+                // // intakeSubsystem));
+                // .onTrue(
+                // new PickUpCubeCmd(this));
                 // new JoystickButton(driverJoystick, Constants.Driver.Button.runOutTake)
-                                // .whileTrue(
-                                // new StartEndCommand(
-                                // () -> intakeSubsystem.runOutTake(),
-                                // // Stop driving at the end of the command
-                                // () -> intakeSubsystem.stopIntake(),
-                                // // Requires the drive subsystem
-                                // intakeSubsystem));
-                                // .onTrue(
-                                //                 new DeliverCubeCmd(this, () -> false));
+                // .whileTrue(
+                // new StartEndCommand(
+                // () -> intakeSubsystem.runOutTake(),
+                // // Stop driving at the end of the command
+                // () -> intakeSubsystem.stopIntake(),
+                // // Requires the drive subsystem
+                // intakeSubsystem));
+                // .onTrue(
+                // new DeliverCubeCmd(this, () -> false));
 
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row1)
-                                .onTrue(new InstantCommand(() -> selectCell(gridCell, 1)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row1)
+                // .onTrue(new InstantCommand(() -> selectCell(gridCell, 1)));
 
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row2)
-                                .onTrue(new InstantCommand(() -> selectCell(gridCell, 2)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row2)
+                // .onTrue(new InstantCommand(() -> selectCell(gridCell, 2)));
 
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row3)
-                                .onTrue(new InstantCommand(() -> selectCell(gridCell, 3)));
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col1)
-                                .onTrue(new InstantCommand(() -> selectCell(1, gridHeight)));
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col2)
-                                .onTrue(new InstantCommand(() -> selectCell(2, gridHeight)));
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col3)
-                                .onTrue(new InstantCommand(() -> selectCell(3, gridHeight)));
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col4)
-                                .onTrue(new InstantCommand(() -> selectCell(4, gridHeight)));
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col5)
-                                .onTrue(new InstantCommand(() -> selectCell(5, gridHeight)));
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col6)
-                                .onTrue(new InstantCommand(() -> selectCell(6, gridHeight)));
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col7)
-                                .onTrue(new InstantCommand(() -> selectCell(7, gridHeight)));
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col8)
-                                .onTrue(new InstantCommand(() -> selectCell(8, gridHeight)));
-                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col9)
-                                .onTrue(new InstantCommand(() -> selectCell(9, gridHeight)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row3)
+                // .onTrue(new InstantCommand(() -> selectCell(gridCell, 3)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col1)
+                // .onTrue(new InstantCommand(() -> selectCell(1, gridHeight)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col2)
+                // .onTrue(new InstantCommand(() -> selectCell(2, gridHeight)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col3)
+                // .onTrue(new InstantCommand(() -> selectCell(3, gridHeight)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col4)
+                // .onTrue(new InstantCommand(() -> selectCell(4, gridHeight)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col5)
+                // .onTrue(new InstantCommand(() -> selectCell(5, gridHeight)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col6)
+                // .onTrue(new InstantCommand(() -> selectCell(6, gridHeight)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col7)
+                // .onTrue(new InstantCommand(() -> selectCell(7, gridHeight)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col8)
+                // .onTrue(new InstantCommand(() -> selectCell(8, gridHeight)));
+                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col9)
+                // .onTrue(new InstantCommand(() -> selectCell(9, gridHeight)));
 
                 // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup1)
                 // .onTrue(new InstantCommand(() -> selectCell(gridHeight, 1, gridGroupCell)));
@@ -332,24 +359,25 @@ public class RobotContainer {
                 return driverJoystick.getRawAxis(Constants.Driver.Axis.rt) > .5;
         }
 
-        public int buttonCellSelect(){
-                int column=0;
-                int row=0;
-                for(int col=1;col<10;col++){
-                        if(buttonBox2.getRawButtonPressed(col)){
-                                column=col;
+        public int buttonCellSelect() {
+                int column = 0;
+                int row = 0;
+                for (int col = 1; col < 10; col++) {
+                        if (buttonBox2.getRawButtonPressed(col)) {
+                                column = col;
                         }
                 }
-                for(int r=10;r<13;r++){
-                        if(buttonBox2.getRawButtonPressed(r)){
-                                row=r;
+                for (int r = 10; r < 13; r++) {
+                        if (buttonBox2.getRawButtonPressed(r)) {
+                                row = r;
                         }
                 }
-                if(row==0||column==0){
+                if (row == 0 || column == 0) {
                         return 0;
                 }
-                row-=10;
-                return (row*9)+column;
+                row -= 10;
+                return (row * 9) + column;
         }
-
-}// create  a mega command to select choose whether we are delivering or if we are using the cell selection to do semi-automatic;
+}
+// create a mega command to select choose whether we are delivering or if we are
+// using the cell selection to do semi-automatic;

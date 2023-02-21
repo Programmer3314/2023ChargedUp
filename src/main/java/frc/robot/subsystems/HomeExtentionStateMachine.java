@@ -100,6 +100,10 @@ public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
         currentState = HomeStates.Start;
     }
 
+    public HomeStates getState(){
+        return currentState;
+    }
+
     public boolean isHomed() {
         return currentState == HomeStates.Normal;
     }
