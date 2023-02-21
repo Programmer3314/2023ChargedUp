@@ -141,7 +141,6 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     public boolean robotHomed() {
         return robotHomed;
-
     }
 
     public void homeRobot() {
@@ -181,7 +180,6 @@ public class MMIntakeSubsystem extends SubsystemBase {
     public void setIntakeDeliverUpper() {
         intakeUpperPosition.set(Value.kForward);
         intakePosition.set(Value.kReverse);
-
     }
 
     public void setIntakeDeliverLower() {
@@ -196,7 +194,6 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     public double getArmExtend() {
         return (-armExtend.getSelectedSensorPosition() / Constants.Arm.ConversionFactors.extensionTicksPerMeter);
-
     }
 
     public void setArmRotation(double radians) {
@@ -211,7 +208,6 @@ public class MMIntakeSubsystem extends SubsystemBase {
         setArmExtend(0);
         setArmRotation(0);
         setIntakeTravel();
-
     }
 
     public void setHomeNoExtend() {
@@ -229,27 +225,23 @@ public class MMIntakeSubsystem extends SubsystemBase {
         setArmExtend(Constants.Arm.Extend.PositionControl.highPeg);
         setArmRotation(Constants.Arm.Rotation.PositionControl.highPeg);
         setIntakeTravel();
-
     }
 
     public void setLowPeg() {
         setArmExtend(Constants.Arm.Extend.PositionControl.lowPeg);
         setArmRotation(Constants.Arm.Rotation.PositionControl.lowPeg);
         setIntakeTravel();
-
     }
 
     public void setGround() {
         setArmExtend(Constants.Arm.Extend.PositionControl.ground);
         setArmRotation(Constants.Arm.Rotation.PositionControl.ground);
         setIntakeTravel();
-
     }
 
     public void stopArm() {
         armExtend.set(ControlMode.PercentOutput, 0);
         armRotate.set(ControlMode.PercentOutput, 0);
-
     }
 
     public void enableCompressor() {
@@ -258,7 +250,6 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     public double getCancoders() {
         return Math.toRadians(armAbsoluteRotation.getAbsolutePosition() - Constants.Arm.Encoder.OffsetDegrees);
-
     }
 
     public void resetArmEncoder() {
