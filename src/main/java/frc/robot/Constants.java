@@ -192,11 +192,12 @@ public class Constants {
         public static class Button {
             public static final int overrideFieldCentricA = 1;
             public static final int resetNavxB = 2;
+
             // public static final int testPeg = 3;
             // public static final int autoDelivery=1;
 
-            // public static final int runIntake = 4;
-            // public static final int runOutTake = 3;
+            public static final int runIntake = 5;
+            public static final int runOutTake = 6;
         }
     }
 
@@ -215,6 +216,7 @@ public class Constants {
             // public static final int gridGroupHeightHigh = 9;
             // public static final int testTurnPeg = 10;
             // 11+12 don't work
+            
 
         }
     }
@@ -308,23 +310,23 @@ public class Constants {
                 // These constants are completely independent of the PID constants. 
                 // So when you start testing them (by moving to some other value) you need 
                 // to leave check for the arm running the wrong way and running too fast.
-                public static final double safety = -0.01*2;
-                public static final double speed = -0.05; // I put this one back.
+                public static final double safety = -0.07;
+                public static final double speed = -0.13; //0.05 I put this one back.
             }
 
             public class PositionControl {
-                public static final double loading = 0.2;
-                public static final double highPeg = 0.4;
-                public static final double lowPeg = 0.19;
+                public static final double loading = 0;
+                public static final double highPeg = 0.8388;
+                public static final double lowPeg = 0.39;
                 public static final double ground = 0.4;
             }
 
             public class PIDValue {
                 public static final double I = 0.000000;
                 public static final double D = 0.00025;
-                public static final double P = 0.002500;// 5e-5;
+                public static final double P = 0.002500*2;// 5e-5;
                 public static final double Iz = 0;
-                public static final double FF = 0.050000;
+                public static final double FF = 0.0000000000;//0.050000
                 public static final double maxOutput = 0.869990;
                 public static final double minOutput = -0.869990;
             }
@@ -338,27 +340,27 @@ public class Constants {
             }
 
             public class PositionControl {
-                public static final double loading = 0.5;
-                public static final double highPeg = 0.8;
-                public static final double lowPeg = 0.8;
-                public static final double ground = 1.2;
+                public static final double loading = 0.698;//40 deg
+                public static final double highPeg = 0.96; //55 deg
+                public static final double lowPeg = 1.004;//57.5 deg  Placing Position: 65.5deg
+                public static final double ground = 2.3; //132 degrees
             }
 
             public class PIDValue {
                 public static final double I = 0.000000;
                 public static final double D = 0.00025;
-                public static final double P = 0.002500*4;// 5e-5;
+                public static final double P = 0.002500;// 5e-5;
                 public static final double Iz = 0;
-                public static final double FF = 0.050000;
-                public static final double MaxOutput = 0.869990;
-                public static final double MinOutput = -0.869990;
+                public static final double FF = 0.0;//0.05
+                public static final double MaxOutput = 0.15; //0.869990
+                public static final double MinOutput = -0.15; //-0.869990
             }
 
         }
 
         public static class Encoder {
             public static final int Id = 5;
-            public static final double OffsetDegrees = 102;
+            public static final double OffsetDegrees = 0;//-102
         }
 
         public class ConversionFactors {
@@ -370,11 +372,13 @@ public class Constants {
             // I think the value may be:
             // 2048*48*(60/15)/(2*Math.PI)
             // But please confirm this by displaying both the cancoder degrees and motor position in ticks
-            // then, record starting values, move the arm, and record stopping values.
+            // then, record fstarting values, move the arm, and record stopping values.
             // Calculate, the differences (degrees and ticks). 
             // Convert the degrees to radians. 
             // finally divide the ticks by the radians and check that the number is close to the above value. 
-            public static final double rotationTicksPerRadians = 2048 / 48 * 15 / 60 / 2 / Math.PI;
+            public static final double rotationTicksPerRadians = 2048*48*(60/15)/(2*Math.PI);
+
+            //2048 / 48 * 15 / 60 / 2 / Math.PI
         }
     }
 

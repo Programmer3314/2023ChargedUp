@@ -21,7 +21,6 @@ public class PositionHomeCmd extends CommandBase {
     public void initialize() {
         if (rc.intakeSubsystem.robotHomed()) {
             rc.intakeSubsystem.setHome();
-
         } else {
             rc.intakeSubsystem.resetHomeStateMachine();
             rc.intakeSubsystem.setHomeNoExtend();

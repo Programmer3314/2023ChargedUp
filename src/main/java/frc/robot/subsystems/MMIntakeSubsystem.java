@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -70,6 +71,9 @@ public class MMIntakeSubsystem extends SubsystemBase {
         armCloseToHome = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.armCloseToHome);
         armFarFromHome = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.armFarFromHome);
         armAbsoluteRotation = new CANCoder(Constants.Arm.Encoder.Id);
+        armAbsoluteRotation.configSensorDirection(true);
+        armAbsoluteRotation.configMagnetOffset(-102);
+        armAbsoluteRotation.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
         armExtend.configFactoryDefault(Constants.Robot.canBusTimeoutMs);
 
         gripper = pneumaticsControlModule.makeDoubleSolenoid(Constants.Arm.Gripper.forwardChannel,
@@ -82,7 +86,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
         configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
         armExtend.configAllSettings(configs, Constants.Robot.canBusTimeoutMs);
         armExtend.setNeutralMode(NeutralMode.Brake);
-        armExtend.setInverted(false);
+        armExtend.setInverted(true);
         armExtend.config_kF(0, Constants.Arm.Extend.PIDValue.FF, Constants.Robot.canBusTimeoutMs);
         armExtend.config_kI(0, Constants.Arm.Extend.PIDValue.I, Constants.Robot.canBusTimeoutMs);
         armExtend.config_kP(0, Constants.Arm.Extend.PIDValue.P, Constants.Robot.canBusTimeoutMs);
@@ -95,9 +99,12 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
         armRotate.getAllConfigs(configs, Constants.Robot.canBusTimeoutMs);
         configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+        
         armRotate.configAllSettings(configs, Constants.Robot.canBusTimeoutMs);
         armRotate.setNeutralMode(NeutralMode.Brake);
         armRotate.setInverted(false);
+
+        
         armRotate.config_kF(0, Constants.Arm.Rotation.PIDValue.FF, Constants.Robot.canBusTimeoutMs);
         armRotate.config_kP(0, Constants.Arm.Rotation.PIDValue.P, Constants.Robot.canBusTimeoutMs);
         armRotate.config_kI(0, Constants.Arm.Rotation.PIDValue.I, Constants.Robot.canBusTimeoutMs);
@@ -119,6 +126,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        
         SmartDashboard.putBoolean("Intake Beam Break: ", intakeBeamBreak.get());
         // SmartDashboard.putNumber("Intake UltraSonic: ",
         // intakeUltraSonic.getVoltage());
@@ -128,10 +136,14 @@ public class MMIntakeSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Close to Home", getCloseToHomeSensor());
         SmartDashboard.putBoolean("Arm Homed", getHomeSensor());
         SmartDashboard.putBoolean("Far From Home", getFarFromHomeSensor());
-        SmartDashboard.putNumber("Rotation CanCoder", getCancoders());
+        SmartDashboard.putNumber("CanCoder Rotation DEG", Math.toDegrees(getCancoders()));
+        SmartDashboard.putNumber("Motor Rotate Position", armRotate.getSelectedSensorPosition());
         SmartDashboard.putNumber("Extend Encoder", getArmExtend());
         SmartDashboard.putNumber("Arm Rotation", getArmRotate());
-        SmartDashboard.putNumber("raw Rotation CanCoder", armAbsoluteRotation.getAbsolutePosition());
+        SmartDashboard.putNumber("raw Rotation CanCoder", -armAbsoluteRotation.getAbsolutePosition());
+        
+        
+
 
     }
 
@@ -167,6 +179,18 @@ public class MMIntakeSubsystem extends SubsystemBase {
     // return intakeUltraSonic.getVoltage();
     // }
 
+    public void setArmRotationVoltage() {
+        armRotate.set(TalonFXControlMode.PercentOutput, .1);
+    }
+
+    public void stopArmRotation() {
+        armRotate.set(TalonFXControlMode.PercentOutput, 0);
+    }
+
+    public void setArmRotationNeg() {
+        armRotate.set(TalonFXControlMode.PercentOutput, -.1);
+    }
+
     public void setIntakeFloor() {
         intakePosition.set(Value.kForward);
         // intakeUpperPosition.set(Value.kForward);
@@ -193,7 +217,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
     }
 
     public double getArmExtend() {
-        return (-armExtend.getSelectedSensorPosition() / Constants.Arm.ConversionFactors.extensionTicksPerMeter);
+        return (armExtend.getSelectedSensorPosition() / Constants.Arm.ConversionFactors.extensionTicksPerMeter);
     }
 
     public void setArmRotation(double radians) {
