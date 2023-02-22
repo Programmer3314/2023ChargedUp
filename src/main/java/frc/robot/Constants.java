@@ -141,8 +141,11 @@ public class Constants {
     }
 
     public static class Limelight {
-        public static final String fLimelight = "limelight-front";
+        public static final String lLimelight = "limelight-left";
         public static final String bLimelight = "limelight-rear";
+        public static final String clawLimelight="limelight-claw";
+        public static final String rlimelight="limelight-right";
+        public static final String fLimelight="limelight-front";
     }
 
     public static final double kfalconDrivetrainKI = 0.000000;
@@ -316,8 +319,8 @@ public class Constants {
 
             public class PositionControl {
                 public static final double loading = 0;
-                public static final double highPeg = 0.8388;
-                public static final double lowPeg = 0.39;
+                public static final double highPeg = 0.82;
+                public static final double lowPeg = 0.4;
                 public static final double ground = 0.4;
             }
 
@@ -340,16 +343,16 @@ public class Constants {
             }
 
             public class PositionControl {
-                public static final double loading = 0.698;//40 deg
-                public static final double highPeg = 0.96; //55 deg
-                public static final double lowPeg = 1.004;//57.5 deg  Placing Position: 65.5deg
+                public static final double loading = 0.768;//44 deg
+                public static final double highPeg = 0.873; //50 deg
+                public static final double lowPeg = 0.942;//54 deg  Placing Position: 65.5deg
                 public static final double ground = 2.3; //132 degrees
             }
 
             public class PIDValue {
                 public static final double I = 0.000000;
                 public static final double D = 0.00025;
-                public static final double P = 0.002500;// 5e-5;
+                public static final double P = 0.002500*11.25;// 5e-5; // Increased by Rich from .0025
                 public static final double Iz = 0;
                 public static final double FF = 0.0;//0.05
                 public static final double MaxOutput = 0.15; //0.869990

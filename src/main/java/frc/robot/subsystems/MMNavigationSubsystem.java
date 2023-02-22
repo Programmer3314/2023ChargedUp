@@ -28,6 +28,9 @@ public class MMNavigationSubsystem extends SubsystemBase {
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
     private final NetworkTable frontLimelight = inst.getTable(Constants.Limelight.fLimelight);
     private final NetworkTable backLimelight=inst.getTable(Constants.Limelight.bLimelight);
+    private final NetworkTable clawLimelight=inst.getTable(Constants.Limelight.clawLimelight);
+    private final NetworkTable rightLimelight=inst.getTable(Constants.Limelight.rlimelight);
+    private final NetworkTable leftLimelight=inst.getTable(Constants.Limelight.lLimelight);
     private Pose2d mainPose = new Pose2d();
     private Pose2d aprilPose = new Pose2d();
     private boolean visionInitialized = false;
