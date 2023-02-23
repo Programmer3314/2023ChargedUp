@@ -14,6 +14,9 @@ enum HomeStates {
 /** Add your docs here. */
 public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
     private RobotContainer rC;
+    boolean lastHome = false;
+    double startUpPosition;
+    boolean hasHomed = false;
 
     public HomeExtentionStateMachine(RobotContainer rC) {
         super(HomeStates.Safety);
@@ -27,7 +30,10 @@ public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
                 nextState = HomeStates.Safety;
                 break;
             case Safety:
-                if (rC.intakeSubsystem.getArmExtend() < -0.1) {
+                if (hasHomed) {
+                    nextState = HomeStates.Speed;
+                }
+                if (rC.intakeSubsystem.getArmExtend() < startUpPosition - 0.1) {
                     nextState = HomeStates.Speed;
                 }
                 if (rC.intakeSubsystem.getCloseToHomeSensor()) {
@@ -62,18 +68,19 @@ public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
     public void doTransition() {
 
         // if (isTransitionFrom(HomeStates.Home)) {
-        //     rC.intakeSubsystem.stopArmExtend();
+        // rC.intakeSubsystem.stopArmExtend();
         // }
         // if (isTransitionFrom(HomeStates.Speed)) {
-        //     rC.intakeSubsystem.stopArmExtend();
+        // rC.intakeSubsystem.stopArmExtend();
         // }
         // if(isTransitionFrom(HomeStates.Safety)){
-        //     rC.intakeSubsystem.stopArmExtend();
+        // rC.intakeSubsystem.stopArmExtend();
         // }
-        if (isTransitionTo(HomeStates.Safety)){
+        if (isTransitionTo(HomeStates.Safety)) {
             rC.intakeSubsystem.setHomeSlow();
+            startUpPosition = rC.intakeSubsystem.getArmExtend();
         }
-        if(isTransitionTo(HomeStates.Home)){
+        if (isTransitionTo(HomeStates.Home)) {
             rC.intakeSubsystem.stopArmExtend();
         }
         if (isTransitionTo(HomeStates.Speed)) {
@@ -82,17 +89,24 @@ public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
         if (isTransitionTo(HomeStates.MoveToHome)) {
             rC.intakeSubsystem.setHomeSlow();
         }
-        if (isTransitionTo(HomeStates.Normal)){
+        if (isTransitionTo(HomeStates.Normal)) {
             rC.intakeSubsystem.stopArmExtend();
             rC.intakeSubsystem.resetExtendMotorEncoder();
             rC.intakeSubsystem.homeRobot();
-            
+            hasHomed = true;
+
         }
 
     }
 
     @Override
     public void doCurrentState() {
+        if (currentState == HomeStates.Normal) {
+            if (rC.intakeSubsystem.getHomeSensor() && !lastHome) {
+                rC.intakeSubsystem.resetExtendMotorEncoder();
+            }
+            lastHome = rC.intakeSubsystem.getHomeSensor();
+        }
 
     }
 
@@ -100,7 +114,7 @@ public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
         currentState = HomeStates.Start;
     }
 
-    public HomeStates getState(){
+    public HomeStates getState() {
         return currentState;
     }
 

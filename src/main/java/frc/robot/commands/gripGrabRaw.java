@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
 /** Add your docs here. */
-public class gripGrabRaw extends CommandBase {
+public class GripGrabRaw extends CommandBase {
     RobotContainer rc;
 
-    public gripGrabRaw(RobotContainer rc) {
+    public GripGrabRaw(RobotContainer rc) {
         this.rc = rc;
         addRequirements(rc.intakeSubsystem);
     }

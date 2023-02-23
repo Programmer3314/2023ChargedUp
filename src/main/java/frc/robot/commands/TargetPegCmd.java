@@ -37,19 +37,19 @@ public class TargetPegCmd extends CommandBase {
 
         turnPidController.initialize(new Rotation2d());
         cyclesOnTarget = 0;
-        isBackCam = cubeInIntake.get();
+        // isBackCam = cubeInIntake.get();
     }
 
     @Override
     public void execute() {
         double rawTarget;
-        if (isBackCam) {
-            rawTarget = rc.navigationSubsystem.getBackTargetX();
-            rc.navigationSubsystem.setBackPipeline(1);
-        } else {
-            rawTarget = rc.navigationSubsystem.getFrontTargetX();
-            rc.navigationSubsystem.setFrontPipeline(1);
-        }
+        // if (isBackCam) {
+        //     rawTarget = rc.navigationSubsystem.getBackTargetX();
+        //     rc.navigationSubsystem.setBackPipeline(1);
+        // } else {
+            rawTarget = rc.navigationSubsystem.getClawTargetX();
+            rc.navigationSubsystem.setClawPipeline(1);
+        // }
 
         Rotation2d targetAngle = new Rotation2d(Math.toRadians(rawTarget));
         double correction = turnPidController.execute(targetAngle.getRadians());
@@ -67,7 +67,7 @@ public class TargetPegCmd extends CommandBase {
         if (isBackCam) {
             rc.navigationSubsystem.setBackPipeline(0);
         } else {
-            rc.navigationSubsystem.setFrontPipeline(0);
+            rc.navigationSubsystem.setClawPipeline(0);
         }
 
     }

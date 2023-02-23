@@ -45,6 +45,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
     private boolean robotHomed = false;
     private DoubleSolenoid gripper;
     private DigitalInput spideySense;
+    private int resetExtendCounter = 0;
 
     public MMIntakeSubsystem(RobotContainer rc) {
         this.rc = rc;
@@ -99,12 +100,11 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
         armRotate.getAllConfigs(configs, Constants.Robot.canBusTimeoutMs);
         configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        
+
         armRotate.configAllSettings(configs, Constants.Robot.canBusTimeoutMs);
         armRotate.setNeutralMode(NeutralMode.Brake);
         armRotate.setInverted(false);
 
-        
         armRotate.config_kF(0, Constants.Arm.Rotation.PIDValue.FF, Constants.Robot.canBusTimeoutMs);
         armRotate.config_kP(0, Constants.Arm.Rotation.PIDValue.P, Constants.Robot.canBusTimeoutMs);
         armRotate.config_kI(0, Constants.Arm.Rotation.PIDValue.I, Constants.Robot.canBusTimeoutMs);
@@ -126,7 +126,8 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        
+        updateHomeStateMachine();
+
         SmartDashboard.putBoolean("Intake Beam Break: ", intakeBeamBreak.get());
         // SmartDashboard.putNumber("Intake UltraSonic: ",
         // intakeUltraSonic.getVoltage());
@@ -134,21 +135,25 @@ public class MMIntakeSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Left Beam Break", intakeLeftBreak.get());
         SmartDashboard.putBoolean("Right Beam Break", intakeRightBreak.get());
         SmartDashboard.putBoolean("Close to Home", getCloseToHomeSensor());
-        SmartDashboard.putBoolean("Arm Homed", getHomeSensor());
+        SmartDashboard.putBoolean("Robot Homed Boolean", robotHomed);
+        SmartDashboard.putBoolean("Arm Homed Sensor", getHomeSensor());
         SmartDashboard.putBoolean("Far From Home", getFarFromHomeSensor());
         SmartDashboard.putNumber("CanCoder Rotation DEG", Math.toDegrees(getCancoders()));
         SmartDashboard.putNumber("Motor Rotate Position", armRotate.getSelectedSensorPosition());
         SmartDashboard.putNumber("Extend Encoder", getArmExtend());
         SmartDashboard.putNumber("Arm Rotation", getArmRotate());
         SmartDashboard.putNumber("raw Rotation CanCoder", -armAbsoluteRotation.getAbsolutePosition());
-        
-        
-
+        SmartDashboard.putNumber("Extend Counter", resetExtendCounter);
+        SmartDashboard.putString("Current State", getCurrentState());
 
     }
 
     public void stopIntake() {
         intakeMotor.set(TalonFXControlMode.PercentOutput, 0);
+    }
+
+    public void iterateExtendCounter() {
+        resetExtendCounter++;
     }
 
     public boolean robotHomed() {

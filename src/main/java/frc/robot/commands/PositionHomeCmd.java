@@ -19,20 +19,21 @@ public class PositionHomeCmd extends CommandBase {
 
     @Override
     public void initialize() {
-        if (rc.intakeSubsystem.robotHomed()) {
-            rc.intakeSubsystem.setHome();
-        } else {
-            rc.intakeSubsystem.resetHomeStateMachine();
-            rc.intakeSubsystem.setHomeNoExtend();
-        }
+        // if (rc.intakeSubsystem.robotHomed()) {
+        // rc.intakeSubsystem.alreadyHomed();
+        // } else {
+        rc.intakeSubsystem.resetHomeStateMachine();
+        rc.intakeSubsystem.setHomeNoExtend();
+        // }
 
     }
 
     @Override
     public void execute() {
-        rc.intakeSubsystem.updateHomeStateMachine();
         SmartDashboard.putBoolean("setHome", rc.intakeSubsystem.robotHomed());
-        SmartDashboard.putString("Current State", rc.intakeSubsystem.getCurrentState());
+        SmartDashboard.putBoolean("Finished with PositionHome", Math.abs(rc.intakeSubsystem.getArmExtend() - 0) < .01
+                && Math.abs(rc.intakeSubsystem.getArmRotate() - 0) < .01
+                && rc.intakeSubsystem.robotHomed());
     }
 
     @Override
@@ -44,8 +45,9 @@ public class PositionHomeCmd extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        rc.intakeSubsystem.resetExtendMotorEncoder();
-        rc.intakeSubsystem.stopArm();
+        // rc.intakeSubsystem.homeRobot();
+        rc.intakeSubsystem.iterateExtendCounter();
+        // rc.intakeSubsystem.stopArm();
     }
 
 }

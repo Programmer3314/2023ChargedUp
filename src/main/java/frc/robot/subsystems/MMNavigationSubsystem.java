@@ -26,18 +26,18 @@ public class MMNavigationSubsystem extends SubsystemBase {
     private final AHRS navx = new AHRS(SPI.Port.kMXP);
     private final SwerveDrivePoseEstimator odometer;
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    private final NetworkTable frontLimelight = inst.getTable(Constants.Limelight.fLimelight);
-    private final NetworkTable backLimelight=inst.getTable(Constants.Limelight.bLimelight);
-    private final NetworkTable clawLimelight=inst.getTable(Constants.Limelight.clawLimelight);
-    private final NetworkTable rightLimelight=inst.getTable(Constants.Limelight.rlimelight);
-    private final NetworkTable leftLimelight=inst.getTable(Constants.Limelight.lLimelight);
+    private final NetworkTable backLimelight = inst.getTable(Constants.Limelight.bLimelight);
+    private final NetworkTable clawLimelight = inst.getTable(Constants.Limelight.clawLimelight);
+    private final NetworkTable rightLimelight = inst.getTable(Constants.Limelight.rlimelight);
+    private final NetworkTable leftLimelight = inst.getTable(Constants.Limelight.lLimelight);
     private Pose2d mainPose = new Pose2d();
     private Pose2d aprilPose = new Pose2d();
     private boolean visionInitialized = false;
-    private long lastVisionHB;
+    private long leftLastVisionHB;
+    private long rightLastVisionHB;
     public static AnalogInput ultraSonicSensor;
     private final Field2d m_field = new Field2d();
-    //private final DigitalInput magneticSensor;
+    // private final DigitalInput magneticSensor;
     // private final SendableChooser fieldWidget;
 
     public MMNavigationSubsystem(MMSwerveSubsystem swerveSubsystem) {
@@ -57,13 +57,13 @@ public class MMNavigationSubsystem extends SubsystemBase {
         // Shuffleboard.getTab("In Match").addString("Robo Pose", () ->
         // getPose().toString())
         // .withWidget(BuiltInWidgets.kField);
-        //magneticSensor=new DigitalInput(Constants.RoboRio.Dio.magneticSensor);
+        // magneticSensor=new DigitalInput(Constants.RoboRio.Dio.magneticSensor);
     }
 
     @Override
     public void periodic() {
         m_field.setRobotPose(convertPoseToField(getPose()));
-        SmartDashboard.putString("onField Pos",convertPoseToField(getPose()).toString());
+        SmartDashboard.putString("onField Pos", convertPoseToField(getPose()).toString());
         odometer.update(getRotation2d(), swerveSubsystem.getSwerveModulePositions());
         mainPose = odometer.getEstimatedPosition();
         aprilPose = getLimelightPose();
@@ -75,7 +75,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Navx Yaw", navx.getYaw());
         SmartDashboard.putNumber("NavX Pitch", getPitch());
         SmartDashboard.putNumber("UltraSonicSensor", ultraSonicSensor.getVoltage());
-        //SmartDashboard.putBoolean("Magnetic Sensor", magneticSensor.get());
+        // SmartDashboard.putBoolean("Magnetic Sensor", magneticSensor.get());
     }
 
     public void zeroHeading() {
@@ -118,24 +118,25 @@ public class MMNavigationSubsystem extends SubsystemBase {
         odometer.resetPosition(getRotation2d(), swerveSubsystem.getSwerveModulePositions(), pose);
     }
 
-    public double getBackTargetX(){
+    public double getBackTargetX() {
         return backLimelight.getEntry("tx").getNumber(0).doubleValue();
     }
 
-    public double getFrontTargetX(){
-        return frontLimelight.getEntry("tx").getNumber(0).doubleValue();
+    public double getClawTargetX() {
+        return clawLimelight.getEntry("tx").getNumber(0).doubleValue();
     }
 
     public Pose2d getLimelightPose() {
 
-        boolean hasTarget = frontLimelight.getEntry("tv").getNumber(0).doubleValue() > 0.5;
+        boolean hasTargetLeft = leftLimelight.getEntry("tv").getNumber(0).doubleValue() > 0.5;
+        boolean hasTargetRight = rightLimelight.getEntry("tv").getNumber(0).doubleValue() > 0.5;
 
-        if (hasTarget) {
-            long currentVisionHB = frontLimelight.getEntry("hb").getInteger(lastVisionHB);
-            if (currentVisionHB != lastVisionHB) {
-                lastVisionHB = currentVisionHB;
+        if (hasTargetLeft) {
+            long currentVisionHB = leftLimelight.getEntry("hb").getInteger(leftLastVisionHB);
+            if (currentVisionHB != leftLastVisionHB) {
+                leftLastVisionHB = currentVisionHB;
                 double[] def = new double[] { 0, 0, 0, 0, 0, 0 };
-                double[] bp = frontLimelight.getEntry("botpose").getDoubleArray(def);
+                double[] bp = leftLimelight.getEntry("botpose").getDoubleArray(def);
                 if (bp.length == 6) {
 
                     Pose2d tempPose = new Pose2d(bp[0], bp[1], Rotation2d.fromDegrees(bp[5]));
@@ -147,7 +148,34 @@ public class MMNavigationSubsystem extends SubsystemBase {
                     }
                     // if (tempPose.getTranslation().getDistance(aprilPose.getTranslation()) < 1) {
                     // SmartDashboard.putNumber("BP[5]", bp[5]);
-                    double latency = frontLimelight.getEntry("tl").getDouble(0);
+                    double latency = leftLimelight.getEntry("tl").getDouble(0);
+                    latency = (latency + 11) / 1000.0;
+                    odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
+                    return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
+                            (aprilPose.getY() + tempPose.getY()) / 2.0,
+                            new Rotation2d(tempPose.getRotation().getRadians()));
+                    // }
+                }
+            }
+        }
+        if (hasTargetRight) {
+            long currentVisionHB = rightLimelight.getEntry("hb").getInteger(rightLastVisionHB);
+            if (currentVisionHB != rightLastVisionHB) {
+                rightLastVisionHB = currentVisionHB;
+                double[] def = new double[] { 0, 0, 0, 0, 0, 0 };
+                double[] bp = rightLimelight.getEntry("botpose").getDoubleArray(def);
+                if (bp.length == 6) {
+
+                    Pose2d tempPose = new Pose2d(bp[0], bp[1], Rotation2d.fromDegrees(bp[5]));
+
+                    if (!visionInitialized) {
+                        visionInitialized = true;
+                        odometer.resetPosition(Rotation2d.fromDegrees(navx.getYaw()),
+                                swerveSubsystem.getSwerveModulePositions(), tempPose);
+                    }
+                    // if (tempPose.getTranslation().getDistance(aprilPose.getTranslation()) < 1) {
+                    // SmartDashboard.putNumber("BP[5]", bp[5]);
+                    double latency = rightLimelight.getEntry("tl").getDouble(0);
                     latency = (latency + 11) / 1000.0;
                     odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
                     return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
@@ -159,12 +187,13 @@ public class MMNavigationSubsystem extends SubsystemBase {
         }
         return mainPose;
     }
-    public void setBackPipeline(int pipelineNumber){
+
+    public void setBackPipeline(int pipelineNumber) {
         backLimelight.getEntry("pipeline").setNumber(pipelineNumber);
     }
 
-    public void setFrontPipeline(int pipelineNumber) {
-        frontLimelight.getEntry("pipeline").setNumber(pipelineNumber);
+    public void setClawPipeline(int pipelineNumber) {
+        clawLimelight.getEntry("pipeline").setNumber(pipelineNumber);
     }
 
     public Pose2d convertPoseToField(Pose2d position) {

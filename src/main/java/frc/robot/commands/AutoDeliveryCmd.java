@@ -13,18 +13,16 @@ import frc.robot.DeliveryMethod;
 import frc.robot.RobotContainer;
 import frc.robot.utility.MMField;
 
-
-
 /** Add your docs here. */
 public class AutoDeliveryCmd extends SequentialCommandGroup {
         public AutoDeliveryCmd(RobotContainer rc) {
                 addCommands(
-                                new InstantCommand(() -> rc.navigationSubsystem.setFrontPipeline(0)),
+                                new InstantCommand(() -> rc.navigationSubsystem.setClawPipeline(0)),
                                 new DriveToGridAlleyCmd(rc, () -> true),
                                 new DriveToCellCmd(rc,
                                                 rc::getGridCell,
                                                 rc::getIsRedAlliance,
-                                                1),
+                                                1, rc.navigationSubsystem),
                                 Commands.select(
                                                 Map.ofEntries(
                                                                 Map.entry(DeliveryMethod.DeliverCone,

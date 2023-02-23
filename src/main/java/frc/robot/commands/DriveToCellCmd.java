@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.utility.MMField;
 import frc.robot.utility.MMTurnPIDController;
 
@@ -25,12 +26,14 @@ public class DriveToCellCmd extends CommandBase {
     private final MMTurnPIDController turnPidController;
     private Pose2d targetPose2d;
     private Supplier<Boolean> isRedAlliance;
+    private MMNavigationSubsystem navigationSubsystem;
 
     public DriveToCellCmd(RobotContainer rc, Supplier<Integer> desiredCell, Supplier<Boolean> isRedAlliance,
-            double maxSpeed) {
+            double maxSpeed, MMNavigationSubsystem navigationSubsystem) {
         this.desiredCell = desiredCell;
         this.isRedAlliance = isRedAlliance;
         this.maxSpeed = maxSpeed;
+        this.navigationSubsystem=navigationSubsystem;
 
         tripPidController = new PIDController(4, 0, 0);
         turnPidController = new MMTurnPIDController();
@@ -47,7 +50,7 @@ public class DriveToCellCmd extends CommandBase {
     @Override
     public void execute() {
         SmartDashboard.putBoolean("isRedAlliance: ", isRedAlliance.get());
-        Translation2d currentPosition = rc.navigationSubsystem.getPose().getTranslation();
+        Translation2d currentPosition = navigationSubsystem.getPose().getTranslation();
         Translation2d trip = targetPosition.minus(currentPosition);
         double tripLength = trip.getNorm();
 

@@ -29,7 +29,7 @@ public class TargetTagCmd extends CommandBase {
 
     @Override
     public void initialize() {
-        rc.navigationSubsystem.setFrontPipeline(0);
+        rc.navigationSubsystem.setClawPipeline(0);
         turnPidController.initialize(new Rotation2d());
         cyclesOnTarget=0;
     }
@@ -40,7 +40,7 @@ public class TargetTagCmd extends CommandBase {
         if (cubeInIntake.get()) {
             rawTarget = rc.navigationSubsystem.getBackTargetX();
         } else {
-            rawTarget = rc.navigationSubsystem.getFrontTargetX();
+            rawTarget = rc.navigationSubsystem.getClawTargetX();
         }
         Rotation2d targetAngle = new Rotation2d(Math.toRadians(rawTarget));
         double correction = turnPidController.execute(targetAngle.getRadians());

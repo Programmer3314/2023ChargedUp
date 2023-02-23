@@ -41,8 +41,9 @@ import frc.robot.commands.PositionLoadingCmd;
 import frc.robot.commands.PositionLowPegCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TargetPegCmd;
+import frc.robot.commands.TargetTagCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
-import frc.robot.commands.gripGrabRaw;
+import frc.robot.commands.GripGrabRaw;
 import frc.robot.subsystems.MMIntakeSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
 import frc.robot.subsystems.MMSwerveSubsystem;
@@ -76,10 +77,10 @@ public class RobotContainer {
             Constants.Driver.Axis.r,
             0.05,
             -(Math.PI));/// 2
-    private int gridHeight;
+    private int gridHeight = 2;
     private int gridGroup;
     private int gridGroupCell;
-    private int gridCell;
+    private int gridCell = 3;
     private GenericEntry gridCellEntry = tab.add("Grid Cell: ", "None").getEntry();
     private Trigger leftTrigger;
     private Trigger rightTrigger;
@@ -111,7 +112,7 @@ public class RobotContainer {
 
         swerveSubsystem.setDefaultCommand(
                 new SequentialCommandGroup(
-                        new InstantCommand(() -> navigationSubsystem.setFrontPipeline(0)),
+                        new InstantCommand(() -> navigationSubsystem.setClawPipeline(0)),
                         new SwerveJoystickCmd(this,
                                 () -> driveXAxis.getSquared(),
                                 () -> driveYAxis.getSquared(),
@@ -162,42 +163,46 @@ public class RobotContainer {
         // 2)));
         // new JoystickButton(buttonBox1, 7)
         // .onTrue(new PositionHighPegCmd(this));
-        
+
         // new JoystickButton(buttonBox1, 9)
         // .whileTrue(new PositionLowPegCmd(this));
         new JoystickButton(buttonBox1, 1)
-        .whileTrue(new PositionHomeCmd(this));
+                .whileTrue(new PositionHomeCmd(this));
         new JoystickButton(buttonBox1, 2)
                 .whileTrue(new PositionLoadingCmd(this));// coment back later
         new JoystickButton(buttonBox1, 3)
-                .whileTrue(new PositionLowPegCmd(this));    
+                .whileTrue(new PositionLowPegCmd(this));
         new JoystickButton(buttonBox1, 4)
-                .whileTrue(new PositionHighPegCmd(this));    
+                .whileTrue(new PositionHighPegCmd(this));
+        new JoystickButton(buttonBox1, 5)
+                .whileTrue(new TargetTagCmd(this, 1, () -> false));
+        new JoystickButton(buttonBox1, 6)
+                .whileTrue(new TargetPegCmd(this, 1, () -> false));
         // new JoystickButton(buttonBox1, 3)
-        //         .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverLower()));
+        // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverLower()));
         // new JoystickButton(buttonBox1, 4)
-        //         .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverUpper()));
+        // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverUpper()));
         new JoystickButton(buttonBox1, 8)
                 .onTrue(new GripReleaseCmd(this));
         new JoystickButton(buttonBox1, 9)
                 .onTrue(new GripGrabCmd(this));
-        
+
         // new JoystickButton(buttonBox1, Constants.Driver.Button.runIntake)
         // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeFloor()));
-
-        
 
         // intakeSubsystem.setIntakeFloor()
         new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
                 .whileTrue(new StartEndCommand(() -> intakeSubsystem.setIntakeDeliverLower(),
                         () -> intakeSubsystem.setIntakeTravel()));
 
-        new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
-                .whileTrue(new StartEndCommand(() -> intakeSubsystem.runIntake(), () -> intakeSubsystem.stopIntake()));
+        // new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
+        // .whileTrue(new StartEndCommand(() -> intakeSubsystem.runIntake(), () ->
+        // intakeSubsystem.stopIntake()));
 
-        new JoystickButton(driverJoystick, Constants.Driver.Button.runOutTake)
-                .whileTrue(new StartEndCommand(() -> intakeSubsystem.runOutTake(), () -> intakeSubsystem.stopIntake()));
-        
+        // new JoystickButton(driverJoystick, Constants.Driver.Button.runOutTake)
+        // .whileTrue(new StartEndCommand(() -> intakeSubsystem.runOutTake(), () ->
+        // intakeSubsystem.stopIntake()));
+
         // new JoystickButton(buttonBox1, 10)
         // .whileTrue(new InstantCommand(() -> intakeSubsystem.setArmRotationNeg()));
 
@@ -210,8 +215,6 @@ public class RobotContainer {
                                 // new Pose2d(3.3, -4, new Rotation2d())
                                 ))));
 
-
-        
         // new JoystickButton(buttonBox1, 2)
         // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeFloor()));
 
@@ -219,8 +222,8 @@ public class RobotContainer {
         // .onTrue(
         // new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5));
 
-        // new JoystickButton(driverJoystick, Constants.Driver.Button.autoDelivery)
-        // .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
+        new JoystickButton(driverJoystick, 6)
+                .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
         // swerveSubsystem, navigationSubsystem,
         // this::getIsRedAlliance,
         // this::getGridCell,
