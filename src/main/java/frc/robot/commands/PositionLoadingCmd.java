@@ -36,7 +36,7 @@ public class PositionLoadingCmd extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        rc.intakeSubsystem.stopArm();
+        //rc.intakeSubsystem.stopArm();
 
     }
 }

@@ -199,7 +199,10 @@ public class Constants {
             // public static final int autoDelivery=1;
 
             public static final int runIntake = 5;
-            public static final int runOutTake = 6;
+            //public static final int runOutTake = 6;
+
+            
+             
         }
     }
 
@@ -218,6 +221,9 @@ public class Constants {
             // public static final int gridGroupHeightHigh = 9;
             // public static final int testTurnPeg = 10;
             // 11+12 don't work
+            public static final int shootingPosition = 7;
+            public static final int runOutTake = 10;
+
             
 
         }
@@ -292,8 +298,8 @@ public class Constants {
     public static class Arm {
         public class Gripper {
             public static final int solenoid = 1;
-            public static final int forwardChannel = 4;
-            public static final int reverseChannel = 5;
+            public static final int forwardChannel = 5;
+            public static final int reverseChannel = 4;
 
         }
 
@@ -313,20 +319,20 @@ public class Constants {
                 // So when you start testing them (by moving to some other value) you need 
                 // to leave check for the arm running the wrong way and running too fast.
                 public static final double safety = -0.07;
-                public static final double speed = -0.13; //0.05 I put this one back.
+                public static final double speed = -0.25; //0.05 I put this one back.
             }
 
             public class PositionControl {
-                public static final double loading = 0.076;
-                public static final double highPeg = 0.82+.108;
-                public static final double lowPeg = 0.4;
+                public static final double loading = 0;
+                public static final double highPeg = 0.87;
+                public static final double lowPeg = 0.4;//.38
                 public static final double ground = 0.4;
             }
 
             public class PIDValue {
                 public static final double I = 0.000000;
                 public static final double D = 0.00025;
-                public static final double P = 0.002500*1.2;// 5e-5;
+                public static final double P = 0.002500*4.5;// 5e-5;
                 public static final double Iz = 0;
                 public static final double FF = 0.0000000000;//0.050000
                 public static final double maxOutput = 0.869990;
@@ -342,16 +348,16 @@ public class Constants {
             }
 
             public class PositionControl {
-                public static final double loading = 0.593;//34 deg
+                public static final double loading = 0.7;//37.8 deg
                 public static final double highPeg = 0.873; //50 deg
-                public static final double lowPeg = 0.942;//54 deg  Placing Position: 65.5deg
+                public static final double lowPeg = 0.86;//54 deg  Placing Position: 65.5deg
                 public static final double ground = 2.3; //132 degrees
             }
 
             public class PIDValue {
                 public static final double I = 0.000000;
                 public static final double D = 0.00025;
-                public static final double P = 0.002500*7.5;// 5e-5; // Increased by Rich from .0025, 11.25
+                public static final double P = 0.002500*11.75;//10 // 5e-5; // Increased by Rich from .0025, 11.25
                 public static final double Iz = 0;
                 public static final double FF = 0.0;//0.05
                 public static final double MaxOutput = 0.15; //0.869990

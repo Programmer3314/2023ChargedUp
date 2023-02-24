@@ -40,12 +40,13 @@ public class DriveToBumperCmd extends CommandBase {
         gyroLockAngle = rc.navigationSubsystem.getRotation2d();
 
         turnPidController.initialize(gyroLockAngle);
-        pastStartUpFlag = false;
-        if (rc.intakeSubsystem.getBeamBreak()) {
-            tempMaxSpeed = -maxSpeed;
-        } else {
-            tempMaxSpeed = maxSpeed;
-        }
+        pastStartUpFlag = false;//TODO revert back
+        // if (rc.intakeSubsystem.getBeamBreak()) {
+        //     tempMaxSpeed = -maxSpeed;
+        // } else {
+        //     tempMaxSpeed = maxSpeed;
+        // }
+        tempMaxSpeed = maxSpeed;
     }
 
     @Override
@@ -78,7 +79,7 @@ public class DriveToBumperCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        boolean droveToPeg = rc.swerveSubsystem.getAverageDriveVelocity() <= .22 && pastStartUpFlag;
+        boolean droveToPeg = rc.swerveSubsystem.getAverageDriveVelocity() <= .15 && pastStartUpFlag;
         SmartDashboard.putBoolean("Drove To Peg", droveToPeg);
         return droveToPeg;
     }

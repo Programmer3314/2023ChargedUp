@@ -30,10 +30,11 @@ public class DriveToCellCmd extends CommandBase {
 
     public DriveToCellCmd(RobotContainer rc, Supplier<Integer> desiredCell, Supplier<Boolean> isRedAlliance,
             double maxSpeed, MMNavigationSubsystem navigationSubsystem) {
+        this.rc = rc;
         this.desiredCell = desiredCell;
         this.isRedAlliance = isRedAlliance;
         this.maxSpeed = maxSpeed;
-        this.navigationSubsystem=navigationSubsystem;
+        this.navigationSubsystem = navigationSubsystem;
 
         tripPidController = new PIDController(4, 0, 0);
         turnPidController = new MMTurnPIDController();

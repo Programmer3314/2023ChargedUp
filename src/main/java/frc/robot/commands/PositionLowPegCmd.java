@@ -28,8 +28,8 @@ public class PositionLowPegCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(rc.intakeSubsystem.getArmExtend() - Constants.Arm.Extend.PositionControl.lowPeg) < .01
-                && Math.abs(rc.intakeSubsystem.getArmRotate() - Constants.Arm.Rotation.PositionControl.lowPeg) < .01;
+        return Math.abs(rc.intakeSubsystem.getArmExtend() - Constants.Arm.Extend.PositionControl.lowPeg) < .04
+                && Math.abs(rc.intakeSubsystem.getArmRotate() - Constants.Arm.Rotation.PositionControl.lowPeg) < .04;
     }
 
     @Override

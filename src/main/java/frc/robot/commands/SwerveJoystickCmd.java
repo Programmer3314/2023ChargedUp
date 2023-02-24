@@ -38,8 +38,8 @@ public class SwerveJoystickCmd extends CommandBase {
         double ySpeed = ySpdFunction.get();
         double turningSpeed = turningSpdFunction.get();
 
-        rc.swerveSubsystem.drive(xSpeed, ySpeed, turningSpeed, !overrideFieldOriented.get(),
-                rc.navigationSubsystem.getRotation2d());
+        rc.swerveSubsystem.humanDrive(xSpeed, ySpeed, turningSpeed, !overrideFieldOriented.get(),
+                rc.navigationSubsystem.getRotation2d(), rc.getIsRedAlliance());
     }
 
     @Override

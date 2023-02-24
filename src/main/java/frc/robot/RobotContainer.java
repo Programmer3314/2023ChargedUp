@@ -124,13 +124,13 @@ public class RobotContainer {
         configureBindings();
     }
 
-    public DeliveryMethod selectDeliveryMethod() {
-        if (intakeSubsystem.getBeamBreak()) {
-            if (gridHeight == 1) {
-                return DeliveryMethod.DeliverFloorCube;
-            }
-            return DeliveryMethod.DeliverMiddleCube;
-        }
+    public DeliveryMethod selectDeliveryMethod() {// TODO revert back
+        // if (intakeSubsystem.getBeamBreak()) {
+        // if (gridHeight == 1) {
+        // return DeliveryMethod.DeliverFloorCube;
+        // }
+        // return DeliveryMethod.DeliverMiddleCube;
+        // }
         if (MMField.isCellCone(gridCell)) {
             return DeliveryMethod.DeliverCone;
         }
@@ -178,30 +178,42 @@ public class RobotContainer {
                 .whileTrue(new TargetTagCmd(this, 1, () -> false));
         new JoystickButton(buttonBox1, 6)
                 .whileTrue(new TargetPegCmd(this, 1, () -> false));
+
+        new JoystickButton(buttonBox1, 10)
+                .whileTrue(
+                        new SequentialCommandGroup(new TargetPegCmd(this, 1, () -> false),
+                                new DriveToBumperCmd(this, .5)));
         // new JoystickButton(buttonBox1, 3)
         // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverLower()));
         // new JoystickButton(buttonBox1, 4)
         // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverUpper()));
-        new JoystickButton(buttonBox1, 8)
-                .onTrue(new GripReleaseCmd(this));
         new JoystickButton(buttonBox1, 9)
+                .onTrue(new GripReleaseCmd(this));
+        new JoystickButton(buttonBox1, 8)
                 .onTrue(new GripGrabCmd(this));
 
         // new JoystickButton(buttonBox1, Constants.Driver.Button.runIntake)
         // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeFloor()));
 
         // intakeSubsystem.setIntakeFloor()
-        new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
-                .whileTrue(new StartEndCommand(() -> intakeSubsystem.setIntakeDeliverLower(),
-                        () -> intakeSubsystem.setIntakeTravel()));
+        // new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
+        // .whileTrue(new StartEndCommand(() -> intakeSubsystem.setIntakeDeliverLower(),
+        // () -> intakeSubsystem.setIntakeTravel()));
 
         // new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
         // .whileTrue(new StartEndCommand(() -> intakeSubsystem.runIntake(), () ->
         // intakeSubsystem.stopIntake()));
 
-        // new JoystickButton(driverJoystick, Constants.Driver.Button.runOutTake)
+        // new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
+        // .whileTrue(new StartEndCommand(() -> intakeSubsystem.runIntake(), () ->
+        // intakeSubsystem.stopIntake()));
+
+        // new JoystickButton(driverJoystick, 6)
         // .whileTrue(new StartEndCommand(() -> intakeSubsystem.runOutTake(), () ->
         // intakeSubsystem.stopIntake()));
+
+        new JoystickButton(buttonBox1, 7)
+                .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverUpper()));
 
         // new JoystickButton(buttonBox1, 10)
         // .whileTrue(new InstantCommand(() -> intakeSubsystem.setArmRotationNeg()));

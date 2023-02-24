@@ -80,7 +80,7 @@ public class MMSwerveSubsystem extends SubsystemBase {
     public void setModuleStatesRaw(SwerveModuleState[] desiredStates, boolean usePercentOutput) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.MK4i.L1.maxVelocityMetersPerSecond);
         for (int i = 0; i < modules.length; i++) {
-            modules[i].setDesiredStateRaw(desiredStates[i],usePercentOutput);
+            modules[i].setDesiredStateRaw(desiredStates[i], usePercentOutput);
         }
     }
 
@@ -116,4 +116,13 @@ public class MMSwerveSubsystem extends SubsystemBase {
         setModuleStates(moduleStates);
     }
 
+    public void humanDrive(double xMetersPerSec, double yMetersPerSec, double rRadPerSec, boolean isFieldCentric,
+            Rotation2d robotAngle, boolean isRedAlliance) {
+        Rotation2d reversedRobotAngle = isRedAlliance ? new Rotation2d(robotAngle.getRadians() + Math.PI) : robotAngle;
+        ChassisSpeeds chassisSpeeds;
+        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                xMetersPerSec, yMetersPerSec, rRadPerSec, isFieldCentric ? reversedRobotAngle : new Rotation2d());
+        SwerveModuleState[] moduleStates = Constants.Chassis.kinematics.toSwerveModuleStates(chassisSpeeds);
+        setModuleStates(moduleStates);
+    }
 }

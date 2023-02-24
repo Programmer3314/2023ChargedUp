@@ -27,7 +27,9 @@ public class DeliverConeCmd extends SequentialCommandGroup {
                                                                 Map.entry(2, new PositionLowPegCmd(rc)),
                                                                 Map.entry(3, new PositionHighPegCmd(rc))),
                                                 rc::getGridHeight),
-
+                                new GripReleaseCmd(rc),
+                                new GripReleaseCmd(rc),
+                                new GripReleaseCmd(rc),
                                 new DriveToGridAlleyCmd(rc, () -> true));
         }
 }

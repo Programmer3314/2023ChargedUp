@@ -17,12 +17,13 @@ public class TargetTagCmd extends CommandBase {
     MMTurnPIDController turnPidController;
     Supplier<Boolean> cubeInIntake;
     int cyclesOnTarget;
-    private  RobotContainer rc;
+    private RobotContainer rc;
 
     public TargetTagCmd(RobotContainer rc, double maxRotationSpeed, Supplier<Boolean> cubeInIntake) {
         this.maxRotationSpeed = maxRotationSpeed;
         turnPidController = new MMTurnPIDController();
-        this.cubeInIntake=cubeInIntake;
+        this.cubeInIntake = cubeInIntake;
+        this.rc = rc;
 
         addRequirements(rc.swerveSubsystem);
     }
@@ -31,7 +32,7 @@ public class TargetTagCmd extends CommandBase {
     public void initialize() {
         rc.navigationSubsystem.setClawPipeline(0);
         turnPidController.initialize(new Rotation2d());
-        cyclesOnTarget=0;
+        cyclesOnTarget = 0;
     }
 
     @Override
@@ -60,6 +61,6 @@ public class TargetTagCmd extends CommandBase {
     @Override
     public boolean isFinished() {
         // return Math.abs(limelight.getEntry("tx").getDouble(0)) < margin;
-        return cyclesOnTarget>=75;
+        return cyclesOnTarget >= 75;
     }
 }
