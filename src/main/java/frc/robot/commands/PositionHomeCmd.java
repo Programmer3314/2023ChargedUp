@@ -23,13 +23,17 @@ public class PositionHomeCmd extends CommandBase {
         // rc.intakeSubsystem.alreadyHomed();
         // } else {
         rc.intakeSubsystem.resetHomeStateMachine();
-        rc.intakeSubsystem.setHomeNoExtend();
+        //rc.intakeSubsystem.setHomeNoExtend();
         // }
 
     }
 
     @Override
     public void execute() {
+        if(rc.intakeSubsystem.robotHomed() && (rc.intakeSubsystem.getArmExtend() < .5)){
+        rc.intakeSubsystem.setHomeNoExtend();
+        }
+
         SmartDashboard.putBoolean("setHome", rc.intakeSubsystem.robotHomed());
         SmartDashboard.putBoolean("Finished with PositionHome", Math.abs(rc.intakeSubsystem.getArmExtend() - 0) < .01
                 && Math.abs(rc.intakeSubsystem.getArmRotate() - 0) < .01

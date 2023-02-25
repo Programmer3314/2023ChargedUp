@@ -17,6 +17,7 @@ public class DriveToRampCmd extends CommandBase {
 
     public DriveToRampCmd(RobotContainer rc,
             double maxSpeed) {
+        this.rc = rc;
         this.maxSpeed = maxSpeed;
         addRequirements(rc.swerveSubsystem);
         robotPitch = rc.navigationSubsystem.getPitch();
@@ -45,7 +46,7 @@ public class DriveToRampCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        boolean finishedCondition = robotPitch < (maxAngle - 3);
+        boolean finishedCondition = robotPitch < (maxAngle - 4);
         SmartDashboard.putBoolean("Finished Condition:", finishedCondition);
         return finishedCondition;
     }

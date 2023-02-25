@@ -70,11 +70,15 @@ public class MMNavigationSubsystem extends SubsystemBase {
         mainPose = new Pose2d(mainPose.getTranslation(), navx.getRotation2d());
         SmartDashboard.putNumber("Robot Heading", Math.toDegrees(getHeadingRad()));
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
-        SmartDashboard.putNumber("AprilTag Rotation Degrees", aprilPose.getRotation().getDegrees());
+        //SmartDashboard.putNumber("AprilTag Rotation Degrees", aprilPose.getRotation().getDegrees());
         SmartDashboard.putNumber("Navx Roll", navx.getRoll());
+
+        SmartDashboard.putNumber("TX claw", getClawTargetX());
         SmartDashboard.putNumber("Navx Yaw", navx.getYaw());
         SmartDashboard.putNumber("NavX Pitch", getPitch());
-        SmartDashboard.putNumber("UltraSonicSensor", ultraSonicSensor.getVoltage());
+        SmartDashboard.putNumber("Horizontal Distance to Target(Inches)", horizontalDistanceToTarget());
+        SmartDashboard.putNumber("Distance to Target(Inches)", distancetoTargetClawCam());
+        // SmartDashboard.putNumber("UltraSonicSensor", ultraSonicSensor.getVoltage());
         // SmartDashboard.putBoolean("Magnetic Sensor", magneticSensor.get());
     }
 
@@ -126,6 +130,29 @@ public class MMNavigationSubsystem extends SubsystemBase {
         return clawLimelight.getEntry("tx").getNumber(0).doubleValue();
     }
 
+    public double distancetoTargetClawCam() {
+        double targetOffsetAngleVertical = clawLimelight.getEntry("ty").getDouble(0.0);
+        double limelightMountAngleDegrees = 21;
+        double goalHeightInches = 18.217;
+        double limelightLensHeightInches = 9;
+        double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngleVertical;
+        double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
+        double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches)
+                / Math.tan(angleToGoalRadians);
+        return distanceFromLimelightToGoalInches;
+    }
+
+    public boolean hasTargetClaw() {
+        return clawLimelight.getEntry("tv").getNumber(0).doubleValue() > 0.5;
+    }
+    public boolean hasTargetBack(){
+        return backLimelight.getEntry("tv").getNumber(0).doubleValue() > 0.5;
+    }
+
+    public double horizontalDistanceToTarget() {
+        return distancetoTargetClawCam() * Math.sin(getClawTargetX());
+    }
+
     public Pose2d getLimelightPose() {
 
         boolean hasTargetLeft = leftLimelight.getEntry("tv").getNumber(0).doubleValue() > 0.5;
@@ -151,10 +178,10 @@ public class MMNavigationSubsystem extends SubsystemBase {
                     double latency = leftLimelight.getEntry("tl").getDouble(0);
                     latency = (latency + 11) / 1000.0;
                     odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
-                    return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
-                            (aprilPose.getY() + tempPose.getY()) / 2.0,
-                            new Rotation2d(tempPose.getRotation().getRadians()));
-                    // }
+                    // return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
+                    //         (aprilPose.getY() + tempPose.getY()) / 2.0,
+                    //         new Rotation2d(tempPose.getRotation().getRadians()));
+                    // // }
                 }
             }
         }
@@ -178,9 +205,9 @@ public class MMNavigationSubsystem extends SubsystemBase {
                     double latency = rightLimelight.getEntry("tl").getDouble(0);
                     latency = (latency + 11) / 1000.0;
                     odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
-                    return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
-                            (aprilPose.getY() + tempPose.getY()) / 2.0,
-                            new Rotation2d(tempPose.getRotation().getRadians()));
+                    // return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
+                    //         (aprilPose.getY() + tempPose.getY()) / 2.0,
+                    //         new Rotation2d(tempPose.getRotation().getRadians()));
                     // }
                 }
             }

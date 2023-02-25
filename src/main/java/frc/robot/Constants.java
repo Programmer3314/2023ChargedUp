@@ -319,14 +319,14 @@ public class Constants {
                 // So when you start testing them (by moving to some other value) you need 
                 // to leave check for the arm running the wrong way and running too fast.
                 public static final double safety = -0.07;
-                public static final double speed = -0.25; //0.05 I put this one back.
+                public static final double speed = -0.75; //0.05 I put this one back.
             }
 
             public class PositionControl {
                 public static final double loading = 0;
                 public static final double highPeg = 0.87;
                 public static final double lowPeg = 0.4;//.38
-                public static final double ground = 0.4;
+                public static final double ground = 0.08;
             }
 
             public class PIDValue {
@@ -351,7 +351,7 @@ public class Constants {
                 public static final double loading = 0.7;//37.8 deg
                 public static final double highPeg = 0.873; //50 deg
                 public static final double lowPeg = 0.86;//54 deg  Placing Position: 65.5deg
-                public static final double ground = 2.3; //132 degrees
+                public static final double ground = 2.33; //132 degrees
             }
 
             public class PIDValue {

@@ -27,6 +27,7 @@ public class RunIntakeUntilBrokenCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return rc.intakeSubsystem.getBeamBreak();
+        // return rc.intakeSubsystem.getBeamBreak();
+        return false;
     }
 }

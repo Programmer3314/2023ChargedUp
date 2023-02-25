@@ -88,6 +88,9 @@ public class MMIntakeSubsystem extends SubsystemBase {
         armExtend.configAllSettings(configs, Constants.Robot.canBusTimeoutMs);
         armExtend.setNeutralMode(NeutralMode.Brake);
         armExtend.setInverted(true);
+        armExtend.configPeakOutputForward(.75, Constants.Robot.canBusTimeoutMs);
+        armExtend.configPeakOutputReverse(-.75, Constants.Robot.canBusTimeoutMs);
+        armExtend.configAllowableClosedloopError(750, Constants.Robot.canBusTimeoutMs);
         armExtend.config_kF(0, Constants.Arm.Extend.PIDValue.FF, Constants.Robot.canBusTimeoutMs);
         armExtend.config_kI(0, Constants.Arm.Extend.PIDValue.I, Constants.Robot.canBusTimeoutMs);
         armExtend.config_kP(0, Constants.Arm.Extend.PIDValue.P, Constants.Robot.canBusTimeoutMs);
