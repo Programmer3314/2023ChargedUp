@@ -46,7 +46,7 @@ public class DriveToRampCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        boolean finishedCondition = robotPitch < (maxAngle - 4);
+        boolean finishedCondition = robotPitch < (maxAngle - 18);
         SmartDashboard.putBoolean("Finished Condition:", finishedCondition);
         return finishedCondition;
     }

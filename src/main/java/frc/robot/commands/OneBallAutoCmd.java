@@ -19,8 +19,6 @@ public class OneBallAutoCmd extends SequentialCommandGroup {
                         () -> 4,
                         rc::getIsRedAlliance,
                         1, rc.navigationSubsystem),
-                new DriveToRampCmd(rc, -.8),
-                new TranslateRelativeCmd(rc, new Pose2d(new Translation2d(0, 2), new Rotation2d()), 0),
-                new LockedInCmd(rc));
+                new CompleteRampSequenceCmd(rc));
     }
 }

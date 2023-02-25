@@ -49,10 +49,13 @@ import frc.robot.commands.PositionLowPegCmd;
 import frc.robot.commands.RunIntakeUntilBrokenCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TargetPegCmd;
+import frc.robot.commands.TargetPegDriveCmd;
 import frc.robot.commands.TargetPegLateralCmd;
 import frc.robot.commands.TargetTagCmd;
+import frc.robot.commands.TargetTagDriveCmd;
 import frc.robot.commands.TargetTagLateralCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
+import frc.robot.commands.TranslateRelativeCmd;
 import frc.robot.commands.GripGrabRaw;
 import frc.robot.subsystems.MMIntakeSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
@@ -66,6 +69,9 @@ public class RobotContainer {
         private final SendableChooser<Integer> getDesiredCell = new SendableChooser<>();
         private final SendableChooser<Integer> getDesiredHeight = new SendableChooser<>();
         private final SendableChooser<Integer> getDesiredAuto = new SendableChooser<>();
+
+        private double manualAngle = 0;
+        private double startingExtension = 0;
 
         private static Alliance alliance;
         private static boolean isRedAlliance = true;
@@ -88,14 +94,15 @@ public class RobotContainer {
                         Constants.Driver.Axis.r,
                         0.05,
                         -(Math.PI));/// 2
-        private int gridHeight = 2;
+        private int gridHeight;
         private int gridGroup;
         private int gridGroupCell;
-        private int gridCell = 2;
+        private int gridCell;
         private GenericEntry gridCellEntry = tab.add("Grid Cell: ", "None").getEntry();
         private Trigger leftTrigger;
         private Trigger rightTrigger;
         public final MMIntakeSubsystem intakeSubsystem;
+        private double startingAngle = 0;
 
         public RobotContainer() {
                 getDesiredAuto.setDefaultOption("None Selected", 0);
@@ -124,7 +131,7 @@ public class RobotContainer {
                 }).start();
                 intakeSubsystem = new MMIntakeSubsystem(this);
 
-                // leftTrigger = new Trigger(this::getLeftTriggerActive);
+                leftTrigger = new Trigger(this::getLeftTriggerActive);
                 rightTrigger = new Trigger(this::getRightTriggerActive);
 
                 swerveSubsystem.setDefaultCommand(
@@ -155,6 +162,8 @@ public class RobotContainer {
         }
 
         private void configureBindings() {
+                leftTrigger.whileTrue(
+                                new TargetPegDriveCmd(this, 1, () -> false, .25));
                 // leftTrigger.whileTrue(new SequentialCommandGroup(
                 // new TranslateAbsoluteCmd(this,
                 // () -> MMField.getLeftDock(this::getIsRedAlliance), 2)
@@ -192,17 +201,43 @@ public class RobotContainer {
                                 .whileTrue(new PositionLowPegCmd(this));
                 new JoystickButton(buttonBox1, 4)
                                 .whileTrue(new PositionHighPegCmd(this));
+                new JoystickButton(driverJoystick, 4)
+                                .whileTrue(new AutoDeliveryCmd(this));
+                // new JoystickButton(buttonBox1, 5)
+                // .whileTrue(new AutoDeliveryCmd(this));
                 new JoystickButton(buttonBox1, 5)
-                                .whileTrue(new TargetTagLateralCmd(this, 1, () -> false));
+                                .onTrue(new SequentialCommandGroup(
+                                                new InstantCommand(() -> setStartingExtension()),
+                                                new InstantCommand(() -> intakeSubsystem
+                                                                .setArmExtend((getStartingExtension() - .0254)))));
                 new JoystickButton(buttonBox1, 6)
-                                .whileTrue(new TargetPegLateralCmd(this, 1, () -> false));
+                                .onTrue(new SequentialCommandGroup(
+                                                new InstantCommand(() -> setStartingExtension()),
+                                                new InstantCommand(() -> intakeSubsystem
+                                                                .setArmExtend((getStartingExtension() + .0254)))));
+                new JoystickButton(driverJoystick, 5)
+                                .onTrue(new SequentialCommandGroup(
+                                                new InstantCommand(() -> setStartingAngle()),
+                                                new InstantCommand(() -> intakeSubsystem
+                                                                .setArmRotation((getStartingAngle() + .0494)))));
+                new JoystickButton(driverJoystick, 6)
+                                .onTrue(new SequentialCommandGroup(
+                                                new InstantCommand(() -> setStartingAngle()),
+                                                new InstantCommand(() -> intakeSubsystem
+                                                                .setArmRotation((getStartingAngle() - .0494)))));
+                // new JoystickButton(buttonBox1, 6)
+                // .whileTrue(new InstantCommand());
+                // new JoystickButton(buttonBox1, 5)
+                // .whileTrue(new TargetTagLateralCmd(this, 1, () -> false));
+                // new JoystickButton(buttonBox1, 6)
+                // .whileTrue(new TargetPegLateralCmd(this, 1, () -> false));
                 // new JoystickButton(buttonBox1, 7)
                 // .whileTrue(new PositionGroundCmd(this));
 
-                new JoystickButton(buttonBox1, 10)
-                                .whileTrue(
-                                                new SequentialCommandGroup(new TargetPegCmd(this, 1, () -> false),
-                                                                new DriveToBumperCmd(this, .5)));
+                // new JoystickButton(buttonBox1, 10)
+                // .whileTrue(
+                // new SequentialCommandGroup(new TargetPegCmd(this, 1, () -> false),
+                // new DriveToBumperCmd(this, .5)));
                 // new JoystickButton(buttonBox1, 3)
                 // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverLower()));
                 // new JoystickButton(buttonBox1, 4)
@@ -211,16 +246,18 @@ public class RobotContainer {
                                 .onTrue(new GripReleaseCmd(this));
                 new JoystickButton(buttonBox1, 8)
                                 .onTrue(new GripGrabCmd(this));
+                new JoystickButton(buttonBox1, 10)
+                                .whileTrue(new LockedInCmd(this));
 
                 // new JoystickButton(buttonBox1, Constants.Driver.Button.runIntake)
                 // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeFloor()));
 
                 // intakeSubsystem.setIntakeFloor()
-                new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
-                                .whileTrue(new ParallelCommandGroup(
-                                                new RunIntakeUntilBrokenCmd(this),
-                                                new StartEndCommand(() -> intakeSubsystem.setIntakeDeliverLower(),
-                                                                () -> intakeSubsystem.setIntakeTravel())));
+                // new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
+                // .whileTrue(new ParallelCommandGroup(
+                // new RunIntakeUntilBrokenCmd(this),
+                // new StartEndCommand(() -> intakeSubsystem.setIntakeDeliverLower(),
+                // () -> intakeSubsystem.setIntakeTravel())));
 
                 // new JoystickButton(driverJoystick, Constants.Driver.Button.runIntake)
                 // .whileTrue(new StartEndCommand(() -> intakeSubsystem.runIntake(), () ->
@@ -230,12 +267,12 @@ public class RobotContainer {
                 // .whileTrue(new StartEndCommand(() -> intakeSubsystem.runIntake(), () ->
                 // intakeSubsystem.stopIntake()));
 
-                new JoystickButton(driverJoystick, 6)
-                                .whileTrue(new StartEndCommand(() -> intakeSubsystem.runOutTake(),
-                                                () -> intakeSubsystem.stopIntake()));
+                // new JoystickButton(driverJoystick, 6)
+                // .whileTrue(new StartEndCommand(() -> intakeSubsystem.runOutTake(),
+                // () -> intakeSubsystem.stopIntake()));
 
                 new JoystickButton(buttonBox1, 7)
-                                .whileTrue(new TargetPegLateralCmd(this, 0, () -> true));
+                                .whileTrue(new PositionGroundCmd(this));
                 // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverUpper()));
 
                 // new JoystickButton(buttonBox1, 10)
@@ -256,7 +293,10 @@ public class RobotContainer {
                 // new JoystickButton(driverJoystick, Constants.Driver.Button.testPeg)
                 // .onTrue(
                 // new DriveToBumperCmd(navigationSubsystem, swerveSubsystem, .5));
-                rightTrigger.whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
+                // rightTrigger.whileTrue(new
+                // AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
+                rightTrigger.whileTrue(
+                                new TargetTagDriveCmd(this, 1, () -> false, .25));
                 // new JoystickButton(driverJoystick, rightTrigger)
                 // .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
                 // swerveSubsystem, navigationSubsystem,
@@ -288,32 +328,32 @@ public class RobotContainer {
                 // .onTrue(
                 // new DeliverCubeCmd(this, () -> false));
 
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row1)
-                // .onTrue(new InstantCommand(() -> selectCell(gridCell, 1)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row1)
+                                .onTrue(new InstantCommand(() -> selectCell(gridCell, 1)));
 
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row2)
-                // .onTrue(new InstantCommand(() -> selectCell(gridCell, 2)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row2)
+                                .onTrue(new InstantCommand(() -> selectCell(gridCell, 2)));
 
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row3)
-                // .onTrue(new InstantCommand(() -> selectCell(gridCell, 3)));
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col1)
-                // .onTrue(new InstantCommand(() -> selectCell(1, gridHeight)));
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col2)
-                // .onTrue(new InstantCommand(() -> selectCell(2, gridHeight)));
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col3)
-                // .onTrue(new InstantCommand(() -> selectCell(3, gridHeight)));
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col4)
-                // .onTrue(new InstantCommand(() -> selectCell(4, gridHeight)));
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col5)
-                // .onTrue(new InstantCommand(() -> selectCell(5, gridHeight)));
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col6)
-                // .onTrue(new InstantCommand(() -> selectCell(6, gridHeight)));
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col7)
-                // .onTrue(new InstantCommand(() -> selectCell(7, gridHeight)));
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col8)
-                // .onTrue(new InstantCommand(() -> selectCell(8, gridHeight)));
-                // new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col9)
-                // .onTrue(new InstantCommand(() -> selectCell(9, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row3)
+                                .onTrue(new InstantCommand(() -> selectCell(gridCell, 3)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col1)
+                                .onTrue(new InstantCommand(() -> selectCell(1, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col2)
+                                .onTrue(new InstantCommand(() -> selectCell(2, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col3)
+                                .onTrue(new InstantCommand(() -> selectCell(3, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col4)
+                                .onTrue(new InstantCommand(() -> selectCell(4, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col5)
+                                .onTrue(new InstantCommand(() -> selectCell(5, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col6)
+                                .onTrue(new InstantCommand(() -> selectCell(6, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col7)
+                                .onTrue(new InstantCommand(() -> selectCell(7, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col8)
+                                .onTrue(new InstantCommand(() -> selectCell(8, gridHeight)));
+                new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.col9)
+                                .onTrue(new InstantCommand(() -> selectCell(9, gridHeight)));
 
                 // new JoystickButton(buttonBox1, Constants.ButtonBox1.Button.gridGroup1)
                 // .onTrue(new InstantCommand(() -> selectCell(gridHeight, 1, gridGroupCell)));
@@ -354,7 +394,7 @@ public class RobotContainer {
                                 new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
                                 trajectoryConfig);
 
-                PIDController xController = new PIDController(10.0, 0, 0);
+                PIDController xController = new PIDController(.0, 0, 0);
                 PIDController yController = new PIDController(10.0, 0, 0);
                 ProfiledPIDController thetaController = new ProfiledPIDController(10.0, 0, 0,
                                 Constants.thetaControllerConstraints);
@@ -378,14 +418,15 @@ public class RobotContainer {
                                 new InstantCommand(() -> swerveSubsystem.stopModules()));
         }
 
-        public void selectCell(int gridHeight, int gridGroup, int gridGroupCell) {
-                gridCell = gridGroup * 3 - 3 + gridGroupCell;
-                this.gridGroup = gridGroup;
-                this.gridGroupCell = gridGroupCell;
-                this.gridHeight = gridHeight;
-                gridCellEntry.setString("Grid Group: " + gridGroup + "Grid GroupCell: " + gridGroupCell
-                                + " Grid Height: " + gridHeight + " Grid Cell: " + gridCell);
-        }
+        // public void selectCell(int gridHeight, int gridGroup, int gridGroupCell) {
+        // gridCell = gridGroup * 3 - 3 + gridGroupCell;
+        // this.gridGroup = gridGroup;
+        // this.gridGroupCell = gridGroupCell;
+        // this.gridHeight = gridHeight;
+        // gridCellEntry.setString("Grid Group: " + gridGroup + "Grid GroupCell: " +
+        // gridGroupCell
+        // + " Grid Height: " + gridHeight + " Grid Cell: " + gridCell);
+        // }
 
         public void selectCell(int column, int row) {
                 gridCell = column;
@@ -395,6 +436,34 @@ public class RobotContainer {
 
         public boolean getIsRedAlliance() {
                 return isRedAlliance;
+        }
+
+        public void incAngle() {
+                manualAngle++;
+        }
+
+        public double getManualAngle() {
+                return manualAngle;
+        }
+
+        public void decAngle() {
+                manualAngle--;
+        }
+
+        public void setStartingExtension() {
+                startingExtension = intakeSubsystem.getArmExtend();
+        }
+
+        public double getStartingAngle() {
+                return startingAngle;
+        }
+
+        public double getStartingExtension() {
+                return startingExtension;
+        }
+
+        public void setStartingAngle() {
+                startingAngle = intakeSubsystem.getArmRotate();
         }
 
         public int getGridCell() {

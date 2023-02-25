@@ -78,6 +78,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("NavX Pitch", getPitch());
         SmartDashboard.putNumber("Horizontal Distance to Target(Inches)", horizontalDistanceToTarget());
         SmartDashboard.putNumber("Distance to Target(Inches)", distancetoTargetClawCam());
+
         // SmartDashboard.putNumber("UltraSonicSensor", ultraSonicSensor.getVoltage());
         // SmartDashboard.putBoolean("Magnetic Sensor", magneticSensor.get());
     }

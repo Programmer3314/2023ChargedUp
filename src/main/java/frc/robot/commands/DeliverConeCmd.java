@@ -17,8 +17,7 @@ public class DeliverConeCmd extends SequentialCommandGroup {
                         RobotContainer rc) {
                 addCommands(
                                 Commands.race(
-                                                new TargetPegCmd(rc, 2,
-                                                                rc.intakeSubsystem::getBeamBreak),
+                                                new TargetPegDriveCmd(rc, 1, () -> false, .25),
                                                 Commands.waitSeconds(2)),
                                 new DriveToBumperCmd(rc, .5),
                                 Commands.select(

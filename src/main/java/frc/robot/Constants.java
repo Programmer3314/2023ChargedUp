@@ -122,14 +122,14 @@ public class Constants {
             public static final int driveMotor = 4;
             public static final int steerMotor = 3;
             public static final int absoluteEncoderId = 2;
-            public static final double absoluteEncoderOffset = -Math.toRadians(188);// -87
+            public static final double absoluteEncoderOffset = -Math.toRadians(-168.5);// 188
         }
 
         public static class backRightModule {
             public static final int driveMotor = 6;
             public static final int steerMotor = 5;
             public static final int absoluteEncoderId = 3;
-            public static final double absoluteEncoderOffset = -Math.toRadians(-61);// 49
+            public static final double absoluteEncoderOffset = -Math.toRadians(121.9+180);// -61
         }
 
         public static class backLeftModule {
@@ -323,9 +323,9 @@ public class Constants {
             }
 
             public class PositionControl {
-                public static final double loading = 0;
-                public static final double highPeg = 0.87;
-                public static final double lowPeg = 0.4;//.38
+                public static final double loading = 0.076;
+                public static final double highPeg = 0.853;
+                public static final double lowPeg = 0.355;//.38
                 public static final double ground = 0.08;
             }
 
@@ -348,9 +348,9 @@ public class Constants {
             }
 
             public class PositionControl {
-                public static final double loading = 0.7;//37.8 deg
-                public static final double highPeg = 0.873; //50 deg
-                public static final double lowPeg = 0.86;//54 deg  Placing Position: 65.5deg
+                public static final double loading = 0.613;//.725
+                public static final double highPeg = 0.837; //50 deg
+                public static final double lowPeg = .9668;//58 deg
                 public static final double ground = 2.33; //132 degrees
             }
 
