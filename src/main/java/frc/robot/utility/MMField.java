@@ -32,6 +32,23 @@ public class MMField {
         return new Pose2d(x, y, new Rotation2d(Math.toRadians(r)));
     }
 
+    public static Pose2d getAutoCellPose(int cell, boolean isRedAlliance) {
+        double y;
+        double x;
+        double r;
+        if (isRedAlliance) {
+            y = redRefCell + cell * cellSpacing;
+            x = 6.4;
+            r = 0;
+        } else {
+            y = blueRefCell - cell * cellSpacing;
+            x = -6.4;
+            r = 180;
+        }
+
+        return new Pose2d(x, y, new Rotation2d(Math.toRadians(r)));
+    }
+
     public static boolean isCellCone(int cell) {
         return cell == 1 || cell == 3 || cell == 4 || cell == 6 || cell == 7 || cell == 9;
     }

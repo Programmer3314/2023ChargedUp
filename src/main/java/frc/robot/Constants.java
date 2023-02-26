@@ -129,7 +129,7 @@ public class Constants {
             public static final int driveMotor = 6;
             public static final int steerMotor = 5;
             public static final int absoluteEncoderId = 3;
-            public static final double absoluteEncoderOffset = -Math.toRadians(121.9+180);// -61
+            public static final double absoluteEncoderOffset = -Math.toRadians(121.9 + 180);// -61
         }
 
         public static class backLeftModule {
@@ -143,8 +143,8 @@ public class Constants {
     public static class Limelight {
         public static final String lLimelight = "limelight-left";
         public static final String bLimelight = "limelight-back";
-        public static final String clawLimelight="limelight-claw";
-        public static final String rlimelight="limelight-right";
+        public static final String clawLimelight = "limelight-claw";
+        public static final String rlimelight = "limelight-right";
     }
 
     public static final double kfalconDrivetrainKI = 0.000000;
@@ -199,10 +199,8 @@ public class Constants {
             // public static final int autoDelivery=1;
 
             public static final int runIntake = 5;
-            //public static final int runOutTake = 6;
+            // public static final int runOutTake = 6;
 
-            
-             
         }
     }
 
@@ -223,8 +221,6 @@ public class Constants {
             // 11+12 don't work
             public static final int shootingPosition = 7;
             public static final int runOutTake = 10;
-
-            
 
         }
     }
@@ -310,31 +306,31 @@ public class Constants {
 
             public class SpeedControl {
                 // TODO: URGENT! (#2) bring these speeds up until the arm starts moving.
-                // Make sure that the arm is extended far enough out that 
-                // you'll be able to stop it if the arm runs too fast. 
+                // Make sure that the arm is extended far enough out that
+                // you'll be able to stop it if the arm runs too fast.
                 // DO NOT increase the speed constant until you've adjusted
-                // the safety constant. Then make the speed constant a little more than 
-                // safety and increase until the arm homes well. 
-                // These constants are completely independent of the PID constants. 
-                // So when you start testing them (by moving to some other value) you need 
+                // the safety constant. Then make the speed constant a little more than
+                // safety and increase until the arm homes well.
+                // These constants are completely independent of the PID constants.
+                // So when you start testing them (by moving to some other value) you need
                 // to leave check for the arm running the wrong way and running too fast.
-                public static final double safety = -0.07;
-                public static final double speed = -0.75; //0.05 I put this one back.
+                public static final double safety = -0.12;
+                public static final double speed = -0.5; // 0.05 I put this one back.
             }
 
             public class PositionControl {
                 public static final double loading = 0.076;
                 public static final double highPeg = 0.853;
-                public static final double lowPeg = 0.355;//.38
-                public static final double ground = 0.08;
+                public static final double lowPeg = 0.355;// .38
+                public static final double ground = 0.1096;
             }
 
             public class PIDValue {
                 public static final double I = 0.000000;
                 public static final double D = 0.00025;
-                public static final double P = 0.002500*4.5;// 5e-5;
+                public static final double P = 0.002500 * 4.5;// 5e-5;
                 public static final double Iz = 0;
-                public static final double FF = 0.0000000000;//0.050000
+                public static final double FF = 0.0000000000;// 0.050000
                 public static final double maxOutput = 0.869990;
                 public static final double minOutput = -0.869990;
             }
@@ -348,45 +344,48 @@ public class Constants {
             }
 
             public class PositionControl {
-                public static final double loading = 0.613;//.725
-                public static final double highPeg = 0.837; //50 deg
-                public static final double lowPeg = .9668;//58 deg
-                public static final double ground = 2.33; //132 degrees
+                public static final double loading = 0.613;// .725
+                public static final double highPeg = 0.837; // 50 deg
+                public static final double lowPeg = .9668;// 58 deg
+                public static final double ground = 2.33; // 132 degrees
             }
 
             public class PIDValue {
                 public static final double I = 0.000000;
                 public static final double D = 0.00025;
-                public static final double P = 0.002500*11.75;//10 // 5e-5; // Increased by Rich from .0025, 11.25
+                public static final double P = 0.002500 * 11.75;// 10 // 5e-5; // Increased by Rich from .0025, 11.25
                 public static final double Iz = 0;
-                public static final double FF = 0.0;//0.05
-                public static final double MaxOutput = 0.15; //0.869990
-                public static final double MinOutput = -0.15; //-0.869990
+                public static final double FF = 0.0;// 0.05
+                public static final double MaxOutput = 0.15; // 0.869990
+                public static final double MinOutput = -0.15; // -0.869990
             }
 
         }
 
         public static class Encoder {
             public static final int Id = 5;
-            public static final double OffsetDegrees = 0;//-102
+            public static final double OffsetDegrees = 0;// -102
         }
 
         public class ConversionFactors {
             public static final double extensionTicksPerMeter = 39.37 * 3 * 2048;
-            // TODO: URGENT! (#1) I believe the rotationTicksPerRadians constant is wrong. 
+            // TODO: URGENT! (#1) I believe the rotationTicksPerRadians constant is wrong.
             // IMPORTANT: This will greatly increase the size of the error - be careful
             // The Gearbox reduces the speed of the motor by a factor of 48.
-            // So, does that mean that there are more ticks per revolution of the arm, or fewer?
+            // So, does that mean that there are more ticks per revolution of the arm, or
+            // fewer?
             // I think the value may be:
             // 2048*48*(60/15)/(2*Math.PI)
-            // But please confirm this by displaying both the cancoder degrees and motor position in ticks
+            // But please confirm this by displaying both the cancoder degrees and motor
+            // position in ticks
             // then, record fstarting values, move the arm, and record stopping values.
-            // Calculate, the differences (degrees and ticks). 
-            // Convert the degrees to radians. 
-            // finally divide the ticks by the radians and check that the number is close to the above value. 
-            public static final double rotationTicksPerRadians = 2048*48*(60/15)/(2*Math.PI);
+            // Calculate, the differences (degrees and ticks).
+            // Convert the degrees to radians.
+            // finally divide the ticks by the radians and check that the number is close to
+            // the above value.
+            public static final double rotationTicksPerRadians = 2048 * 48 * (60 / 15) / (2 * Math.PI);
 
-            //2048 / 48 * 15 / 60 / 2 / Math.PI
+            // 2048 / 48 * 15 / 60 / 2 / Math.PI
         }
     }
 

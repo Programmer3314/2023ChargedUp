@@ -34,6 +34,7 @@ import frc.robot.Constants.ButtonBox1;
 import frc.robot.Constants.ButtonBox2;
 import frc.robot.commands.AutoDeliveryCmd;
 import frc.robot.commands.OneBallAutoCmd;
+import frc.robot.commands.OneConeAutoCmd;
 import frc.robot.commands.DeliverCubeCmd;
 import frc.robot.commands.DriveToBumperCmd;
 import frc.robot.commands.DriveToRampCmd;
@@ -56,6 +57,7 @@ import frc.robot.commands.TargetTagDriveCmd;
 import frc.robot.commands.TargetTagLateralCmd;
 import frc.robot.commands.TranslateAbsoluteCmd;
 import frc.robot.commands.TranslateRelativeCmd;
+import frc.robot.commands.TwoBallAutoCmd;
 import frc.robot.commands.GripGrabRaw;
 import frc.robot.subsystems.MMIntakeSubsystem;
 import frc.robot.subsystems.MMNavigationSubsystem;
@@ -66,9 +68,10 @@ import frc.robot.utility.MMJoystickAxis;
 public class RobotContainer {
         private ShuffleboardTab tab = Shuffleboard.getTab("In Match");
 
-        private final SendableChooser<Integer> getDesiredCell = new SendableChooser<>();
+        private final SendableChooser<Integer> getAutoStartPose = new SendableChooser<>();
         private final SendableChooser<Integer> getDesiredHeight = new SendableChooser<>();
-        private final SendableChooser<Integer> getDesiredAuto = new SendableChooser<>();
+        private final SendableChooser<AutonomousSelection> getDesiredAuto = new SendableChooser<>();
+        private final SendableChooser<Boolean> getChargingStation = new SendableChooser<>();
 
         private double manualAngle = 0;
         private double startingExtension = 0;
@@ -103,22 +106,28 @@ public class RobotContainer {
         private Trigger rightTrigger;
         public final MMIntakeSubsystem intakeSubsystem;
         private double startingAngle = 0;
+        private Pose2d autoPosition;
+        private boolean isOverChargingStation;
 
         public RobotContainer() {
-                getDesiredAuto.setDefaultOption("None Selected", 0);
-                getDesiredAuto.addOption("Drop to Balance", 1);
-                getDesiredAuto.addOption("Drop to Pickup to Balance", 2);
+                getChargingStation.setDefaultOption("True", true);
+                getChargingStation.addOption("False", false);
+                getDesiredAuto.setDefaultOption("One Ball", AutonomousSelection.OneBallAuto);
+                getDesiredAuto.setDefaultOption("One Cone", AutonomousSelection.OneConeAuto);
+                getDesiredAuto.addOption("Two Ball", AutonomousSelection.TwoBallAuto);
+                getDesiredAuto.addOption("Three Ball", AutonomousSelection.ThreeBallAuto);
                 getDesiredHeight.setDefaultOption("None Selected", 0);
                 for (int i = 1; i < 4; i++) {
                         getDesiredHeight.addOption("Height: " + i, i);
                 }
-                getDesiredCell.setDefaultOption("None Selected", 0);
+                getAutoStartPose.setDefaultOption("None Selected", 0);
                 for (int i = 1; i < 10; i++) {
-                        getDesiredCell.addOption("Cell: " + i, i);
+                        getAutoStartPose.addOption("Cell: " + i, i);
                 }
 
-                Shuffleboard.getTab("In Match").add(getDesiredCell).withWidget(BuiltInWidgets.kComboBoxChooser);
+                Shuffleboard.getTab("In Match").add(getAutoStartPose).withWidget(BuiltInWidgets.kComboBoxChooser);
                 Shuffleboard.getTab("In Match").add(getDesiredAuto).withWidget(BuiltInWidgets.kComboBoxChooser);
+                Shuffleboard.getTab("In Match").add(getChargingStation).withWidget(BuiltInWidgets.kComboBoxChooser);
                 Shuffleboard.getTab("In Match").add(getDesiredHeight).withWidget(BuiltInWidgets.kComboBoxChooser);
                 new Thread(() -> {
                         try {
@@ -133,6 +142,9 @@ public class RobotContainer {
 
                 leftTrigger = new Trigger(this::getLeftTriggerActive);
                 rightTrigger = new Trigger(this::getRightTriggerActive);
+
+                intakeSubsystem.setDefaultCommand(
+                                new PositionHomeCmd(this));
 
                 swerveSubsystem.setDefaultCommand(
                                 new SequentialCommandGroup(
@@ -215,6 +227,8 @@ public class RobotContainer {
                                                 new InstantCommand(() -> setStartingExtension()),
                                                 new InstantCommand(() -> intakeSubsystem
                                                                 .setArmExtend((getStartingExtension() + .0254)))));
+                new JoystickButton(buttonBox1, 7)
+                                .onTrue(new PositionGroundCmd(this));
                 new JoystickButton(driverJoystick, 5)
                                 .onTrue(new SequentialCommandGroup(
                                                 new InstantCommand(() -> setStartingAngle()),
@@ -271,8 +285,6 @@ public class RobotContainer {
                 // .whileTrue(new StartEndCommand(() -> intakeSubsystem.runOutTake(),
                 // () -> intakeSubsystem.stopIntake()));
 
-                new JoystickButton(buttonBox1, 7)
-                                .whileTrue(new PositionGroundCmd(this));
                 // .onTrue(new InstantCommand(() -> intakeSubsystem.setIntakeDeliverUpper()));
 
                 // new JoystickButton(buttonBox1, 10)
@@ -280,7 +292,8 @@ public class RobotContainer {
 
                 new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavxB)
                                 .onTrue(new SequentialCommandGroup(
-                                                new InstantCommand(() -> navigationSubsystem.zeroHeading()),
+                                                new InstantCommand(() -> navigationSubsystem
+                                                                .zeroHeading(() -> getIsRedAlliance())),
                                                 new InstantCommand(() -> navigationSubsystem
                                                                 .resetOdometry(
                                                                                 navigationSubsystem.getLimelightPose()
@@ -328,6 +341,7 @@ public class RobotContainer {
                 // .onTrue(
                 // new DeliverCubeCmd(this, () -> false));
 
+                
                 new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row1)
                                 .onTrue(new InstantCommand(() -> selectCell(gridCell, 1)));
 
@@ -379,26 +393,26 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                TrajectoryConfig trajectoryConfig = new TrajectoryConfig(2, 1.7)
-                                .setKinematics(Constants.Chassis.kinematics);
-                // return Commands.print("No autonomous command configured");
-                Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(0, 0, new Rotation2d()),
-                                List.of(
-                                                new Translation2d(1, 0),
-                                                new Translation2d(1, -1),
-                                                new Translation2d(2.4, -1),
-                                                new Translation2d(2.4, 0.8),
-                                                new Translation2d(1, 0.8),
-                                                new Translation2d(1, 0)),
-                                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-                                trajectoryConfig);
+                // TrajectoryConfig trajectoryConfig = new TrajectoryConfig(2, 1.7)
+                // .setKinematics(Constants.Chassis.kinematics);
+                // // return Commands.print("No autonomous command configured");
+                // Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+                // new Pose2d(0, 0, new Rotation2d()),
+                // List.of(
+                // new Translation2d(1, 0),
+                // new Translation2d(1, -1),
+                // new Translation2d(2.4, -1),
+                // new Translation2d(2.4, 0.8),
+                // new Translation2d(1, 0.8),
+                // new Translation2d(1, 0)),
+                // new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                // trajectoryConfig);
 
-                PIDController xController = new PIDController(.0, 0, 0);
-                PIDController yController = new PIDController(10.0, 0, 0);
-                ProfiledPIDController thetaController = new ProfiledPIDController(10.0, 0, 0,
-                                Constants.thetaControllerConstraints);
-                thetaController.enableContinuousInput(-Math.PI, Math.PI);
+                // PIDController xController = new PIDController(.0, 0, 0);
+                // PIDController yController = new PIDController(10.0, 0, 0);
+                // ProfiledPIDController thetaController = new ProfiledPIDController(10.0, 0, 0,
+                // Constants.thetaControllerConstraints);
+                // thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
                 // SwerveControllerCommand swerveControllerCommand = new
                 // SwerveControllerCommand(
@@ -410,12 +424,16 @@ public class RobotContainer {
                 // thetaController,
                 // swerveSubsystem::setModuleStates,
                 // swerveSubsystem);
+                switch (getDesiredAuto.getSelected()) {
+                        case TwoBallAuto:
+                                return new TwoBallAutoCmd(this);
+                        case OneConeAuto:
+                                return new OneConeAutoCmd(this, () -> autoPosition, () -> isOverChargingStation);
+                        default:
+                                return new OneBallAutoCmd(this, () -> autoPosition, () -> isOverChargingStation);
 
-                return new SequentialCommandGroup(
-                                new InstantCommand(
-                                                () -> navigationSubsystem.resetOdometry(trajectory.getInitialPose())),
-                                // swerveControllerCommand,
-                                new InstantCommand(() -> swerveSubsystem.stopModules()));
+                }
+
         }
 
         // public void selectCell(int gridHeight, int gridGroup, int gridGroupCell) {
@@ -436,6 +454,14 @@ public class RobotContainer {
 
         public boolean getIsRedAlliance() {
                 return isRedAlliance;
+        }
+
+        public void setAutoPosition() {
+                autoPosition = MMField.getAutoCellPose(getAutoStartPose.getSelected(), isRedAlliance);
+        }
+
+        public void setChargingStation() {
+                isOverChargingStation = getChargingStation.getSelected();
         }
 
         public void incAngle() {

@@ -88,8 +88,8 @@ public class MMIntakeSubsystem extends SubsystemBase {
         armExtend.configAllSettings(configs, Constants.Robot.canBusTimeoutMs);
         armExtend.setNeutralMode(NeutralMode.Brake);
         armExtend.setInverted(true);
-        armExtend.configPeakOutputForward(.75, Constants.Robot.canBusTimeoutMs);
-        armExtend.configPeakOutputReverse(-.75, Constants.Robot.canBusTimeoutMs);
+        armExtend.configPeakOutputForward(.5, Constants.Robot.canBusTimeoutMs);
+        armExtend.configPeakOutputReverse(-.5, Constants.Robot.canBusTimeoutMs);
         armExtend.configAllowableClosedloopError(750, Constants.Robot.canBusTimeoutMs);
         armExtend.config_kF(0, Constants.Arm.Extend.PIDValue.FF, Constants.Robot.canBusTimeoutMs);
         armExtend.config_kI(0, Constants.Arm.Extend.PIDValue.I, Constants.Robot.canBusTimeoutMs);
@@ -204,12 +204,12 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     public void setIntakeFloor() {
         intakePosition.set(Value.kForward);
-        // intakeUpperPosition.set(Value.kForward);
+        intakeUpperPosition.set(Value.kForward);
     }
 
     public void setIntakeTravel() {
         intakePosition.set(Value.kReverse);
-        // intakeUpperPosition.set(Value.kForward);
+        intakeUpperPosition.set(Value.kReverse);
     }
 
     public void setIntakeDeliverUpper() {
@@ -347,6 +347,10 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     public boolean getSpideySense() {
         return spideySense.get();
+    }
+
+    public Object zeroHeading(Object object) {
+        return null;
     }
 
 }

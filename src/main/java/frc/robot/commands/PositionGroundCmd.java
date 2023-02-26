@@ -35,5 +35,6 @@ public class PositionGroundCmd extends CommandBase {
 
     public void end(boolean interrupted) {
         rc.intakeSubsystem.stopArm();
+        rc.intakeSubsystem.setGrip();
     }
 }

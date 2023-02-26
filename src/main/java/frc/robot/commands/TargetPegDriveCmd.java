@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.utility.MMTurnPIDController;
@@ -53,6 +54,8 @@ public class TargetPegDriveCmd extends CommandBase {
         if (!pastStartUpFlag) {
             pastStartUpFlag = rc.swerveSubsystem.getAverageDriveVelocity() > .15;
         }
+        SmartDashboard.putBoolean("pastStartUp,", pastStartUpFlag);
+
 
         double rawTarget;
         double correction = 0;
@@ -92,6 +95,7 @@ public class TargetPegDriveCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
+        SmartDashboard.putNumber("Drive Velocity: ", rc.swerveSubsystem.getAverageDriveVelocity());
         boolean droveToPeg = rc.swerveSubsystem.getAverageDriveVelocity() <= .8 && pastStartUpFlag;
         return cyclesOnTarget >= 75 && droveToPeg;
     }

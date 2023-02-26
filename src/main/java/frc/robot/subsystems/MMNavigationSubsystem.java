@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.Supplier;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.MathUtil;
@@ -37,6 +39,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
     private long rightLastVisionHB;
     public static AnalogInput ultraSonicSensor;
     private final Field2d m_field = new Field2d();
+    private double angleOffset;
     // private final DigitalInput magneticSensor;
     // private final SendableChooser fieldWidget;
 
@@ -48,7 +51,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                zeroHeading();
+                // zeroHeading(() -> true);
             } catch (Exception e) {
             }
         }).start();
@@ -70,7 +73,8 @@ public class MMNavigationSubsystem extends SubsystemBase {
         mainPose = new Pose2d(mainPose.getTranslation(), navx.getRotation2d());
         SmartDashboard.putNumber("Robot Heading", Math.toDegrees(getHeadingRad()));
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
-        //SmartDashboard.putNumber("AprilTag Rotation Degrees", aprilPose.getRotation().getDegrees());
+        // SmartDashboard.putNumber("AprilTag Rotation Degrees",
+        // aprilPose.getRotation().getDegrees());
         SmartDashboard.putNumber("Navx Roll", navx.getRoll());
 
         SmartDashboard.putNumber("TX claw", getClawTargetX());
@@ -83,8 +87,13 @@ public class MMNavigationSubsystem extends SubsystemBase {
         // SmartDashboard.putBoolean("Magnetic Sensor", magneticSensor.get());
     }
 
-    public void zeroHeading() {
+    public void zeroHeading(Supplier<Boolean> isFacingRed) {
         navx.reset();
+        setOffset(isFacingRed.get() ? 0 : Math.PI);
+    }
+
+    public void setOffset(double offset) {
+        angleOffset = offset;
     }
 
     public double getHeadingRad() {
@@ -108,7 +117,7 @@ public class MMNavigationSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getYaw() {
-        return Rotation2d.fromDegrees(navx.getYaw());
+        return Rotation2d.fromDegrees(navx.getYaw() + Math.toDegrees(angleOffset));
     }
 
     public double getRoll() {
@@ -146,7 +155,8 @@ public class MMNavigationSubsystem extends SubsystemBase {
     public boolean hasTargetClaw() {
         return clawLimelight.getEntry("tv").getNumber(0).doubleValue() > 0.5;
     }
-    public boolean hasTargetBack(){
+
+    public boolean hasTargetBack() {
         return backLimelight.getEntry("tv").getNumber(0).doubleValue() > 0.5;
     }
 
@@ -180,8 +190,8 @@ public class MMNavigationSubsystem extends SubsystemBase {
                     latency = (latency + 11) / 1000.0;
                     odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
                     // return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
-                    //         (aprilPose.getY() + tempPose.getY()) / 2.0,
-                    //         new Rotation2d(tempPose.getRotation().getRadians()));
+                    // (aprilPose.getY() + tempPose.getY()) / 2.0,
+                    // new Rotation2d(tempPose.getRotation().getRadians()));
                     // // }
                 }
             }
@@ -207,8 +217,8 @@ public class MMNavigationSubsystem extends SubsystemBase {
                     latency = (latency + 11) / 1000.0;
                     odometer.addVisionMeasurement(tempPose, Timer.getFPGATimestamp() - latency);
                     // return new Pose2d((aprilPose.getX() + tempPose.getX()) / 2.0,
-                    //         (aprilPose.getY() + tempPose.getY()) / 2.0,
-                    //         new Rotation2d(tempPose.getRotation().getRadians()));
+                    // (aprilPose.getY() + tempPose.getY()) / 2.0,
+                    // new Rotation2d(tempPose.getRotation().getRadians()));
                     // }
                 }
             }
@@ -229,4 +239,5 @@ public class MMNavigationSubsystem extends SubsystemBase {
         double y = position.getY() + 3;
         return new Pose2d(x, y, position.getRotation());
     }
+
 }

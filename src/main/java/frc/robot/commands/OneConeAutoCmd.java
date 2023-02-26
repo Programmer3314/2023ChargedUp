@@ -17,14 +17,16 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 
 /** Add your docs here. */
-public class OneBallAutoCmd extends SequentialCommandGroup {
-    public OneBallAutoCmd(RobotContainer rc, Supplier<Pose2d> startingPosition, BooleanSupplier isOverChargingStation) {
+public class OneConeAutoCmd extends SequentialCommandGroup {
+    public OneConeAutoCmd(RobotContainer rc, Supplier<Pose2d> startingPosition, BooleanSupplier isOverChargingStation) {
         addCommands(
                 new InstantCommand(() -> rc.setAutoPosition()),
                 new InstantCommand(() -> rc.setChargingStation()),
                 new InstantCommand(() -> rc.navigationSubsystem.zeroHeading((rc::getIsRedAlliance))),
                 new InstantCommand(() -> rc.navigationSubsystem.resetOdometry(startingPosition.get())),
+                new PositionLowPegCmd(rc),
                 new GripReleaseCmd(rc),
+                new PositionHomeCmd(rc),
                 new DriveToGridAlleyCmd(rc, () -> true),
                 new DriveToCellCmd(rc,
                         () -> 4,
