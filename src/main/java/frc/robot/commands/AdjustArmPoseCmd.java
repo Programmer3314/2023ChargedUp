@@ -23,10 +23,10 @@ public class AdjustArmPoseCmd extends SequentialCommandGroup {
                 Commands.select(Map.ofEntries(
                         Map.entry(AdjustSelection.RotateIncrease,
                                 new InstantCommand(() -> rc.intakeSubsystem
-                                        .setArmRotation(rc.intakeSubsystem.getArmRotate() + .0494))),
+                                        .setArmRotation(rc.intakeSubsystem.getArmRotate() + .05))),
                         Map.entry(AdjustSelection.RotateDecrease,
                                 new InstantCommand(() -> rc.intakeSubsystem
-                                        .setArmRotation(rc.intakeSubsystem.getArmRotate() - .0494))),
+                                        .setArmRotation(rc.intakeSubsystem.getArmRotate() - .05))),
                         Map.entry(AdjustSelection.ExtendIncrease,
                                 new InstantCommand(() -> rc.intakeSubsystem
                                         .setArmExtend(rc.intakeSubsystem.getArmExtend() + .0254))),
