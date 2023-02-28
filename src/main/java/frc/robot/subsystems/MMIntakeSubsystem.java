@@ -46,11 +46,13 @@ public class MMIntakeSubsystem extends SubsystemBase {
     private DoubleSolenoid gripper;
     private DigitalInput spideySense;
     private int resetExtendCounter = 0;
+    private TalonFX outTakeMotor;
 
     public MMIntakeSubsystem(RobotContainer rc) {
         this.rc = rc;
         homeStateMachine = new HomeExtentionStateMachine(rc);
         intakeMotor = new TalonFX(Constants.DeliveryMotor.IntakeMotor.intakeMotorCanId);
+        outTakeMotor = new TalonFX(Constants.DeliveryMotor.OutTakeMotor.outTakeMotorCanId);
         // intakeUltraSonic = new
         // AnalogInput(Constants.RoboRio.Analog.IntakeSensors.ultraSonicSensor);
         intakeBeamBreak = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.beamBreakSensor);
@@ -156,6 +158,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     public void stopIntake() {
         intakeMotor.set(TalonFXControlMode.PercentOutput, 0);
+        outTakeMotor.set(TalonFXControlMode.PercentOutput, 0);
     }
 
     public void iterateExtendCounter() {
@@ -176,10 +179,12 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     public void runOutTakeSlow() {
         intakeMotor.set(TalonFXControlMode.PercentOutput, .2);
+        outTakeMotor.set(TalonFXControlMode.PercentOutput, .2);
     }
 
     public void runOutTake() {
         intakeMotor.set(TalonFXControlMode.PercentOutput, 1);
+        outTakeMotor.set(TalonFXControlMode.PercentOutput, 1);
     }
 
     public boolean getBeamBreak() {
@@ -223,6 +228,11 @@ public class MMIntakeSubsystem extends SubsystemBase {
     }
 
     public void setArmExtend(double armPositionInMeters) {
+        if (armPositionInMeters < 0) {
+            armPositionInMeters = 0;
+        } else if (armPositionInMeters > Constants.Arm.Extend.PositionControl.maxExtendPositionInMeters) {
+            armPositionInMeters = Constants.Arm.Extend.PositionControl.maxExtendPositionInMeters;
+        }
         armExtend.set(TalonFXControlMode.Position,
                 armPositionInMeters * Constants.Arm.ConversionFactors.extensionTicksPerMeter);
     }

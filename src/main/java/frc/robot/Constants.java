@@ -289,6 +289,10 @@ public class Constants {
         public static class IntakeMotor {
             public static final int intakeMotorCanId = 10;
         }
+
+        public static class OutTakeMotor {
+            public static final int outTakeMotorCanId = 13;
+        }
     }
 
     public static class Arm {
@@ -323,6 +327,7 @@ public class Constants {
                 public static final double highPeg = 0.853;
                 public static final double lowPeg = 0.355;// .38
                 public static final double ground = 0.1096;
+                public static final double maxExtendPositionInMeters = 178;
             }
 
             public class PIDValue {

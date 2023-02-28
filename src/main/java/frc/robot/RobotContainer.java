@@ -29,9 +29,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ButtonBox1;
 import frc.robot.Constants.ButtonBox2;
+import frc.robot.commands.AdjustArmPoseCmd;
 import frc.robot.commands.AutoDeliveryCmd;
 import frc.robot.commands.OneBallAutoCmd;
 import frc.robot.commands.OneConeAutoCmd;
@@ -108,6 +110,10 @@ public class RobotContainer {
         private double startingAngle = 0;
         private Pose2d autoPosition;
         private boolean isOverChargingStation;
+        private POVButton driverLeftPOV;
+        private POVButton driverRightPOV;
+        private POVButton driverUpPOV;
+        private POVButton driverDownPOV;
 
         public RobotContainer() {
                 getChargingStation.setDefaultOption("True", true);
@@ -143,8 +149,13 @@ public class RobotContainer {
                 leftTrigger = new Trigger(this::getLeftTriggerActive);
                 rightTrigger = new Trigger(this::getRightTriggerActive);
 
-                intakeSubsystem.setDefaultCommand(
-                                new PositionHomeCmd(this));
+                driverLeftPOV = new POVButton(driverJoystick, 270);
+                driverRightPOV = new POVButton(driverJoystick, 90);
+                driverUpPOV = new POVButton(driverJoystick, 0);
+                driverDownPOV = new POVButton(driverJoystick, 180);
+
+                // intakeSubsystem.setDefaultCommand(
+                // new PositionHomeCmd(this));
 
                 swerveSubsystem.setDefaultCommand(
                                 new SequentialCommandGroup(
@@ -175,7 +186,12 @@ public class RobotContainer {
 
         private void configureBindings() {
                 leftTrigger.whileTrue(
-                                new TargetPegDriveCmd(this, 1, () -> false, .25));
+                                new SequentialCommandGroup(new TargetPegLateralCmd(this, 1, () -> false),
+                                                new TargetPegDriveCmd(this, 1, () -> false, .25)));
+
+                // driverLeftPOV.onTrue(
+                // new InstantCommand(new ));
+
                 // leftTrigger.whileTrue(new SequentialCommandGroup(
                 // new TranslateAbsoluteCmd(this,
                 // () -> MMField.getLeftDock(this::getIsRedAlliance), 2)
@@ -205,6 +221,14 @@ public class RobotContainer {
 
                 // new JoystickButton(buttonBox1, 9)
                 // .whileTrue(new PositionLowPegCmd(this));
+                new JoystickButton(driverJoystick, 5)
+                                .whileTrue(new StartEndCommand(() -> intakeSubsystem.runIntake(),
+                                                () -> intakeSubsystem.stopIntake()));
+
+                new JoystickButton(driverJoystick, 6)
+                                .whileTrue(new StartEndCommand(() -> intakeSubsystem.runOutTake(),
+                                                () -> intakeSubsystem.stopIntake()));
+
                 new JoystickButton(buttonBox1, 1)
                                 .whileTrue(new PositionHomeCmd(this));
                 new JoystickButton(buttonBox1, 2)
@@ -215,30 +239,34 @@ public class RobotContainer {
                                 .whileTrue(new PositionHighPegCmd(this));
                 new JoystickButton(driverJoystick, 4)
                                 .whileTrue(new AutoDeliveryCmd(this));
+                driverLeftPOV.onTrue(new AdjustArmPoseCmd(() -> AdjustSelection.RotateIncrease, this));
+                driverRightPOV.onTrue(new AdjustArmPoseCmd(() -> AdjustSelection.RotateDecrease, this));
+                driverUpPOV.onTrue(new AdjustArmPoseCmd(() -> AdjustSelection.ExtendIncrease, this));
+                driverDownPOV.onTrue(new AdjustArmPoseCmd(() -> AdjustSelection.ExtendDecrease, this));
                 // new JoystickButton(buttonBox1, 5)
                 // .whileTrue(new AutoDeliveryCmd(this));
-                new JoystickButton(buttonBox1, 5)
-                                .onTrue(new SequentialCommandGroup(
-                                                new InstantCommand(() -> setStartingExtension()),
-                                                new InstantCommand(() -> intakeSubsystem
-                                                                .setArmExtend((getStartingExtension() - .0254)))));
-                new JoystickButton(buttonBox1, 6)
-                                .onTrue(new SequentialCommandGroup(
-                                                new InstantCommand(() -> setStartingExtension()),
-                                                new InstantCommand(() -> intakeSubsystem
-                                                                .setArmExtend((getStartingExtension() + .0254)))));
+                // new JoystickButton(buttonBox1, 5)
+                // .onTrue(new SequentialCommandGroup(
+                // new InstantCommand(() -> setStartingExtension()),
+                // new InstantCommand(() -> intakeSubsystem
+                // .setArmExtend((getStartingExtension() - .0254)))));
+                // new JoystickButton(buttonBox1, 6)
+                // .onTrue(new SequentialCommandGroup(
+                // new InstantCommand(() -> setStartingExtension()),
+                // new InstantCommand(() -> intakeSubsystem
+                // .setArmExtend((getStartingExtension() + .0254)))));
                 new JoystickButton(buttonBox1, 7)
                                 .onTrue(new PositionGroundCmd(this));
-                new JoystickButton(driverJoystick, 5)
-                                .onTrue(new SequentialCommandGroup(
-                                                new InstantCommand(() -> setStartingAngle()),
-                                                new InstantCommand(() -> intakeSubsystem
-                                                                .setArmRotation((getStartingAngle() + .0494)))));
-                new JoystickButton(driverJoystick, 6)
-                                .onTrue(new SequentialCommandGroup(
-                                                new InstantCommand(() -> setStartingAngle()),
-                                                new InstantCommand(() -> intakeSubsystem
-                                                                .setArmRotation((getStartingAngle() - .0494)))));
+                // new JoystickButton(driverJoystick, 5)
+                // .onTrue(new SequentialCommandGroup(
+                // new InstantCommand(() -> setStartingAngle()),
+                // new InstantCommand(() -> intakeSubsystem
+                // .setArmRotation((getStartingAngle() + .0494)))));
+                // new JoystickButton(driverJoystick, 6)
+                // .onTrue(new SequentialCommandGroup(
+                // new InstantCommand(() -> setStartingAngle()),
+                // new InstantCommand(() -> intakeSubsystem
+                // .setArmRotation((getStartingAngle() - .0494)))));
                 // new JoystickButton(buttonBox1, 6)
                 // .whileTrue(new InstantCommand());
                 // new JoystickButton(buttonBox1, 5)
@@ -309,7 +337,8 @@ public class RobotContainer {
                 // rightTrigger.whileTrue(new
                 // AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
                 rightTrigger.whileTrue(
-                                new TargetTagDriveCmd(this, 1, () -> false, .25));
+                                new SequentialCommandGroup(new TargetTagLateralCmd(this, 1, () -> false),
+                                                new TargetTagDriveCmd(this, 1, () -> false, .25)));
                 // new JoystickButton(driverJoystick, rightTrigger)
                 // .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
                 // swerveSubsystem, navigationSubsystem,
@@ -341,7 +370,6 @@ public class RobotContainer {
                 // .onTrue(
                 // new DeliverCubeCmd(this, () -> false));
 
-                
                 new JoystickButton(buttonBox2, Constants.ButtonBox2.Button.row1)
                                 .onTrue(new InstantCommand(() -> selectCell(gridCell, 1)));
 
@@ -510,6 +538,22 @@ public class RobotContainer {
 
         public void clearSelectedCell() {
                 gridCell = 0;
+        }
+
+        public boolean getDriverUpPOV() {
+                return driverJoystick.getPOV() == 0;
+        }
+
+        public boolean getDriverDownPOV() {
+                return driverJoystick.getPOV() == 180;
+        }
+
+        public boolean getDriverLeftPOV() {
+                return driverJoystick.getPOV() == 270;
+        }
+
+        public boolean getDriverRightPOV() {
+                return driverJoystick.getPOV() == 90;
         }
 
         public boolean getLeftTriggerActive() {
