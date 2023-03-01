@@ -19,7 +19,7 @@ public class DeliverCubeCmd extends SequentialCommandGroup {
                 Commands.parallel(
                         Commands.either(
                                 new InstantCommand(rc.intakeSubsystem::runOutTakeSlow),
-                                new InstantCommand(rc.intakeSubsystem::runOutTake),
+                                new InstantCommand(rc.intakeSubsystem::runOutTakeHigh),
                                 isLow),
                         Commands.waitSeconds(1)),
                 new InstantCommand(rc.intakeSubsystem::stopIntake));

@@ -42,13 +42,16 @@ import frc.robot.commands.DriveToBumperCmd;
 import frc.robot.commands.DriveToRampCmd;
 import frc.robot.commands.GripGrabCmd;
 import frc.robot.commands.GripReleaseCmd;
+import frc.robot.commands.LeftDockExtract;
 import frc.robot.commands.LockedInCmd;
+import frc.robot.commands.ManualDeliverCmd;
 import frc.robot.commands.PickUpCubeCmd;
 import frc.robot.commands.PositionGroundCmd;
 import frc.robot.commands.PositionHighPegCmd;
 import frc.robot.commands.PositionHomeCmd;
 import frc.robot.commands.PositionLoadingCmd;
 import frc.robot.commands.PositionLowPegCmd;
+import frc.robot.commands.RightDockExtract;
 import frc.robot.commands.RunIntakeUntilBrokenCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TargetPegCmd;
@@ -164,8 +167,9 @@ public class RobotContainer {
                                                                 () -> driveXAxis.getSquared(),
                                                                 () -> driveYAxis.getSquared(),
                                                                 () -> driveRAxis.getSquared(),
-                                                                () -> driverJoystick.getRawButton(
-                                                                                Constants.Driver.Button.overrideFieldCentricA)))
+                                                                () -> false))
+                // driverJoystick.getRawButton(
+                // Constants.Driver.Button.overrideFieldCentricA)
 
                 );
                 configureBindings();
@@ -186,8 +190,10 @@ public class RobotContainer {
 
         private void configureBindings() {
                 leftTrigger.whileTrue(
-                                new SequentialCommandGroup(new TargetPegLateralCmd(this, 1, () -> false),
-                                                new TargetPegDriveCmd(this, 1, () -> false, .25)));
+                                new SequentialCommandGroup(
+                                                new TargetPegLateralCmd(this, 1, () -> intakeSubsystem.getBeamBreak()),
+                                                new TargetPegDriveCmd(this, 1, () -> intakeSubsystem.getBeamBreak(),
+                                                                .25)));
 
                 // driverLeftPOV.onTrue(
                 // new InstantCommand(new ));
@@ -221,22 +227,26 @@ public class RobotContainer {
 
                 // new JoystickButton(buttonBox1, 9)
                 // .whileTrue(new PositionLowPegCmd(this));
+                new JoystickButton(driverJoystick, 3)
+                                .whileTrue(new LeftDockExtract(this));
+                new JoystickButton(driverJoystick, 2)
+                                .whileTrue(new RightDockExtract(this));
                 new JoystickButton(driverJoystick, 5)
                                 .whileTrue(new StartEndCommand(() -> intakeSubsystem.runIntake(),
                                                 () -> intakeSubsystem.stopIntake()));
 
                 new JoystickButton(driverJoystick, 6)
-                                .whileTrue(new StartEndCommand(() -> intakeSubsystem.runOutTake(),
+                                .whileTrue(new StartEndCommand(() -> intakeSubsystem.runOutTakeHigh(),
                                                 () -> intakeSubsystem.stopIntake()));
 
                 new JoystickButton(buttonBox1, 1)
                                 .whileTrue(new PositionHomeCmd(this));
                 new JoystickButton(buttonBox1, 2)
-                                .whileTrue(new PositionLoadingCmd(this));// coment back later
+                                .whileTrue(new PositionLoadingCmd(this));
                 new JoystickButton(buttonBox1, 3)
-                                .whileTrue(new PositionLowPegCmd(this));
-                new JoystickButton(buttonBox1, 4)
-                                .whileTrue(new PositionHighPegCmd(this));
+                                .whileTrue(new ManualDeliverCmd(this, () -> getManualDeliver()));
+                // new JoystickButton(buttonBox1, 4)
+                // .whileTrue(new PositionHighPegCmd(this));
                 new JoystickButton(driverJoystick, 4)
                                 .whileTrue(new AutoDeliveryCmd(this));
                 driverLeftPOV.onTrue(new AdjustArmPoseCmd(() -> AdjustSelection.RotateIncrease, this));
@@ -318,7 +328,7 @@ public class RobotContainer {
                 // new JoystickButton(buttonBox1, 10)
                 // .whileTrue(new InstantCommand(() -> intakeSubsystem.setArmRotationNeg()));
 
-                new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavxB)
+                new JoystickButton(driverJoystick, Constants.Driver.Button.resetNavxA)
                                 .onTrue(new SequentialCommandGroup(
                                                 new InstantCommand(() -> navigationSubsystem
                                                                 .zeroHeading(() -> getIsRedAlliance())),
@@ -337,8 +347,10 @@ public class RobotContainer {
                 // rightTrigger.whileTrue(new
                 // AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
                 rightTrigger.whileTrue(
-                                new SequentialCommandGroup(new TargetTagLateralCmd(this, 1, () -> false),
-                                                new TargetTagDriveCmd(this, 1, () -> false, .25)));
+                                new SequentialCommandGroup(
+                                                new TargetTagLateralCmd(this, 1, () -> intakeSubsystem.getBeamBreak()),
+                                                new TargetTagDriveCmd(this, 1, () -> intakeSubsystem.getBeamBreak(),
+                                                                .25)));
                 // new JoystickButton(driverJoystick, rightTrigger)
                 // .whileTrue(new AutoDeliveryCmd(this).unless(this::isNotGridCellSelected));
                 // swerveSubsystem, navigationSubsystem,
@@ -583,6 +595,31 @@ public class RobotContainer {
                 row -= 10;
                 return (row * 9) + column;
         }
+
+        public ManualDeliveryMethod getManualDeliver() {
+                if (intakeSubsystem.getBeamBreak()) {
+                        switch (gridHeight) {
+                                case 1:
+                                        return ManualDeliveryMethod.CubeLowNode;
+                                case 2:
+                                        return ManualDeliveryMethod.CubeMiddleNode;
+                                case 3:
+                                        return ManualDeliveryMethod.CubeHighNode;
+                        }
+
+                } else {
+                        switch (gridHeight) {
+                                case 1:
+                                        return ManualDeliveryMethod.ClawLowNode;
+                                case 2:
+                                        return ManualDeliveryMethod.ClawMiddleNode;
+                                case 3:
+                                        return ManualDeliveryMethod.ClawHighNode;
+                        }
+                }
+                return ManualDeliveryMethod.NoneSelected;
+        }
+
 }
 // create a mega command to select choose whether we are delivering or if we are
 // using the cell selection to do semi-automatic;

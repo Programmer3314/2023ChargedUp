@@ -192,8 +192,8 @@ public class Constants {
         }
 
         public static class Button {
-            public static final int overrideFieldCentricA = 1;
-            public static final int resetNavxB = 2;
+            // public static final int overrideFieldCentricA = 1;
+            public static final int resetNavxA = 1;
 
             // public static final int testPeg = 3;
             // public static final int autoDelivery=1;

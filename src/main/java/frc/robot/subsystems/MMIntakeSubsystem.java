@@ -182,9 +182,14 @@ public class MMIntakeSubsystem extends SubsystemBase {
         outTakeMotor.set(TalonFXControlMode.PercentOutput, .2);
     }
 
-    public void runOutTake() {
+    public void runOutTakeHigh() {
         intakeMotor.set(TalonFXControlMode.PercentOutput, 1);
         outTakeMotor.set(TalonFXControlMode.PercentOutput, 1);
+    }
+
+    public void runOutTakeMiddle() {
+        intakeMotor.set(TalonFXControlMode.PercentOutput, .85);
+        outTakeMotor.set(TalonFXControlMode.PercentOutput, .85);
     }
 
     public boolean getBeamBreak() {
