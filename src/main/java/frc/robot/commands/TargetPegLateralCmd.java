@@ -28,7 +28,7 @@ public class TargetPegLateralCmd extends CommandBase {
     public TargetPegLateralCmd(RobotContainer rc, double maxRotationSpeed, Supplier<Boolean> placeCube) {
         this.maxRotationSpeed = maxRotationSpeed;
         // turnPidController = new MMTurnPIDController();
-        targetPidController = new PIDController(.125, 0, 0);
+        targetPidController = new PIDController(.105, 0, 0);
         this.cubeInIntake = cubeInIntake;
         this.rc = rc;
         this.placeCube = placeCube;
@@ -61,7 +61,7 @@ public class TargetPegLateralCmd extends CommandBase {
         // Rotation2d targetAngle = new Rotation2d(Math.toRadians(rawTarget));
         // double correction = turnPidController.execute(targetAngle.getRadians());
         if (rc.navigationSubsystem.hasTargetClaw()) {
-            correction = targetPidController.calculate(rawTarget);
+            correction = targetPidController.calculate(rc.getIsRedAlliance() ? rawTarget : -rawTarget);
         }
 
         rc.swerveSubsystem.drive(0, correction, 0, true, new Rotation2d(angle));

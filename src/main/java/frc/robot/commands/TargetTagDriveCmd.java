@@ -26,6 +26,7 @@ public class TargetTagDriveCmd extends CommandBase {
     private double rawTarget;
     private double driveSpeed;
     private boolean pastStartUpFlag = false;
+    private double currentDriveSpeed;
 
     public TargetTagDriveCmd(RobotContainer rc, double maxRotationSpeed,
             Supplier<Boolean> placeCube, double driveSpeed) {
@@ -42,6 +43,11 @@ public class TargetTagDriveCmd extends CommandBase {
 
     @Override
     public void initialize() {
+        currentDriveSpeed = driveSpeed;
+        if (!rc.getIsRedAlliance()) {
+            currentDriveSpeed = -driveSpeed;
+        }
+
         double angle = (placeCube.get() ^ rc.getIsRedAlliance()) ? 0 : Math.PI;
 
         cyclesOnTarget = 0;
@@ -78,6 +84,10 @@ public class TargetTagDriveCmd extends CommandBase {
                 rawTarget = rc.navigationSubsystem.getClawTargetX();
                 correction = targetPidController.calculate(rawTarget);
             }
+        }
+
+        if (rc.navigationSubsystem.hasTargetClaw()) {
+            correction = targetPidController.calculate(rc.getIsRedAlliance() ? rawTarget : -rawTarget);
         }
 
         rc.swerveSubsystem.drive(driveSpeed, correction, angleCorrection, true, rc.navigationSubsystem.getRotation2d());

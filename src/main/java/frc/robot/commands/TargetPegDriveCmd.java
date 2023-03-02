@@ -26,12 +26,13 @@ public class TargetPegDriveCmd extends CommandBase {
     private Supplier<Boolean> placeCube;
     private boolean pastStartUpFlag = false;
     private double driveSpeed;
+    private double currentDriveSpeed;
 
     public TargetPegDriveCmd(RobotContainer rc, double maxRotationSpeed, Supplier<Boolean> placeCube,
             double driveSpeed) {
         this.maxRotationSpeed = maxRotationSpeed;
         // turnPidController = new MMTurnPIDController();
-        targetPidController = new PIDController(.125, 0, 0);
+        targetPidController = new PIDController(.105, 0, 0);
         this.cubeInIntake = cubeInIntake;
         this.rc = rc;
         this.placeCube = placeCube;
@@ -42,6 +43,10 @@ public class TargetPegDriveCmd extends CommandBase {
 
     @Override
     public void initialize() {
+        currentDriveSpeed = driveSpeed;
+        if (!rc.getIsRedAlliance()) {
+            currentDriveSpeed = -driveSpeed;
+        }
         // navigationSubsystem.setFrontPipeline(1);
         // targetPidController.i
         // turnPidController.initialize(new Rotation2d());
@@ -55,7 +60,6 @@ public class TargetPegDriveCmd extends CommandBase {
             pastStartUpFlag = rc.swerveSubsystem.getAverageDriveVelocity() > .15;
         }
         SmartDashboard.putBoolean("pastStartUp,", pastStartUpFlag);
-
 
         double rawTarget;
         double correction = 0;
@@ -71,10 +75,10 @@ public class TargetPegDriveCmd extends CommandBase {
         // Rotation2d targetAngle = new Rotation2d(Math.toRadians(rawTarget));
         // double correction = turnPidController.execute(targetAngle.getRadians());
         if (rc.navigationSubsystem.hasTargetClaw()) {
-            correction = targetPidController.calculate(rawTarget);
+            correction = targetPidController.calculate(rc.getIsRedAlliance() ? rawTarget : -rawTarget);
         }
 
-        rc.swerveSubsystem.drive(driveSpeed, correction, 0, true, new Rotation2d(angle));
+        rc.swerveSubsystem.drive(currentDriveSpeed, correction, 0, true, new Rotation2d(angle));
         if (Math.abs(rawTarget) < 3) {
             cyclesOnTarget++;
         } else {

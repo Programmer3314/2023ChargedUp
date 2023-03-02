@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -117,8 +119,8 @@ public class MMSwerveSubsystem extends SubsystemBase {
     }
 
     public void humanDrive(double xMetersPerSec, double yMetersPerSec, double rRadPerSec, boolean isFieldCentric,
-            Rotation2d robotAngle, boolean isRedAlliance) {
-        Rotation2d reversedRobotAngle = isRedAlliance ? new Rotation2d(robotAngle.getRadians() + Math.PI) : robotAngle;
+            Rotation2d robotAngle, Supplier<Boolean> isRedAlliance) {
+        Rotation2d reversedRobotAngle = isRedAlliance.get() ? new Rotation2d(robotAngle.getRadians() + Math.PI) : robotAngle;
         ChassisSpeeds chassisSpeeds;
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 xMetersPerSec, yMetersPerSec, rRadPerSec, isFieldCentric ? reversedRobotAngle : new Rotation2d());

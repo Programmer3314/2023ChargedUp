@@ -70,12 +70,13 @@ public class MMNavigationSubsystem extends SubsystemBase {
         odometer.update(getRotation2d(), swerveSubsystem.getSwerveModulePositions());
         mainPose = odometer.getEstimatedPosition();
         aprilPose = getLimelightPose();
-        mainPose = new Pose2d(mainPose.getTranslation(), navx.getRotation2d());
+        mainPose = new Pose2d(mainPose.getTranslation(), getYaw());
         SmartDashboard.putNumber("Robot Heading", Math.toDegrees(getHeadingRad()));
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
         // SmartDashboard.putNumber("AprilTag Rotation Degrees",
         // aprilPose.getRotation().getDegrees());
         SmartDashboard.putNumber("Navx Roll", navx.getRoll());
+        SmartDashboard.putNumber("Angle Offset", angleOffset);
 
         SmartDashboard.putNumber("TX claw", getClawTargetX());
         SmartDashboard.putNumber("Navx Yaw", navx.getYaw());

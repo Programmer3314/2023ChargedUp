@@ -36,7 +36,7 @@ public class RunOutTakeCmd extends SequentialCommandGroup {
                                 new SequentialCommandGroup(
                                         new ParallelCommandGroup(
                                                 new InstantCommand(
-                                                        () -> rc.intakeSubsystem.setIntakeDeliverLower()),
+                                                        () -> rc.intakeSubsystem.setIntakeDeliverMiddle()),
                                                 Commands.waitSeconds(.5)),
                                         Commands.race(
                                                 Commands.waitSeconds(0.5),

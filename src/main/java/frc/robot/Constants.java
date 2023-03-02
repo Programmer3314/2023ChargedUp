@@ -272,8 +272,8 @@ public class Constants {
             // public static final int magneticSensor = 9;
 
             public static class IntakeSensors {
-                public static final int beamBreakSensor = 1;
-                public static final int breakBeamLeft = 5;
+                public static final int beamBreakSensor = 5;
+                public static final int breakBeamLeft = 1;
                 public static final int breakBeamRight = 6;
 
                 public static final int armHome = 7;
@@ -324,7 +324,7 @@ public class Constants {
 
             public class PositionControl {
                 public static final double loading = 0.076;
-                public static final double highPeg = 0.853;
+                public static final double highPeg = 0.8784;
                 public static final double lowPeg = 0.355;// .38
                 public static final double ground = 0.1096;
                 public static final double maxExtendPositionInMeters = 178;

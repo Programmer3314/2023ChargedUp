@@ -18,50 +18,46 @@ import frc.robot.RobotContainer;
 
 /** Add your docs here. */
 public class ManualDeliverCmd extends SequentialCommandGroup {
-    public ManualDeliverCmd(RobotContainer rc, Supplier<Object> method) {
+        public ManualDeliverCmd(RobotContainer rc, Supplier<Object> method) {
 
-        addCommands(
-                Commands.select(Map.ofEntries(
-                        Map.entry(ManualDeliveryMethod.CubeLowNode,
-                                new SequentialCommandGroup(
-                                        new ParallelCommandGroup(
-                                                new InstantCommand(
-                                                        () -> rc.intakeSubsystem.setIntakeTravel()),
-                                                Commands.waitSeconds(.5)),
-                                        Commands.race(
-                                                Commands.waitSeconds(0.5),
-                                                new InstantCommand(() -> rc.intakeSubsystem.runOutTakeSlow())),
-                                        new InstantCommand(() -> rc.intakeSubsystem.stopIntake()))),
-                        Map.entry(ManualDeliveryMethod.CubeMiddleNode,
-                                new SequentialCommandGroup(
-                                        new ParallelCommandGroup(
-                                                new InstantCommand(
-                                                        () -> rc.intakeSubsystem.setIntakeDeliverLower()),
-                                                Commands.waitSeconds(.5)),
-                                        Commands.race(
-                                                Commands.waitSeconds(0.5),
-                                                new InstantCommand(
-                                                        () -> rc.intakeSubsystem.runOutTakeMiddle())),
-                                        new InstantCommand(() -> rc.intakeSubsystem.stopIntake()))),
-                        Map.entry(ManualDeliveryMethod.CubeHighNode,
-                                new SequentialCommandGroup(
-                                        new ParallelCommandGroup(
-                                                new InstantCommand(
-                                                        () -> rc.intakeSubsystem.setIntakeDeliverUpper()),
-                                                Commands.waitSeconds(.5)),
-                                        Commands.race(
-                                                Commands.waitSeconds(0.5),
-                                                new InstantCommand(
-                                                        () -> rc.intakeSubsystem.runOutTakeMiddle())),
-                                        new InstantCommand(() -> rc.intakeSubsystem.stopIntake()))),
+                addCommands(
+                                Commands.select(Map.ofEntries(
+                                                Map.entry(ManualDeliveryMethod.CubeLowNode,
+                                                                new SequentialCommandGroup(
+                                                                                new ParallelCommandGroup(
+                                                                                                new InstantCommand(
+                                                                                                                () -> rc.intakeSubsystem
+                                                                                                                                .setIntakeTravel()),
+                                                                                                Commands.waitSeconds(
+                                                                                                                .5)),
 
-                        Map.entry(ManualDeliveryMethod.ClawLowNode,
-                                new GripReleaseCmd(rc)),
-                        Map.entry(ManualDeliveryMethod.ClawMiddleNode,
-                                new PositionLowPegCmd(rc)),
-                        Map.entry(ManualDeliveryMethod.ClawHighNode,
-                                new PositionHighPegCmd(rc))),
-                        method));
+                                                                                new SpeedCubeDeliverCmd(rc, 50, 0.2))),
+                                                Map.entry(ManualDeliveryMethod.CubeMiddleNode,
+                                                                new SequentialCommandGroup(
+                                                                                new ParallelCommandGroup(
+                                                                                                new InstantCommand(
+                                                                                                                () -> rc.intakeSubsystem
+                                                                                                                                .setIntakeDeliverMiddle()),
+                                                                                                Commands.waitSeconds(
+                                                                                                                1)),
+                                                                                                                new SpeedCubeDeliverCmd(rc, 50, 0.8))),
+                                                Map.entry(ManualDeliveryMethod.CubeHighNode,
+                                                                new SequentialCommandGroup(
+                                                                                new ParallelCommandGroup(
+                                                                                                new InstantCommand(
+                                                                                                                () -> rc.intakeSubsystem
+                                                                                                                                .setIntakeDeliverUpper()),
+                                                                                                Commands.waitSeconds(
+                                                                                                                .5)),
+                                                                                                                new SpeedCubeDeliverCmd(rc, 50, 1))),
 
-    }
+                                                Map.entry(ManualDeliveryMethod.ClawLowNode,
+                                                                new GripReleaseCmd(rc)),
+                                                Map.entry(ManualDeliveryMethod.ClawMiddleNode,
+                                                                new PositionLowPegCmd(rc)),
+                                                Map.entry(ManualDeliveryMethod.ClawHighNode,
+                                                                new PositionHighPegCmd(rc))),
+                                                method));
+
+        }
 }

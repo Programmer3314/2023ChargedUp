@@ -57,7 +57,6 @@ public class TargetTagLateralCmd extends CommandBase {
     public void execute() {
 
         double correction = 0;
-        
 
         double angleCorrection = turnPidController.execute(rc.navigationSubsystem.getRotation2d());
         SmartDashboard.putNumber("Current Angle Correction", angleCorrection);
@@ -66,13 +65,15 @@ public class TargetTagLateralCmd extends CommandBase {
         if (placeCube.get()) {
             if (rc.navigationSubsystem.hasTargetBack()) {
                 rawTarget = rc.navigationSubsystem.getBackTargetX();
-                correction = targetPidController.calculate(rawTarget);
             }
         } else {
             if (rc.navigationSubsystem.hasTargetClaw()) {
                 rawTarget = rc.navigationSubsystem.getClawTargetX();
-                correction = targetPidController.calculate(rawTarget);
             }
+        }
+
+        if (rc.navigationSubsystem.hasTargetClaw()) {
+            correction = targetPidController.calculate(rc.getIsRedAlliance() ? rawTarget : -rawTarget);
         }
 
         rc.swerveSubsystem.drive(0, correction, angleCorrection, true, rc.navigationSubsystem.getRotation2d());

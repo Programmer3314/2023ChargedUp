@@ -15,6 +15,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -40,6 +43,7 @@ import frc.robot.commands.OneConeAutoCmd;
 import frc.robot.commands.DeliverCubeCmd;
 import frc.robot.commands.DriveToBumperCmd;
 import frc.robot.commands.DriveToRampCmd;
+import frc.robot.commands.FullIntakeCmd;
 import frc.robot.commands.GripGrabCmd;
 import frc.robot.commands.GripReleaseCmd;
 import frc.robot.commands.LeftDockExtract;
@@ -53,6 +57,7 @@ import frc.robot.commands.PositionLoadingCmd;
 import frc.robot.commands.PositionLowPegCmd;
 import frc.robot.commands.RightDockExtract;
 import frc.robot.commands.RunIntakeUntilBrokenCmd;
+import frc.robot.commands.SaveRetinasCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.TargetPegCmd;
 import frc.robot.commands.TargetPegDriveCmd;
@@ -81,8 +86,8 @@ public class RobotContainer {
         private double manualAngle = 0;
         private double startingExtension = 0;
 
-        private static Alliance alliance;
-        private static boolean isRedAlliance = true;
+        public static DriverStation.Alliance alliance;
+        public static boolean isRedAlliance = true;
 
         public final MMSwerveSubsystem swerveSubsystem = new MMSwerveSubsystem();
         public final MMNavigationSubsystem navigationSubsystem = new MMNavigationSubsystem(swerveSubsystem);
@@ -107,6 +112,8 @@ public class RobotContainer {
         private int gridGroupCell;
         private int gridCell;
         private GenericEntry gridCellEntry = tab.add("Grid Cell: ", "None").getEntry();
+        private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        private final NetworkTable fmsIsRed = inst.getTable("FMSInfo");
         private Trigger leftTrigger;
         private Trigger rightTrigger;
         public final MMIntakeSubsystem intakeSubsystem;
@@ -141,9 +148,6 @@ public class RobotContainer {
                 new Thread(() -> {
                         try {
                                 Thread.sleep(1000);
-                                alliance = DriverStation.getAlliance();
-                                isRedAlliance = Alliance.Red == alliance && Alliance.Blue != alliance;
-                                ;
                         } catch (Exception e) {
                         }
                 }).start();
@@ -159,7 +163,6 @@ public class RobotContainer {
 
                 // intakeSubsystem.setDefaultCommand(
                 // new PositionHomeCmd(this));
-
                 swerveSubsystem.setDefaultCommand(
                                 new SequentialCommandGroup(
                                                 new InstantCommand(() -> navigationSubsystem.setClawPipeline(0)),
@@ -191,8 +194,10 @@ public class RobotContainer {
         private void configureBindings() {
                 leftTrigger.whileTrue(
                                 new SequentialCommandGroup(
-                                                new TargetPegLateralCmd(this, 1, () -> intakeSubsystem.getBeamBreak()),
-                                                new TargetPegDriveCmd(this, 1, () -> intakeSubsystem.getBeamBreak(),
+                                                new TargetPegLateralCmd(this, 1,
+                                                                () -> intakeSubsystem.getBeamBreak()),
+                                                new TargetPegDriveCmd(this, 1,
+                                                                () -> intakeSubsystem.getBeamBreak(),
                                                                 .25)));
 
                 // driverLeftPOV.onTrue(
@@ -232,8 +237,8 @@ public class RobotContainer {
                 new JoystickButton(driverJoystick, 2)
                                 .whileTrue(new RightDockExtract(this));
                 new JoystickButton(driverJoystick, 5)
-                                .whileTrue(new StartEndCommand(() -> intakeSubsystem.runIntake(),
-                                                () -> intakeSubsystem.stopIntake()));
+                                .whileTrue(
+                                                new FullIntakeCmd(this));
 
                 new JoystickButton(driverJoystick, 6)
                                 .whileTrue(new StartEndCommand(() -> intakeSubsystem.runOutTakeHigh(),
@@ -244,7 +249,7 @@ public class RobotContainer {
                 new JoystickButton(buttonBox1, 2)
                                 .whileTrue(new PositionLoadingCmd(this));
                 new JoystickButton(buttonBox1, 3)
-                                .whileTrue(new ManualDeliverCmd(this, () -> getManualDeliver()));
+                                .onTrue(new ManualDeliverCmd(this, () -> getManualDeliver()));
                 // new JoystickButton(buttonBox1, 4)
                 // .whileTrue(new PositionHighPegCmd(this));
                 new JoystickButton(driverJoystick, 4)

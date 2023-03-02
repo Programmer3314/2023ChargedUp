@@ -31,8 +31,8 @@ public class MMIntakeSubsystem extends SubsystemBase {
     private final DigitalInput intakeRightBreak;
     private final DigitalInput intakeLeftBreak;
     private final PneumaticsControlModule pneumaticsControlModule;
-    private final DoubleSolenoid intakePosition;
-    private final DoubleSolenoid intakeUpperPosition;
+    private final DoubleSolenoid pickPosition;
+    private final DoubleSolenoid shootPosition;
 
     private final TalonFX armExtend;
     private final TalonFX armRotate;
@@ -60,12 +60,12 @@ public class MMIntakeSubsystem extends SubsystemBase {
         intakeRightBreak = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.breakBeamRight);
 
         pneumaticsControlModule = new PneumaticsControlModule(Constants.Pneumatic.pneumaticHubModule);
-        intakePosition = pneumaticsControlModule.makeDoubleSolenoid( // large pneumatics that can set the intake to
-                                                                     // floor or travel for the claw thing
+        pickPosition = pneumaticsControlModule.makeDoubleSolenoid( // large pneumatics that can set the intake to
+                                                                   // floor or travel for the claw thing
                 Constants.Pneumatic.LowerIntake.forwardChannel,
                 Constants.Pneumatic.LowerIntake.reverseChannel);
 
-        intakeUpperPosition = pneumaticsControlModule.makeDoubleSolenoid(
+        shootPosition = pneumaticsControlModule.makeDoubleSolenoid(
                 Constants.Pneumatic.UpperIntake.forwardChannel, Constants.Pneumatic.UpperIntake.reverseChannel);
 
         armExtend = new TalonFX(Constants.Arm.Extend.CanID.Id);
@@ -177,6 +177,11 @@ public class MMIntakeSubsystem extends SubsystemBase {
         intakeMotor.set(TalonFXControlMode.PercentOutput, -.2);
     }
 
+    public void runOutTakeSpeed(double speed) {
+        intakeMotor.set(TalonFXControlMode.PercentOutput, speed);
+        outTakeMotor.set(TalonFXControlMode.PercentOutput, speed);
+    }
+
     public void runOutTakeSlow() {
         intakeMotor.set(TalonFXControlMode.PercentOutput, .2);
         outTakeMotor.set(TalonFXControlMode.PercentOutput, .2);
@@ -213,23 +218,23 @@ public class MMIntakeSubsystem extends SubsystemBase {
     }
 
     public void setIntakeFloor() {
-        intakePosition.set(Value.kForward);
-        intakeUpperPosition.set(Value.kForward);
+        pickPosition.set(Value.kForward);
+        shootPosition.set(Value.kReverse);
     }
 
     public void setIntakeTravel() {
-        intakePosition.set(Value.kReverse);
-        intakeUpperPosition.set(Value.kReverse);
+        pickPosition.set(Value.kReverse);
+        shootPosition.set(Value.kReverse);
     }
 
     public void setIntakeDeliverUpper() {
-        intakeUpperPosition.set(Value.kForward);
-        intakePosition.set(Value.kReverse);
+        shootPosition.set(Value.kForward);
+        pickPosition.set(Value.kReverse);
     }
 
-    public void setIntakeDeliverLower() {
-        intakeUpperPosition.set(Value.kReverse);
-        intakePosition.set(Value.kForward);
+    public void setIntakeDeliverMiddle() {
+        shootPosition.set(Value.kForward);
+        pickPosition.set(Value.kReverse);
     }
 
     public void setArmExtend(double armPositionInMeters) {
