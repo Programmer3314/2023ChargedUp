@@ -24,6 +24,7 @@ public class OneBallAutoCmd extends SequentialCommandGroup {
                 new InstantCommand(() -> rc.setChargingStation()),
                 new InstantCommand(() -> rc.navigationSubsystem.zeroHeading((rc::getIsRedAlliance))),
                 new InstantCommand(() -> rc.navigationSubsystem.resetOdometry(startingPosition.get())),
+                new PositionHomeCmd(rc),
                 new GripReleaseCmd(rc),
                 new DriveToGridAlleyCmd(rc, () -> true),
                 new DriveToCellCmd(rc,

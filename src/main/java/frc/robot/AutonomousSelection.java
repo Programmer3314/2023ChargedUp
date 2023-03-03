@@ -9,5 +9,6 @@ public enum AutonomousSelection {
     OneBallAuto,
     OneConeAuto,
     TwoBallAuto,
-    ThreeBallAuto
+    ThreeBallAuto,
+    OneConeLeaveCommunityAutoCmd
 }

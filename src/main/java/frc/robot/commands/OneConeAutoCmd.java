@@ -24,6 +24,7 @@ public class OneConeAutoCmd extends SequentialCommandGroup {
                 new InstantCommand(() -> rc.setChargingStation()),
                 new InstantCommand(() -> rc.navigationSubsystem.zeroHeading((rc::getIsRedAlliance))),
                 new InstantCommand(() -> rc.navigationSubsystem.resetOdometry(startingPosition.get())),
+                new PositionHomeCmd(rc),
                 new PositionLowPegCmd(rc),
                 new GripReleaseCmd(rc),
                 new PositionHomeCmd(rc),

@@ -40,6 +40,7 @@ import frc.robot.commands.AdjustArmPoseCmd;
 import frc.robot.commands.AutoDeliveryCmd;
 import frc.robot.commands.OneBallAutoCmd;
 import frc.robot.commands.OneConeAutoCmd;
+import frc.robot.commands.OneConeLeaveCommunityAutoCmd;
 import frc.robot.commands.DeliverCubeCmd;
 import frc.robot.commands.DriveToBumperCmd;
 import frc.robot.commands.DriveToRampCmd;
@@ -132,6 +133,7 @@ public class RobotContainer {
                 getDesiredAuto.setDefaultOption("One Cone", AutonomousSelection.OneConeAuto);
                 getDesiredAuto.addOption("Two Ball", AutonomousSelection.TwoBallAuto);
                 getDesiredAuto.addOption("Three Ball", AutonomousSelection.ThreeBallAuto);
+                getDesiredAuto.addOption("One Cone Community", AutonomousSelection.OneConeLeaveCommunityAutoCmd);
                 getDesiredHeight.setDefaultOption("None Selected", 0);
                 for (int i = 1; i < 4; i++) {
                         getDesiredHeight.addOption("Height: " + i, i);
@@ -474,6 +476,8 @@ public class RobotContainer {
                                 return new TwoBallAutoCmd(this);
                         case OneConeAuto:
                                 return new OneConeAutoCmd(this, () -> autoPosition, () -> isOverChargingStation);
+                        case OneConeLeaveCommunityAutoCmd:
+                                return new OneConeLeaveCommunityAutoCmd(this, () -> autoPosition);
                         default:
                                 return new OneBallAutoCmd(this, () -> autoPosition, () -> isOverChargingStation);
 
@@ -490,6 +494,35 @@ public class RobotContainer {
         // gridGroupCell
         // + " Grid Height: " + gridHeight + " Grid Cell: " + gridCell);
         // }
+        
+        public Pose2d pickUpOutsidePosition(){
+                Rotation2d rot;
+                double x;
+                double y;
+                if (isRedAlliance){
+                        rot = new Rotation2d();
+                        x = 1.76;
+                        y = autoPosition.getTranslation().getY();
+                        if(getAutoStartPose.getSelected()==1){
+                                y=-3.0825;
+                        }
+                        if(getAutoStartPose.getSelected()==9){
+                                y=0.575;
+                        }
+                } else{
+                        rot = new Rotation2d(Math.PI);
+                        x = -1.76;
+                        y = autoPosition.getTranslation().getY();
+                        if(getAutoStartPose.getSelected()==9){
+                                y=-3.0825;
+                        }
+                        if(getAutoStartPose.getSelected()==1){
+                                y=0.575;
+                        }
+                }
+                return new Pose2d(x, y, rot);
+
+        }
 
         public void selectCell(int column, int row) {
                 gridCell = column;

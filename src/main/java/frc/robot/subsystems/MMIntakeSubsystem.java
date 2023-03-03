@@ -75,7 +75,7 @@ public class MMIntakeSubsystem extends SubsystemBase {
         armFarFromHome = new DigitalInput(Constants.RoboRio.Dio.IntakeSensors.armFarFromHome);
         armAbsoluteRotation = new CANCoder(Constants.Arm.Encoder.Id);
         armAbsoluteRotation.configSensorDirection(true);
-        armAbsoluteRotation.configMagnetOffset(-103);
+        armAbsoluteRotation.configMagnetOffset(-102);
         armAbsoluteRotation.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
         armExtend.configFactoryDefault(Constants.Robot.canBusTimeoutMs);
 

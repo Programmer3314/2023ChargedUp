@@ -34,7 +34,6 @@ public class TargetTagDriveCmd extends CommandBase {
         this.maxRotationSpeed = maxRotationSpeed;
         // turnPidController = new MMTurnPIDController();
         targetPidController = new PIDController(.06125, 0, 0);
-        turnPidController = new MMTurnPIDController();
         this.rc = rc;
         this.placeCube = placeCube;
 
@@ -51,7 +50,7 @@ public class TargetTagDriveCmd extends CommandBase {
         double angle = (placeCube.get() ^ rc.getIsRedAlliance()) ? 0 : Math.PI;
 
         cyclesOnTarget = 0;
-        turnPidController.initialize(new Rotation2d(angle));
+        // turnPidController.initialize(new Rotation2d(angle));
         if (placeCube.get()) {
 
             rc.navigationSubsystem.setBackPipeline(0);
@@ -69,7 +68,7 @@ public class TargetTagDriveCmd extends CommandBase {
 
         double correction = 0;
 
-        double angleCorrection = turnPidController.execute(rc.navigationSubsystem.getRotation2d());
+        double angleCorrection = (placeCube.get() ^ rc.getIsRedAlliance()) ? 0 : Math.PI;
         SmartDashboard.putNumber("Drive Velocity", rc.swerveSubsystem.getAverageDriveVelocity());
         SmartDashboard.putNumber("Current Angle Correction", angleCorrection);
         // Rotation2d targetAngle = new Rotation2d(Math.toRadians(rawTarget));
@@ -90,7 +89,7 @@ public class TargetTagDriveCmd extends CommandBase {
             correction = targetPidController.calculate(rc.getIsRedAlliance() ? rawTarget : -rawTarget);
         }
 
-        rc.swerveSubsystem.drive(driveSpeed, correction, angleCorrection, true, rc.navigationSubsystem.getRotation2d());
+        rc.swerveSubsystem.drive(currentDriveSpeed, correction, 0, true, new Rotation2d(angleCorrection));
         if (Math.abs(rawTarget) < 3) {
             cyclesOnTarget++;
         } else {
@@ -111,7 +110,10 @@ public class TargetTagDriveCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        boolean droveToPeg = rc.swerveSubsystem.getAverageDriveVelocity() <= .15 && pastStartUpFlag;
+        SmartDashboard.putNumber("Drive Velocity: ",
+                rc.swerveSubsystem.getAverageDriveVelocity());
+        
+        boolean droveToPeg = rc.swerveSubsystem.getAverageDriveVelocity() <= .8 && pastStartUpFlag;
         return cyclesOnTarget >= 75 && droveToPeg;
     }
 }

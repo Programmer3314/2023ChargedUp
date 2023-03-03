@@ -37,14 +37,14 @@ public class PositionHomeCmd extends CommandBase {
 
         SmartDashboard.putBoolean("setHome", rc.intakeSubsystem.robotHomed());
         SmartDashboard.putBoolean("Finished with PositionHome", Math.abs(rc.intakeSubsystem.getArmExtend() - 0) < .01
-                && rc.intakeSubsystem.getArmRotate() < .01
+                && rc.intakeSubsystem.getArmRotate() < .03
                 && rc.intakeSubsystem.robotHomed());
     }
 
     @Override
     public boolean isFinished() {
         return Math.abs(rc.intakeSubsystem.getArmExtend() - 0) < .01
-                && rc.intakeSubsystem.getArmRotate() < .01
+                && rc.intakeSubsystem.getArmRotate() < .03
                 && rc.intakeSubsystem.robotHomed();
     }
 

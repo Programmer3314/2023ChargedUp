@@ -43,7 +43,8 @@ public class Robot extends TimedRobot {
     RobotContainer.alliance = DriverStation.getAlliance();
     RobotContainer.isRedAlliance = Alliance.Red == RobotContainer.alliance;// && Alliance.Blue != alliance
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    SmartDashboard.putString("Alliance Condition",
+        RobotContainer.alliance.toString());
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }

@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -23,6 +24,8 @@ public class PositionLowPegCmd extends CommandBase {
 
     @Override
     public void execute() {
+        SmartDashboard.putBoolean("FinishedLowPeg", Math.abs(rc.intakeSubsystem.getArmExtend() - Constants.Arm.Extend.PositionControl.lowPeg) < .04
+        && Math.abs(rc.intakeSubsystem.getArmRotate() - Constants.Arm.Rotation.PositionControl.lowPeg) < .04);
 
     }
 
