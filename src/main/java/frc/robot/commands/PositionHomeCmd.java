@@ -45,7 +45,7 @@ public class PositionHomeCmd extends CommandBase {
     public boolean isFinished() {
         return Math.abs(rc.intakeSubsystem.getArmExtend() - 0) < .01
                 && rc.intakeSubsystem.getArmRotate() < .03
-                && rc.intakeSubsystem.robotHomed();
+                && rc.intakeSubsystem.robotHomed() && rc.intakeSubsystem.extendIsHomed();
     }
 
     @Override

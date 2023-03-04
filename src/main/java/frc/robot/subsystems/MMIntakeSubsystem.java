@@ -282,6 +282,12 @@ public class MMIntakeSubsystem extends SubsystemBase {
         setIntakeTravel();
     }
 
+    public void setHighPegSafety() {
+        setArmExtend(Constants.Arm.Extend.PositionControl.highPeg);
+        setArmRotation(Constants.Arm.Rotation.PositionControl.highPegSafety);
+        setIntakeTravel();
+    }
+
     public void setLowPeg() {
         setArmExtend(Constants.Arm.Extend.PositionControl.lowPeg);
         setArmRotation(Constants.Arm.Rotation.PositionControl.lowPeg);
@@ -371,6 +377,14 @@ public class MMIntakeSubsystem extends SubsystemBase {
 
     public Object zeroHeading(Object object) {
         return null;
+    }
+
+    public void setLightCube(){
+
+    }
+
+    public void setLightCone(){
+        
     }
 
 }

@@ -40,12 +40,13 @@ public class SwerveJoystickCmd extends CommandBase {
         SmartDashboard.putBoolean("IsRedAlliance", rc.getIsRedAlliance());
         SmartDashboard.putNumber("X Speed", xSpdFunction.get());
         SmartDashboard.putNumber("Manual Value", rc.getStartingAngle());
+        SmartDashboard.putString("Robot Rot2d",rc.navigationSubsystem.getRotation2d().toString() );
         double xSpeed = xSpdFunction.get();
         double ySpeed = ySpdFunction.get();
         double turningSpeed = turningSpdFunction.get();
 
-        rc.swerveSubsystem.humanDrive(xSpeed, ySpeed, turningSpeed, !overrideFieldOriented.get(),
-                rc.navigationSubsystem.getRotation2d(), () -> rc.getIsRedAlliance());
+        rc.swerveSubsystem.drive(xSpeed, ySpeed, turningSpeed, !overrideFieldOriented.get(),
+                rc.navigationSubsystem.getRotation2d());// , () -> rc.getIsRedAlliance()
     }
 
     @Override

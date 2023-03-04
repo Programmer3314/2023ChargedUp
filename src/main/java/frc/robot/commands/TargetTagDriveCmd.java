@@ -88,6 +88,8 @@ public class TargetTagDriveCmd extends CommandBase {
         if (rc.navigationSubsystem.hasTargetClaw()) {
             correction = targetPidController.calculate(rc.getIsRedAlliance() ? rawTarget : -rawTarget);
         }
+        SmartDashboard.putNumber("DrTag Horizontal Correction", correction);
+        SmartDashboard.putNumber("DrTag Robot Angle", angleCorrection);
 
         rc.swerveSubsystem.drive(currentDriveSpeed, correction, 0, true, new Rotation2d(angleCorrection));
         if (Math.abs(rawTarget) < 3) {
@@ -112,7 +114,7 @@ public class TargetTagDriveCmd extends CommandBase {
     public boolean isFinished() {
         SmartDashboard.putNumber("Drive Velocity: ",
                 rc.swerveSubsystem.getAverageDriveVelocity());
-        
+
         boolean droveToPeg = rc.swerveSubsystem.getAverageDriveVelocity() <= .8 && pastStartUpFlag;
         return cyclesOnTarget >= 75 && droveToPeg;
     }

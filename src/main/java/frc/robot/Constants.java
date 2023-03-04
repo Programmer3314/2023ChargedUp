@@ -351,6 +351,7 @@ public class Constants {
             public class PositionControl {
                 public static final double loading = 0.613;// .725
                 public static final double highPeg = 0.837; // 50 deg
+                public static final double highPegSafety = 0.827;
                 public static final double lowPeg = .9668;// 58 deg
                 public static final double ground = 2.33; // 132 degrees
             }

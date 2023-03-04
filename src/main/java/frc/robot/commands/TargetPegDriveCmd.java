@@ -77,7 +77,8 @@ public class TargetPegDriveCmd extends CommandBase {
         if (rc.navigationSubsystem.hasTargetClaw()) {
             correction = targetPidController.calculate(rc.getIsRedAlliance() ? rawTarget : -rawTarget);
         }
-
+        SmartDashboard.putNumber("DrPeg Horizontal Correction", correction);
+        SmartDashboard.putNumber("DrPeg Robot Angle", angle);
         rc.swerveSubsystem.drive(currentDriveSpeed, correction, 0, true, new Rotation2d(angle));
         if (Math.abs(rawTarget) < 3) {
             cyclesOnTarget++;

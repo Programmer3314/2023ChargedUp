@@ -9,17 +9,17 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 /** Add your docs here. */
-public class PositionHighPegCmd extends CommandBase {
-    private final RobotContainer rc;
+public class PositionHighPegSafetyCmd extends CommandBase {
+    RobotContainer rc;
 
-    public PositionHighPegCmd(RobotContainer rc) {
+    public PositionHighPegSafetyCmd(RobotContainer rc) {
         this.rc = rc;
         addRequirements(rc.intakeSubsystem);
     }
 
     @Override
     public void initialize() {
-        rc.intakeSubsystem.setHighPeg();
+        rc.intakeSubsystem.setHighPegSafety();
 
     }
 

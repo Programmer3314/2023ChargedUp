@@ -38,6 +38,7 @@ import frc.robot.Constants.ButtonBox1;
 import frc.robot.Constants.ButtonBox2;
 import frc.robot.commands.AdjustArmPoseCmd;
 import frc.robot.commands.AutoDeliveryCmd;
+import frc.robot.commands.CompleteRampSequenceCmd;
 import frc.robot.commands.OneBallAutoCmd;
 import frc.robot.commands.OneConeAutoCmd;
 import frc.robot.commands.OneConeLeaveCommunityAutoCmd;
@@ -260,6 +261,14 @@ public class RobotContainer {
                 driverRightPOV.onTrue(new AdjustArmPoseCmd(() -> AdjustSelection.RotateDecrease, this));
                 driverUpPOV.onTrue(new AdjustArmPoseCmd(() -> AdjustSelection.ExtendIncrease, this));
                 driverDownPOV.onTrue(new AdjustArmPoseCmd(() -> AdjustSelection.ExtendDecrease, this));
+
+                new JoystickButton(buttonBox1, 5)
+                                .onTrue(new InstantCommand(() -> intakeSubsystem.setLightCone()));
+                new JoystickButton(buttonBox1, 6)
+                                .onTrue(new InstantCommand(() -> intakeSubsystem.setLightCube()));
+
+                new JoystickButton(buttonBox1, 4)
+                                .whileTrue(new CompleteRampSequenceCmd(this));
                 // new JoystickButton(buttonBox1, 5)
                 // .whileTrue(new AutoDeliveryCmd(this));
                 // new JoystickButton(buttonBox1, 5)
@@ -494,30 +503,30 @@ public class RobotContainer {
         // gridGroupCell
         // + " Grid Height: " + gridHeight + " Grid Cell: " + gridCell);
         // }
-        
-        public Pose2d pickUpOutsidePosition(){
+
+        public Pose2d pickUpOutsidePosition() {
                 Rotation2d rot;
                 double x;
                 double y;
-                if (isRedAlliance){
+                if (isRedAlliance) {
                         rot = new Rotation2d();
                         x = 1.76;
                         y = autoPosition.getTranslation().getY();
-                        if(getAutoStartPose.getSelected()==1){
-                                y=-3.0825;
+                        if (getAutoStartPose.getSelected() == 1) {
+                                y = -3.0825;
                         }
-                        if(getAutoStartPose.getSelected()==9){
-                                y=0.575;
+                        if (getAutoStartPose.getSelected() == 9) {
+                                y = 0.575;
                         }
-                } else{
+                } else {
                         rot = new Rotation2d(Math.PI);
                         x = -1.76;
                         y = autoPosition.getTranslation().getY();
-                        if(getAutoStartPose.getSelected()==9){
-                                y=-3.0825;
+                        if (getAutoStartPose.getSelected() == 9) {
+                                y = -3.0825;
                         }
-                        if(getAutoStartPose.getSelected()==1){
-                                y=0.575;
+                        if (getAutoStartPose.getSelected() == 1) {
+                                y = 0.575;
                         }
                 }
                 return new Pose2d(x, y, rot);

@@ -18,22 +18,25 @@ import frc.robot.RobotContainer;
 
 /** Add your docs here. */
 public class OneConeAutoCmd extends SequentialCommandGroup {
-    public OneConeAutoCmd(RobotContainer rc, Supplier<Pose2d> startingPosition, BooleanSupplier isOverChargingStation) {
-        addCommands(
-                new InstantCommand(() -> rc.setAutoPosition()),
-                new InstantCommand(() -> rc.setChargingStation()),
-                new InstantCommand(() -> rc.navigationSubsystem.zeroHeading((rc::getIsRedAlliance))),
-                new InstantCommand(() -> rc.navigationSubsystem.resetOdometry(startingPosition.get())),
-                new PositionHomeCmd(rc),
-                new PositionLowPegCmd(rc),
-                new GripReleaseCmd(rc),
-                new PositionHomeCmd(rc),
-                new DriveToGridAlleyCmd(rc, () -> true),
-                new DriveToCellCmd(rc,
-                        () -> 4,
-                        rc::getIsRedAlliance,
-                        1, rc.navigationSubsystem),
-                Commands.either(
-                        new CompleteRampSequenceCmd(rc), new LockedInCmd(rc), isOverChargingStation));
-    }
+        public OneConeAutoCmd(RobotContainer rc, Supplier<Pose2d> startingPosition,
+                        BooleanSupplier isOverChargingStation) {
+                addCommands(
+                                new InstantCommand(() -> rc.setAutoPosition()),
+                                new InstantCommand(() -> rc.setChargingStation()),
+                                new InstantCommand(() -> rc.navigationSubsystem.zeroHeading((rc::getIsRedAlliance))),
+                                new InstantCommand(() -> rc.navigationSubsystem.resetOdometry(startingPosition.get())),
+                                new PositionHomeCmd(rc),
+                                Commands.waitSeconds(0.25),
+                                new PositionLowPegCmd(rc),
+                                new GripReleaseCmd(rc),
+                                new PositionHomeCmd(rc),
+                                new DriveToGridAlleyCmd(rc, () -> true),
+                                new DriveToCellCmd(rc,
+                                                () -> 4,
+                                                rc::getIsRedAlliance,
+                                                1, rc.navigationSubsystem),
+                                Commands.either(
+                                                new CompleteRampSequenceCmd(rc), new LockedInCmd(rc),
+                                                isOverChargingStation));
+        }
 }

@@ -40,7 +40,7 @@ public class ManualDeliverCmd extends SequentialCommandGroup {
                                                                                                                                 .setIntakeDeliverMiddle()),
                                                                                                 Commands.waitSeconds(
                                                                                                                 1)),
-                                                                                                                new SpeedCubeDeliverCmd(rc, 50, 0.8))),
+                                                                                new SpeedCubeDeliverCmd(rc, 50, 0.8))),
                                                 Map.entry(ManualDeliveryMethod.CubeHighNode,
                                                                 new SequentialCommandGroup(
                                                                                 new ParallelCommandGroup(
@@ -49,14 +49,15 @@ public class ManualDeliverCmd extends SequentialCommandGroup {
                                                                                                                                 .setIntakeDeliverUpper()),
                                                                                                 Commands.waitSeconds(
                                                                                                                 .5)),
-                                                                                                                new SpeedCubeDeliverCmd(rc, 50, 1))),
+                                                                                new SpeedCubeDeliverCmd(rc, 50, 1))),
 
                                                 Map.entry(ManualDeliveryMethod.ClawLowNode,
                                                                 new GripReleaseCmd(rc)),
                                                 Map.entry(ManualDeliveryMethod.ClawMiddleNode,
                                                                 new PositionLowPegCmd(rc)),
                                                 Map.entry(ManualDeliveryMethod.ClawHighNode,
-                                                                new PositionHighPegCmd(rc))),
+                                                                new SequentialCommandGroup(new PositionHighPegCmd(rc),
+                                                                                new PositionHighPegSafetyCmd(rc)))),
                                                 method));
 
         }
