@@ -75,16 +75,6 @@ public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
 
     @Override
     public void doTransition() {
-
-        // if (isTransitionFrom(HomeStates.Home)) {
-        // rC.intakeSubsystem.stopArmExtend();
-        // }
-        // if (isTransitionFrom(HomeStates.Speed)) {
-        // rC.intakeSubsystem.stopArmExtend();
-        // }
-        // if(isTransitionFrom(HomeStates.Safety)){
-        // rC.intakeSubsystem.stopArmExtend();
-        // }
         if (isTransitionTo(HomeStates.Safety)) {
             rC.intakeSubsystem.setHomeSlow();
             startUpPosition = rC.intakeSubsystem.getArmExtend();
@@ -103,9 +93,7 @@ public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
             rC.intakeSubsystem.resetExtendMotorEncoder();
             rC.intakeSubsystem.homeRobot();
             hasHomed = true;
-
         }
-
     }
 
     @Override
@@ -116,7 +104,6 @@ public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
             }
             lastHome = rC.intakeSubsystem.getHomeSensor();
         }
-
     }
 
     public void resetState() {
