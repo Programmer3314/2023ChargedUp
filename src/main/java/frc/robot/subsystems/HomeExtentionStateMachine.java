@@ -23,6 +23,13 @@ public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
         this.rC = rC;
     }
 
+    // TODO: fix problem with arm slamming into the retracted hard stop
+    // There are times when we may not be extending past the CloseToHomeSensor,
+    // such as Loading. When we retract we have homed so we go to speed, 
+    // but if we're to close to home we never hit the CloseToHome sensor so
+    // we go full force into the hard stop. 
+    // Please add a condition for: hasHomed and distance is near home enough
+    // that we should move slowly. You may want to add this to Safety and Speed.
     @Override
     public void CalcNextState() {
         switch (currentState) {

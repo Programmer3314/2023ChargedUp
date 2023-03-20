@@ -90,6 +90,11 @@ public class MMIntakeSubsystem extends SubsystemBase {
         armExtend.configAllSettings(configs, Constants.Robot.canBusTimeoutMs);
         armExtend.setNeutralMode(NeutralMode.Brake);
         armExtend.setInverted(true);
+        // TODO: Experiment and consider increasing the max EXTEND speed for the arm
+        // I don't know if this is the foward or reverse peak outputs below. 
+        // I do not think that we want to speed up the reverse without ensuring that 
+        // we slow down early enough not to slam into the stop when retracting. 
+        // See other not about slowing down in the extension state machine.
         armExtend.configPeakOutputForward(.5, Constants.Robot.canBusTimeoutMs);
         armExtend.configPeakOutputReverse(-.5, Constants.Robot.canBusTimeoutMs);
         armExtend.configAllowableClosedloopError(750, Constants.Robot.canBusTimeoutMs);
