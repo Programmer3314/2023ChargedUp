@@ -28,6 +28,9 @@ public class PositionHighPegSafetyCmd extends CommandBase {
 
     }
 
+    // TODO: This is HighPegSafety, but the isFinished is using .highPeg for the rotational constant
+    // so as the arm rolls throught he highPeg position it stops. The are might continue to move (no stop)
+    // but the release 
     @Override
     public boolean isFinished() {
         return Math.abs(rc.intakeSubsystem.getArmExtend() - Constants.Arm.Extend.PositionControl.highPeg) < .05
