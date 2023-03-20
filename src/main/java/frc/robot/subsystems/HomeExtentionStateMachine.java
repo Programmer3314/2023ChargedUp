@@ -30,6 +30,8 @@ public class HomeExtentionStateMachine extends MMStateMachine<HomeStates> {
     // we go full force into the hard stop. 
     // Please add a condition for: hasHomed and distance is near home enough
     // that we should move slowly. You may want to add this to Safety and Speed.
+    // Also, let's look at the current position of the close to home sensor,
+    // we might be able to improve that. 
     @Override
     public void CalcNextState() {
         switch (currentState) {
